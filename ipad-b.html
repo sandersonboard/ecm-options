@@ -8,27 +8,33 @@
 <link rel="stylesheet" href="tokens.css?v=20260615c" />
 <link rel="stylesheet" href="styles.css?v=20260615c" />
 <style>
-  .compare-app { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr 76px; height: 100%; background: var(--luna-gray-100); font-size: 12px; }
-  .compare-toolbar { grid-column: 1 / -1; background: var(--luna-white); border-bottom: 1px solid var(--luna-gray-200); padding: 10px 14px; display: flex; align-items: center; gap: 12px; }
-  .compare-toolbar .title { font-weight: 700; font-size: 13px; color: var(--luna-gray-900); }
-  .compare-toolbar .meta { font-size: 11px; color: var(--luna-gray-500); margin-left: 6px; }
-  .compare-toolbar .tool { padding: 4px 9px; font-size: 11px; font-weight: 600; border-radius: 4px; background: var(--luna-gray-100); color: var(--luna-gray-700); cursor: pointer; }
-  .compare-toolbar .tool.is-active { background: var(--luna-teal-500); color: var(--luna-white); }
+  .compare-app { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr auto; height: 100%; background: var(--luna-gray-100); font-size: 12px; }
+  .compare-toolbar { grid-column: 1 / -1; background: var(--luna-white); border-bottom: 1px solid var(--luna-gray-200); padding: 8px 14px; display: flex; flex-direction: column; gap: 6px; }
+  .compare-toolbar .tb-row { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .compare-toolbar .title-block { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; }
+  .compare-toolbar .title { font-weight: 700; font-size: 13px; color: var(--luna-gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .compare-toolbar .meta { font-size: 11px; color: var(--luna-gray-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .compare-toolbar .tools { display: flex; gap: 4px; align-items: center; }
+  .compare-toolbar .tool { padding: 4px 9px; font-size: 10.5px; font-weight: 600; border-radius: 5px; background: var(--luna-white); color: var(--luna-gray-700); border: 1px solid var(--luna-gray-300); cursor: pointer; white-space: nowrap; }
+  .compare-toolbar .tool.is-active { background: var(--luna-teal-500); color: var(--luna-white); border-color: var(--luna-teal-500); }
   .compare-toolbar .delta-stats { display: flex; gap: 6px; margin-left: auto; align-items: center; }
-  .compare-toolbar .delta-pill { padding: 2px 9px; border-radius: 12px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+  .compare-toolbar .delta-pill { padding: 2px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; letter-spacing: 0.01em; }
   .compare-toolbar .delta-pill.is-warn { background: var(--luna-orange-50); color: var(--luna-orange-700); border: 1px solid var(--luna-orange-100); }
   .compare-toolbar .delta-pill.is-good { background: var(--luna-green-50); color: var(--luna-green-700); border: 1px solid var(--luna-green-100); }
   .compare-toolbar .delta-pill.is-info { background: var(--luna-blue-50); color: var(--luna-blue-700); border: 1px solid var(--luna-blue-100); }
-  .compare-toolbar .delta-pill.is-done { background: var(--luna-gray-100); color: var(--luna-gray-600); border: 1px solid var(--luna-gray-200); text-decoration: line-through; }
+  .compare-toolbar .delta-pill.is-done { background: var(--luna-gray-100); color: var(--luna-gray-600); border: 1px solid var(--luna-gray-200); }
+  .compare-toolbar .signed-meta { font-size: 11px; color: var(--luna-green-700); font-weight: 600; white-space: nowrap; }
 
   .compare-pane { background: var(--luna-white); border-right: 1px solid var(--luna-gray-200); overflow-y: auto; position: relative; }
   .compare-pane:last-of-type { border-right: none; }
-  .pane-head { position: sticky; top: 0; background: var(--luna-white); border-bottom: 1px solid var(--luna-gray-200); padding: 10px 14px; display: flex; align-items: center; gap: 8px; z-index: 2; }
-  .pane-head .label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); }
-  .pane-head .doc-name { font-size: 13px; font-weight: 600; color: var(--luna-gray-900); }
-  .pane-head .marker { margin-left: auto; padding: 2px 7px; font-size: 10px; border-radius: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .pane-head { position: sticky; top: 0; background: var(--luna-white); border-bottom: 1px solid var(--luna-gray-200); padding: 9px 14px; display: flex; align-items: center; gap: 8px; z-index: 2; min-height: 38px; }
+  .pane-head .label { font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); }
+  .pane-head .doc-name { font-size: 12px; font-weight: 600; color: var(--luna-gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+  .pane-head .marker { padding: 2px 7px; font-size: 9.5px; border-radius: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; }
   .pane-head .marker.is-this { background: var(--luna-teal-100); color: var(--luna-teal-700); }
   .pane-head .marker.is-prior { background: var(--luna-gray-100); color: var(--luna-gray-600); }
+  .pane-head .marker.is-draft { background: var(--luna-blue-50); color: var(--luna-blue-700); border: 1px solid var(--luna-blue-100); }
+  .pane-head .marker.is-sealed { background: var(--luna-green-50); color: var(--luna-green-700); border: 1px solid var(--luna-green-100); }
   .pane-body { padding: 12px 14px; }
   .pane-body h3 { font-size: 14px; font-weight: 700; margin: 0 0 4px; color: var(--luna-gray-900); }
   .pane-body .pane-meta { font-size: 10px; color: var(--luna-gray-500); margin-bottom: 10px; }
@@ -54,8 +60,8 @@
     margin: 4px 0;
   }
   .pane-attest { padding: 8px 10px; background: var(--luna-gray-50); border: 1px dashed var(--luna-gray-300); border-radius: 4px; font-size: 11px; color: var(--luna-gray-700); }
-  .compare-footer { grid-column: 1 / -1; background: var(--luna-white); border-top: 1px solid var(--luna-gray-200); padding: 0 14px; display: flex; align-items: center; gap: 16px; overflow-x: auto; }
-  .delta-card { flex-shrink: 0; padding: 10px 14px; border-left: 3px solid var(--luna-orange-500); background: var(--luna-orange-50); min-width: 280px; transition: opacity 0.2s; }
+  .compare-footer { grid-column: 1 / -1; background: var(--luna-white); border-top: 1px solid var(--luna-gray-200); padding: 10px 14px; display: flex; align-items: stretch; gap: 10px; overflow-x: auto; }
+  .delta-card { flex-shrink: 0; padding: 9px 12px; border-left: 3px solid var(--luna-orange-500); background: var(--luna-orange-50); min-width: 220px; max-width: 260px; border-radius: 0 5px 5px 0; transition: opacity 0.2s; }
   .delta-card.is-good { border-left-color: var(--luna-green-500); background: var(--luna-green-50); }
   .delta-card.is-new { border-left-color: var(--luna-blue-500); background: var(--luna-blue-50); }
   .delta-card.is-removed { border-left-color: var(--luna-gray-400); background: var(--luna-gray-50); }
@@ -141,21 +147,29 @@
         <div class="device-screen">
           <div class="compare-app">
             <div class="compare-toolbar">
-              <span class="title">Control 4.2.1 — Q3 vs. Q2 access review</span>
-              <span class="meta">prod-db-01.helios · auto-aligned by ECM</span>
-              <span class="tool">↻ Re-align</span>
-              <span class="tool is-active">Show deltas</span>
-              <span class="tool">Show identical</span>
-              <span class="tool">✎ Pencil</span>
-              <span class="delta-stats">
-                <span class="delta-pill is-warn">⚠ 2 drifts</span>
-                <span class="delta-pill is-info">+ 1 added</span>
-                <span class="delta-pill is-good">✓ 19 unchanged</span>
-              </span>
+              <div class="tb-row">
+                <div class="title-block">
+                  <span class="title">Control 4.2.1 — Q3 vs. Q2 access review</span>
+                  <span class="meta">prod-db-01.helios · auto-aligned by ECM</span>
+                </div>
+                <div class="delta-stats">
+                  <span class="delta-pill is-warn">⚠ 2 drifts</span>
+                  <span class="delta-pill is-info">+1 added</span>
+                  <span class="delta-pill is-good">✓ 19 unchanged</span>
+                </div>
+              </div>
+              <div class="tb-row">
+                <div class="tools">
+                  <span class="tool">↻ Re-align</span>
+                  <span class="tool is-active">Show deltas</span>
+                  <span class="tool">Show identical</span>
+                  <span class="tool">✎ Pencil</span>
+                </div>
+              </div>
             </div>
 
             <div class="compare-pane">
-              <div class="pane-head"><span class="label">Quarter</span><span class="doc-name">AR-Q3FY26-prod-db.pdf</span><span class="marker is-this">This quarter</span></div>
+              <div class="pane-head"><span class="label">Quarter</span><span class="doc-name">AR-Q3FY26-prod-db.pdf</span><span class="marker is-this">This quarter</span><span class="marker is-draft">Draft</span></div>
               <div class="pane-body">
                 <h3>Q3 FY2026 — Production database AR</h3>
                 <div class="pane-meta">Exported 2026-09-25 · 22 active accounts · Weston Prohaska</div>
@@ -173,12 +187,12 @@
                     <tr><td>etl-svc</td><td>etl</td><td>09-25</td><td>✓ (auto)</td></tr>
                   </tbody>
                 </table>
-                <div class="pane-attest"><strong>DBA attestation</strong> — Weston Prohaska. "All accounts reviewed."</div>
+                <div class="pane-attest"><strong>DBA attestation</strong> — Weston Prohaska <em>(draft)</em>. "22 accounts. r.taylor escalation pending review; contractor-svc-09 still open from Q2."</div>
               </div>
             </div>
 
             <div class="compare-pane">
-              <div class="pane-head"><span class="label">Quarter</span><span class="doc-name">AR-Q2FY26-prod-db.pdf</span><span class="marker is-prior">Prior</span><span style="font-size:11px;color:var(--luna-green-700);font-weight:600;">✓ signed off · Jun 17</span></div>
+              <div class="pane-head"><span class="label">Quarter</span><span class="doc-name">AR-Q2FY26-prod-db.pdf</span><span class="marker is-prior">Prior</span><span class="marker is-sealed">✓ Sealed · Jun 17</span></div>
               <div class="pane-body">
                 <h3>Q2 FY2026 — Production database AR</h3>
                 <div class="pane-meta">Exported 2026-06-25 · 21 active accounts · Weston Prohaska</div>
@@ -190,7 +204,6 @@
                     <tr class="delta-warn"><td>contractor-svc-09</td><td>dba-admin</td><td>04-12</td><td>—</td></tr>
                     <tr><td>k.singh@helios.com</td><td>dba-read</td><td>06-19</td><td>✓</td></tr>
                     <tr class="delta-warn"><td>r.taylor@helios.com</td><td><strong>dba-read</strong></td><td>06-11</td><td>✓</td></tr>
-                    <tr class="delta-removed"><td>placeholder-row</td><td>—</td><td>—</td><td>—</td></tr>
                     <tr><td>app-svc-prod</td><td>app-svc</td><td>06-25</td><td>✓ (auto)</td></tr>
                     <tr><td>backups-svc</td><td>backups</td><td>06-25</td><td>✓ (auto)</td></tr>
                     <tr><td>etl-svc</td><td>etl</td><td>06-25</td><td>✓ (auto)</td></tr>
@@ -237,19 +250,27 @@
         <div class="device-screen">
           <div class="compare-app">
             <div class="compare-toolbar">
-              <span class="title">Control 4.2.1 — Q3 vs. Q2 access review</span>
-              <span class="meta">prod-db-01.helios · all deltas resolved</span>
-              <span class="tool">↻ Re-align</span>
-              <span class="tool is-active">Show deltas</span>
-              <span class="tool">Show identical</span>
-              <span class="tool">✎ Pencil</span>
-              <span class="delta-stats">
-                <span class="delta-pill is-good">✓ all 4 resolved</span>
-              </span>
+              <div class="tb-row">
+                <div class="title-block">
+                  <span class="title">Control 4.2.1 — Q3 vs. Q2 access review</span>
+                  <span class="meta">prod-db-01.helios · all deltas resolved</span>
+                </div>
+                <div class="delta-stats">
+                  <span class="delta-pill is-good">✓ 4 of 4 resolved</span>
+                </div>
+              </div>
+              <div class="tb-row">
+                <div class="tools">
+                  <span class="tool">↻ Re-align</span>
+                  <span class="tool is-active">Show deltas</span>
+                  <span class="tool">Show identical</span>
+                  <span class="tool">✎ Pencil</span>
+                </div>
+              </div>
             </div>
 
             <div class="compare-pane">
-              <div class="pane-head"><span class="label">Quarter</span><span class="doc-name">AR-Q3FY26-prod-db.pdf</span><span class="marker is-this">This quarter</span></div>
+              <div class="pane-head"><span class="label">Quarter</span><span class="doc-name">AR-Q3FY26-prod-db.pdf</span><span class="marker is-this">This quarter</span><span class="marker is-draft">Draft</span></div>
               <div class="pane-body">
                 <h3>Q3 FY2026 — Production database AR</h3>
                 <div class="pane-meta">All 22 rows reviewed · 4 of 4 deltas ratified</div>
@@ -266,7 +287,7 @@
             </div>
 
             <div class="compare-pane">
-              <div class="pane-head"><span class="label">Verdict draft</span><span class="doc-name">AR-Q3FY26-prod-db</span></div>
+              <div class="pane-head"><span class="label">Verdict</span><span class="doc-name">AR-Q3FY26-prod-db</span><span class="marker is-draft">AI draft</span></div>
               <div class="pane-body">
                 <div style="padding:14px;background:linear-gradient(135deg,var(--luna-purple-50),var(--luna-blue-50));border:1px solid var(--luna-purple-100);border-left:3px solid var(--luna-purple-500);border-radius:6px;font-size:13px;line-height:1.55;">
                   <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--luna-purple-700);margin-bottom:6px;display:flex;align-items:center;gap:6px;"><span class="ai-chip">Optro ECM</span> Verdict draft</div>
@@ -320,15 +341,23 @@
         <div class="device-screen">
           <div class="compare-app">
             <div class="compare-toolbar">
-              <span class="title">Control 4.2.1 — Q3 vs. Q2 access review</span>
-              <span class="meta" style="color:var(--luna-green-700);font-weight:600;">✓ Signed off · just now</span>
-              <span class="tool">↻ Re-align</span>
-              <span class="tool">Show deltas</span>
-              <span class="tool">Show identical</span>
-              <span class="tool">✎ Pencil</span>
-              <span class="delta-stats">
-                <span class="delta-pill is-good">✓ Sealed</span>
-              </span>
+              <div class="tb-row">
+                <div class="title-block">
+                  <span class="title">Control 4.2.1 — Q3 vs. Q2 access review</span>
+                  <span class="signed-meta">✓ Signed off · just now</span>
+                </div>
+                <div class="delta-stats">
+                  <span class="delta-pill is-good">✓ Sealed</span>
+                </div>
+              </div>
+              <div class="tb-row">
+                <div class="tools">
+                  <span class="tool">↻ Re-align</span>
+                  <span class="tool">Show deltas</span>
+                  <span class="tool">Show identical</span>
+                  <span class="tool">✎ Pencil</span>
+                </div>
+              </div>
             </div>
 
             <div class="signoff-pane">
