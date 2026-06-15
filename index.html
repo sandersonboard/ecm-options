@@ -348,39 +348,31 @@
   .more-disclosure .surface-section { margin-top: 32px; }
   .more-disclosure .surface-section:first-of-type { margin-top: 24px; padding: 0; max-width: none; }
   .more-disclosure .surface-section { padding: 0; max-width: none; }
-  .card-scores {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-    margin-top: -2px;
-  }
-  .card-scores .score {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 4px;
-    padding: 2px 7px 2px 6px;
+  .take-card .rank {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--luna-gray-400);
+    font-variant-numeric: tabular-nums;
+    padding: 2px 8px;
+    border-radius: 10px;
     background: var(--luna-gray-50);
     border: 1px solid var(--luna-gray-200);
-    border-radius: 10px;
-    font-size: 10px;
-    line-height: 1.45;
-    cursor: help;
   }
-  .card-scores .score .lbl {
-    font-weight: 700;
-    color: var(--luna-gray-500);
-    letter-spacing: 0.03em;
+  .take-card .rank.is-top {
+    color: var(--luna-teal-700);
+    background: var(--luna-teal-50);
+    border-color: var(--luna-teal-200, #c9ecee);
   }
-  .card-scores .score .val {
-    font-weight: 700;
-    color: var(--luna-gray-900);
-    font-variant-numeric: tabular-nums;
+  .take-card .rank.is-bottom {
+    color: var(--luna-gray-400);
   }
-  .card-scores .score[data-tier="strong"] .val { color: var(--luna-teal-700); }
-  .card-scores .score[data-tier="weak"] .val { color: var(--luna-gray-400); }
   .section-sub .legend {
     display: block;
-    margin-top: 8px;
+    margin-top: 6px;
     font-size: 11px;
     color: var(--luna-gray-500);
     letter-spacing: 0.01em;
@@ -427,7 +419,7 @@
     <div class="left">
       <span class="section-eyebrow">2 — The recommended portfolio</span>
       <h2>9 takes in 3 groups</h2>
-      <p class="section-sub">Eighteen more are declined (see below). The groups capture design rationale — sequencing and ship calls are PM judgment.<span class="legend">Each card scored 1–5 on $ (money potential) · UX (usability) · BO (blue ocean) — hover a chip for the definition</span></p>
+      <p class="section-sub">Eighteen more are declined (see below). The groups capture design rationale — sequencing and ship calls are PM judgment.<span class="legend">Each card shows its overall rank (1 = strongest) across money potential, UX, and blue-ocean strategy.</span></p>
     </div>
   </div>
 
@@ -438,36 +430,24 @@
     </div>
     <div class="takes-grid">
       <a class="take-card" href="palette-c.html">
+        <span class="rank is-bottom">#9</span>
         <h3>Prepped drafts</h3>
         <p class="tag">Command palette opens already half-done. Owner ratifies what AI staged.</p>
         <div class="card-meta">Reminder agent · Owner</div>
-        <div class="card-scores">
-          <span class="score" data-tier="weak" title="Money potential — revenue, moat, TAM expansion (1–5)"><span class="lbl">$</span><span class="val">2</span></span>
-          <span class="score" data-tier="strong" title="UX strength — cognitive load fit for the user (1–5)"><span class="lbl">UX</span><span class="val">4</span></span>
-          <span class="score" data-tier="weak" title="Blue ocean — category-defining vs. red-ocean refinement (1–5)"><span class="lbl">BO</span><span class="val">1</span></span>
-        </div>
         <span class="open">Open mockup <span class="arrow">→</span></span>
       </a>
       <a class="take-card" href="slack-a.html">
+        <span class="rank">#6</span>
         <h3>Bot DM + rich card</h3>
         <p class="tag">Bot DMs the owner with a one-tap approval card. Reaches them where they work.</p>
         <div class="card-meta">Reminder agent · Owner</div>
-        <div class="card-scores">
-          <span class="score" data-tier="weak" title="Money potential — revenue, moat, TAM expansion (1–5)"><span class="lbl">$</span><span class="val">2</span></span>
-          <span class="score" data-tier="strong" title="UX strength — cognitive load fit for the user (1–5)"><span class="lbl">UX</span><span class="val">5</span></span>
-          <span class="score" data-tier="weak" title="Blue ocean — category-defining vs. red-ocean refinement (1–5)"><span class="lbl">BO</span><span class="val">1</span></span>
-        </div>
         <span class="open">Open mockup <span class="arrow">→</span></span>
       </a>
       <a class="take-card" href="ipad-b.html">
+        <span class="rank is-top">#1</span>
         <h3>Side-by-side compare</h3>
         <p class="tag">This quarter vs. last on one canvas. Reviewer ratifies deltas, not the whole.</p>
         <div class="card-meta">Sufficiency agent · Reviewer</div>
-        <div class="card-scores">
-          <span class="score" data-tier="strong" title="Money potential — revenue, moat, TAM expansion (1–5)"><span class="lbl">$</span><span class="val">4</span></span>
-          <span class="score" data-tier="strong" title="UX strength — cognitive load fit for the user (1–5)"><span class="lbl">UX</span><span class="val">5</span></span>
-          <span class="score" data-tier="ok" title="Blue ocean — category-defining vs. red-ocean refinement (1–5)"><span class="lbl">BO</span><span class="val">3</span></span>
-        </div>
         <span class="open">Open mockup <span class="arrow">→</span></span>
       </a>
     </div>
@@ -480,36 +460,24 @@
     </div>
     <div class="takes-grid">
       <a class="take-card" href="gov-c.html">
+        <span class="rank is-top">#3</span>
         <h3>Policy-as-code</h3>
         <p class="tag">ECM's rules are versioned, signed, ratified code. Changing a rule is a PR.</p>
         <div class="card-meta">Sufficiency agent · PMO + Eng</div>
-        <div class="card-scores">
-          <span class="score" data-tier="strong" title="Money potential — revenue, moat, TAM expansion (1–5)"><span class="lbl">$</span><span class="val">5</span></span>
-          <span class="score" data-tier="weak" title="UX strength — cognitive load fit for the user (1–5)"><span class="lbl">UX</span><span class="val">2</span></span>
-          <span class="score" data-tier="strong" title="Blue ocean — category-defining vs. red-ocean refinement (1–5)"><span class="lbl">BO</span><span class="val">5</span></span>
-        </div>
         <span class="open">Open mockup <span class="arrow">→</span></span>
       </a>
       <a class="take-card" href="chain-b.html">
+        <span class="rank is-top">#2</span>
         <h3>Verification widget</h3>
         <p class="tag">Embeddable in the auditor's working paper. They verify without learning blockchain.</p>
         <div class="card-meta">Sufficiency agent · External auditor</div>
-        <div class="card-scores">
-          <span class="score" data-tier="strong" title="Money potential — revenue, moat, TAM expansion (1–5)"><span class="lbl">$</span><span class="val">5</span></span>
-          <span class="score" data-tier="ok" title="UX strength — cognitive load fit for the user (1–5)"><span class="lbl">UX</span><span class="val">3</span></span>
-          <span class="score" data-tier="strong" title="Blue ocean — category-defining vs. red-ocean refinement (1–5)"><span class="lbl">BO</span><span class="val">5</span></span>
-        </div>
         <span class="open">Open mockup <span class="arrow">→</span></span>
       </a>
       <a class="take-card" href="aiready-c.html">
+        <span class="rank">#4</span>
         <h3>Provenance graph</h3>
         <p class="tag">Auditable lineage from source-of-record to receipt. Provenance is the foundation of trust.</p>
         <div class="card-meta">Sufficiency agent · Reviewer + auditor</div>
-        <div class="card-scores">
-          <span class="score" data-tier="strong" title="Money potential — revenue, moat, TAM expansion (1–5)"><span class="lbl">$</span><span class="val">4</span></span>
-          <span class="score" data-tier="ok" title="UX strength — cognitive load fit for the user (1–5)"><span class="lbl">UX</span><span class="val">3</span></span>
-          <span class="score" data-tier="ok" title="Blue ocean — category-defining vs. red-ocean refinement (1–5)"><span class="lbl">BO</span><span class="val">3</span></span>
-        </div>
         <span class="open">Open mockup <span class="arrow">→</span></span>
       </a>
     </div>
@@ -522,36 +490,24 @@
     </div>
     <div class="takes-grid">
       <a class="take-card" href="causal-a.html">
+        <span class="rank">#5</span>
         <h3>Root-cause analysis</h3>
         <p class="tag">One finding becomes two outcomes: symptom fix + cause fix.</p>
         <div class="card-meta">Sufficiency agent · Reviewer + PMO</div>
-        <div class="card-scores">
-          <span class="score" data-tier="ok" title="Money potential — revenue, moat, TAM expansion (1–5)"><span class="lbl">$</span><span class="val">3</span></span>
-          <span class="score" data-tier="strong" title="UX strength — cognitive load fit for the user (1–5)"><span class="lbl">UX</span><span class="val">4</span></span>
-          <span class="score" data-tier="strong" title="Blue ocean — category-defining vs. red-ocean refinement (1–5)"><span class="lbl">BO</span><span class="val">5</span></span>
-        </div>
         <span class="open">Open mockup <span class="arrow">→</span></span>
       </a>
       <a class="take-card" href="chain-a.html">
+        <span class="rank is-bottom">#8</span>
         <h3>Receipt with chain narration</h3>
         <p class="tag">Plain-English chain summary for CFO and committee.</p>
         <div class="card-meta">Sufficiency agent · PMO</div>
-        <div class="card-scores">
-          <span class="score" data-tier="weak" title="Money potential — revenue, moat, TAM expansion (1–5)"><span class="lbl">$</span><span class="val">2</span></span>
-          <span class="score" data-tier="ok" title="UX strength — cognitive load fit for the user (1–5)"><span class="lbl">UX</span><span class="val">3</span></span>
-          <span class="score" data-tier="ok" title="Blue ocean — category-defining vs. red-ocean refinement (1–5)"><span class="lbl">BO</span><span class="val">3</span></span>
-        </div>
         <span class="open">Open mockup <span class="arrow">→</span></span>
       </a>
       <a class="take-card" href="chain-c.html">
+        <span class="rank">#7</span>
         <h3>Audit committee dashboard</h3>
         <p class="tag">Quarterly governance readout with chain as a verifiable record.</p>
         <div class="card-meta">Sufficiency agent · Committee</div>
-        <div class="card-scores">
-          <span class="score" data-tier="strong" title="Money potential — revenue, moat, TAM expansion (1–5)"><span class="lbl">$</span><span class="val">4</span></span>
-          <span class="score" data-tier="weak" title="UX strength — cognitive load fit for the user (1–5)"><span class="lbl">UX</span><span class="val">2</span></span>
-          <span class="score" data-tier="weak" title="Blue ocean — category-defining vs. red-ocean refinement (1–5)"><span class="lbl">BO</span><span class="val">2</span></span>
-        </div>
         <span class="open">Open mockup <span class="arrow">→</span></span>
       </a>
     </div>
