@@ -53,28 +53,35 @@
   .stat .l { font-size: 12px; color: var(--luna-gray-600); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-top: 4px; }
   .stat .n.is-zero { color: var(--luna-gray-400); }
 
-  /* PRD block */
-  .frame-block {
+  /* Problem/Solution frame */
+  .frame-grid {
     max-width: 1080px;
-    margin: 56px auto 0;
-    padding: 28px 32px;
+    margin: 32px auto 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 880px) { .frame-grid { grid-template-columns: 1fr; } }
+  .frame-block {
+    padding: 16px 20px;
     background: var(--luna-white);
-    border: 2px solid var(--luna-gray-200);
+    border: 1px solid var(--luna-gray-200);
     border-radius: var(--luna-radius-md);
     box-shadow: var(--luna-shadow-100);
   }
   .frame-block .eyebrow {
-    font-size: 11px; font-weight: 700;
+    font-size: 10px; font-weight: 700;
     letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--luna-purple-700);
-    display: inline-flex; align-items: center; gap: 8px;
-    margin-bottom: 8px;
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-bottom: 4px;
   }
-  .frame-block .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--luna-purple-500); }
-  .frame-block h2 { font-size: 22px; font-weight: 700; margin: 0 0 12px; color: var(--luna-gray-900); }
-  .frame-block p { font-size: 15px; color: var(--luna-gray-700); line-height: 1.6; margin: 0 0 10px; }
-  .frame-block .hard-rules { margin-top: 16px; font-size: 13px; color: var(--luna-gray-800); }
-  .frame-block .hard-rules strong { font-weight: 700; color: var(--luna-gray-900); }
+  .frame-block .eyebrow::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--luna-purple-500); }
+  .frame-block h2 { font-size: 16px; font-weight: 700; margin: 0 0 8px; color: var(--luna-gray-900); letter-spacing: -0.01em; line-height: 1.25; }
+  .frame-block p { font-size: 13px; color: var(--luna-gray-700); line-height: 1.55; margin: 0 0 6px; }
+  .frame-block p:last-child { margin-bottom: 0; }
+  .frame-block .hard-rules { margin-top: 10px; font-size: 11.5px; color: var(--luna-gray-700); line-height: 1.55; }
+  .frame-block .hard-rules strong { font-weight: 700; color: var(--luna-gray-900); display: block; margin-bottom: 2px; }
   .frame-block .hard-rules span { display: inline-block; margin: 0 4px; color: var(--luna-gray-400); }
 
   /* Section header */
@@ -225,38 +232,35 @@
 </head>
 <body>
 
-<div class="frame-block" style="margin-top: 56px;">
-  <div class="eyebrow">Problem</div>
-  <h2>The cost was never the upload.</h2>
-  <p>
-    The way SOX evidence gets collected today assumes the control owner will go into a web app to upload artifacts,
-    the reviewer will log in to judge them, and the PMO will check a dashboard to see where things stand.
-  </p>
-  <p>
-    The people doing this mostly do not work in audit, so the app is the part they put off. And the real cost was never the upload.
-    When evidence comes back incomplete or wrong, someone has to work out what is missing before they can even ask for a corrected version,
-    then chase the owner until it shows up. Multiply that across every control and every quarter and you have the actual job.
-  </p>
-</div>
+<div class="frame-grid">
+  <div class="frame-block">
+    <div class="eyebrow">Problem</div>
+    <h2>The cost was never the upload.</h2>
+    <p>
+      SOX evidence collection assumes the control owner goes into a web app to upload artifacts, the reviewer logs in to judge them, and the PMO checks a dashboard.
+    </p>
+    <p>
+      The people doing this mostly don't work in audit, so the app is the part they put off. The real cost was never the upload — it's that when evidence comes back wrong, someone has to diagnose what's missing before they can ask for a fix, then chase the owner until it shows up. Multiply across every control and every quarter and you have the actual job.
+    </p>
+  </div>
 
-<div class="frame-block" style="margin-top: 24px; border-color: var(--luna-teal-300);">
-  <div class="eyebrow" style="color: var(--luna-teal-700);">Solution</div>
-  <h2>Move the judgment, not just the form.</h2>
-  <p>
-    The slow part of collection was always the judgment, not the file transfer. Someone has to decide whether the evidence covers the
-    right period, carries the fields it needs, and actually shows the control operated. That decision is the thing an agent can now make.
-    ECM reads what gets submitted, compares it against what the control requires, and surfaces the gaps before a reviewer has to find them by hand.
-  </p>
-  <p>
-    Once the agent carries that judgment, the work stops needing a fixed home in a web app. It can run wherever the owner and reviewer already are.
-  </p>
-  <p class="hard-rules" style="margin-top: 18px;">
-    <strong>Four rules hold on every surface.</strong>
-    Never accept evidence automatically <span>·</span>
-    Always leave an escape hatch for a person <span>·</span>
-    Every AI judgment is legible <span>·</span>
-    The trace is the output.
-  </p>
+  <div class="frame-block" style="border-color: var(--luna-teal-300);">
+    <div class="eyebrow" style="color: var(--luna-teal-700);">Solution</div>
+    <h2>Move the judgment, not just the form.</h2>
+    <p>
+      The slow part was always the judgment, not the file transfer. ECM reads what gets submitted, compares it against what the control requires, and surfaces the gaps before a reviewer has to find them by hand.
+    </p>
+    <p>
+      Once the agent carries that judgment, the work stops needing a fixed home. It can run wherever the owner and reviewer already are.
+    </p>
+    <p class="hard-rules">
+      <strong>Four rules on every surface.</strong>
+      Never auto-accept <span>·</span>
+      Always an escape hatch <span>·</span>
+      Every AI judgment is legible <span>·</span>
+      The trace is the output.
+    </p>
+  </div>
 </div>
 
 <!-- ============== Surface 1: Command palette ============== -->
