@@ -221,6 +221,76 @@
   .scenario-card h3 { font-size: 15px; font-weight: 700; color: var(--luna-purple-700); margin: 0 0 8px; display: flex; align-items: center; gap: 10px; }
   .scenario-card p { font-size: 14px; color: var(--luna-gray-800); line-height: 1.6; margin: 0; }
   .scenario-card p strong { color: var(--luna-gray-900); }
+
+  /* Strategic reframe — two-agent split */
+  .reframe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  @media (max-width: 880px) { .reframe-grid { grid-template-columns: 1fr; } }
+  .agent-card { padding: 22px 24px; border-radius: var(--luna-radius-md); box-shadow: var(--luna-shadow-100); }
+  .agent-card.is-reminder { background: linear-gradient(135deg, #ecfeff, #fff); border: 1.5px solid var(--luna-teal-500); }
+  .agent-card.is-sufficiency { background: linear-gradient(135deg, #faf5ff, #fff); border: 1.5px solid var(--luna-purple-500); }
+  .agent-card .label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+  .agent-card.is-reminder .label { color: var(--luna-teal-700); }
+  .agent-card.is-sufficiency .label { color: var(--luna-purple-700); }
+  .agent-card h3 { font-size: 22px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; color: var(--luna-gray-900); }
+  .agent-card .body { font-size: 14px; color: var(--luna-gray-700); line-height: 1.55; margin: 0 0 12px; }
+  .agent-card .metrics { font-size: 12px; color: var(--luna-gray-600); line-height: 1.7; }
+  .agent-card .metrics strong { color: var(--luna-gray-900); }
+
+  /* Phase row header */
+  .phase-row { margin-top: 28px; }
+  .phase-row:first-child { margin-top: 16px; }
+  .phase-row .head { display: flex; align-items: baseline; gap: 14px; padding: 8px 0; margin-bottom: 16px; border-bottom: 1.5px solid var(--luna-gray-200); flex-wrap: wrap; }
+  .phase-row.is-p1 .head { border-bottom-color: var(--luna-teal-300); }
+  .phase-row.is-p2 .head { border-bottom-color: var(--luna-purple-300); }
+  .phase-row.is-p3 .head { border-bottom-color: #bfdbfe; }
+  .phase-row .head .ph-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: var(--luna-radius-full); }
+  .phase-row.is-p1 .ph-tag { color: var(--luna-teal-700); background: var(--luna-teal-50); }
+  .phase-row.is-p2 .ph-tag { color: var(--luna-purple-700); background: var(--luna-purple-50); }
+  .phase-row.is-p3 .ph-tag { color: var(--luna-blue-700); background: var(--luna-blue-50); }
+  .phase-row .head .ph-title { font-size: 18px; font-weight: 700; color: var(--luna-gray-900); }
+  .phase-row .head .ph-sub { font-size: 13px; color: var(--luna-gray-600); margin-left: auto; }
+
+  /* Honest caveat card */
+  .caveat-card { padding: 22px 28px; background: linear-gradient(135deg, #fffbeb, #fff); border: 1px solid #fde68a; border-left: 4px solid #f59e0b; border-radius: var(--luna-radius-md); box-shadow: var(--luna-shadow-100); }
+  .caveat-card .label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #b45309; margin-bottom: 6px; }
+  .caveat-card h3 { font-size: 20px; font-weight: 700; margin: 0 0 10px; color: var(--luna-gray-900); letter-spacing: -0.01em; }
+  .caveat-card > p { font-size: 13.5px; color: var(--luna-gray-700); line-height: 1.6; margin: 0 0 10px; }
+  .caveat-assumptions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+  @media (max-width: 720px) { .caveat-assumptions { grid-template-columns: 1fr; } }
+  .caveat-assumption { padding: 12px 14px; background: #fff; border: 1px solid #fde68a; border-radius: 6px; }
+  .caveat-assumption .num { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #b45309; margin-bottom: 4px; }
+  .caveat-assumption .what { font-size: 12.5px; font-weight: 600; color: var(--luna-gray-900); margin-bottom: 4px; line-height: 1.4; }
+  .caveat-assumption .test { font-size: 11px; color: var(--luna-gray-600); line-height: 1.5; }
+  .caveat-card .closer { font-size: 13px; color: #92400e; line-height: 1.55; margin: 14px 0 0; font-weight: 500; }
+
+  /* Anti-portfolio */
+  .ap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 32px; margin-top: 8px; }
+  @media (max-width: 720px) { .ap-grid { grid-template-columns: 1fr; } }
+  .ap-group .label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .ap-group.is-red .label { color: var(--luna-red-700); }
+  .ap-group.is-amber .label { color: #b45309; }
+  .ap-group.is-gray .label { color: var(--luna-gray-500); }
+  .ap-list { display: flex; flex-direction: column; gap: 6px; }
+  .ap-list.is-quad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  @media (max-width: 880px) { .ap-list.is-quad { grid-template-columns: repeat(2, 1fr); } }
+  .ap-card {
+    padding: 9px 12px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 5px;
+    text-decoration: none;
+    color: inherit;
+    opacity: 0.62;
+    transition: opacity 0.2s, border-color 0.2s, transform 0.15s;
+    display: block;
+  }
+  .ap-card:hover { opacity: 1; text-decoration: none; border-color: var(--luna-gray-400); transform: translateX(1px); }
+  .ap-card.is-red { border-left: 3px solid #ef4444; }
+  .ap-card.is-amber { border-left: 3px solid #f59e0b; }
+  .ap-card.is-gray { border-left: 3px solid #cbd5e1; }
+  .ap-card .ap-name { font-size: 12.5px; font-weight: 600; color: var(--luna-gray-900); }
+  .ap-card .ap-why { font-size: 11px; color: var(--luna-gray-600); margin-left: 8px; }
+  .ap-card .ap-why.is-block { display: block; margin-left: 0; margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -256,378 +326,220 @@
   </div>
 </div>
 
-<!-- ============== Surface 1: Command palette ============== -->
+<!-- ============== Section 1: The main reframe ============== -->
 <section class="surface-section">
   <div class="section-head">
     <div class="left">
-      <span class="section-eyebrow">Surface 1 · Keyboard overlay</span>
-      <h2>The command palette</h2>
-      <p class="section-sub">
-        Weston Prohaska hits ⌘K from anywhere in Optro. Three different things could open.
-      </p>
-    </div>
-    <div class="right">
-      <div class="lbl">Persona</div>
-      <div class="what">Weston Prohaska · Owner</div>
+      <span class="section-eyebrow">1 — The main reframe</span>
+      <h2>It's two products, not one</h2>
+      <p class="section-sub">What we've been calling "one product with many UX options" is actually two products with different strategic logic. The portfolio splits cleanly along this line.</p>
     </div>
   </div>
 
-  <div class="takes-grid">
-    <a class="take-card" href="palette-a.html">
-      <span class="take-letter"><span class="L">A</span> Take A</span>
-      <h3>Smart search</h3>
-      <p class="tag">Pure fuzzy navigation. Type → match → enter. AI just ranks results by intent.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card" href="palette-b.html">
-      <span class="take-letter"><span class="L">B</span> Take B</span>
-      <h3>Agentic dialog</h3>
-      <p class="tag">Multi-turn chat in a box. AI asks clarifying questions, proposes evidence, files when confirmed.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card is-recommended" href="palette-c.html">
-      <span class="take-letter"><span class="L">C</span> Take C <span class="rec-pill">Recommended</span></span>
-      <h3>Prepped drafts</h3>
-      <p class="tag">Opens already half-done. Top hits are AI-drafted evidence tasks for what's due this week.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
+  <div class="reframe-grid">
+    <div class="agent-card is-reminder">
+      <div class="label">Reminder agent</div>
+      <h3>The press-release win</h3>
+      <p class="body">Meets owners where they work. Quotable in Q1, but the moat is weak — copyable within a quarter.</p>
+      <div class="metrics">
+        <div><strong>Primary user:</strong> Control owner</div>
+        <div><strong>Moat character:</strong> Distribution &amp; behavioral lock-in</div>
+        <div><strong>Time to quotable:</strong> Q1</div>
+      </div>
+    </div>
+    <div class="agent-card is-sufficiency">
+      <div class="label">Sufficiency agent</div>
+      <h3>What builds the company</h3>
+      <p class="body">Judges whether evidence actually proves the control operated. Longer horizon (Q4+), but the structural moat — substantive rules tied to specific controls, signed off by the audit committee — compounds.</p>
+      <div class="metrics">
+        <div><strong>Primary user:</strong> Reviewer / external auditor</div>
+        <div><strong>Moat character:</strong> Structural rules per control</div>
+        <div><strong>Time to quotable:</strong> Q4+</div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ============== Surface 2: Slack / Teams ============== -->
+<!-- ============== Section 2: The recommended portfolio ============== -->
 <section class="surface-section">
   <div class="section-head">
     <div class="left">
-      <span class="section-eyebrow">Surface 2 · Chat platform</span>
-      <h2>Slack &amp; Teams</h2>
-      <p class="section-sub">
-        Where IT leads already live. ECM could join the conversation as a bot DM, a per-control channel, or a fluent chat colleague.
-      </p>
-    </div>
-    <div class="right">
-      <div class="lbl">Persona</div>
-      <div class="what">Weston Prohaska · Owner</div>
+      <span class="section-eyebrow">2 — The recommended portfolio</span>
+      <h2>9 takes ship across 3 phases</h2>
+      <p class="section-sub">Eighteen are deliberately declined (see below). Sequencing matters — each phase depends on the substrate of the prior one.</p>
     </div>
   </div>
 
-  <div class="takes-grid">
-    <a class="take-card is-recommended" href="slack-a.html">
-      <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
-      <h3>Bot DM + rich card</h3>
-      <p class="tag">One DM, one approve. Prefilled card with confidence bar, one-tap file.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
+  <div class="phase-row is-p1">
+    <div class="head">
+      <span class="ph-tag">Phase 1 · 0–6mo</span>
+      <span class="ph-title">The credibility play</span>
+      <span class="ph-sub">Reminder + reviewer-side · press-release win in Q1</span>
+    </div>
+    <div class="takes-grid">
+      <a class="take-card is-recommended" href="palette-c.html">
+        <span class="take-letter"><span class="L">C</span> Take C <span class="rec-pill">Recommended</span></span>
+        <h3>Prepped drafts</h3>
+        <p class="tag">Command palette opens already half-done. Owner ratifies what AI staged. <em>Reminder agent · Owner.</em></p>
+        <span class="open">Open mockup <span class="arrow">→</span></span>
+      </a>
+      <a class="take-card is-recommended" href="slack-a.html">
+        <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
+        <h3>Bot DM + rich card</h3>
+        <p class="tag">Bot DMs the owner with a one-tap approval card. Reaches them where they work. <em>Reminder agent · Owner.</em></p>
+        <span class="open">Open mockup <span class="arrow">→</span></span>
+      </a>
+      <a class="take-card is-recommended" href="ipad-b.html">
+        <span class="take-letter"><span class="L">B</span> Take B <span class="rec-pill">Recommended</span></span>
+        <h3>Side-by-side compare</h3>
+        <p class="tag">This quarter vs. last on one canvas. Reviewer ratifies deltas, not the whole. <em>Sufficiency agent · Reviewer.</em></p>
+        <span class="open">Open mockup <span class="arrow">→</span></span>
+      </a>
+    </div>
+  </div>
 
-    <a class="take-card" href="slack-b.html">
-      <span class="take-letter"><span class="L">B</span> Take B</span>
-      <h3>Channel-per-control</h3>
-      <p class="tag">Each control becomes a Slack channel. Persistent context. AI posts weekly digests, owners drop evidence, reviewers thumbs up.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
+  <div class="phase-row is-p2">
+    <div class="head">
+      <span class="ph-tag">Phase 2 · 6–18mo</span>
+      <span class="ph-title">The moat</span>
+      <span class="ph-sub">Substrate · governance · audit-grade output</span>
+    </div>
+    <div class="takes-grid">
+      <a class="take-card is-recommended" href="gov-c.html">
+        <span class="take-letter"><span class="L">C</span> Take C <span class="rec-pill">Recommended</span></span>
+        <h3>Policy-as-code</h3>
+        <p class="tag">ECM's rules are versioned, signed, ratified code. Changing a rule is a PR. <em>Sufficiency agent · PMO + Eng.</em></p>
+        <span class="open">Open mockup <span class="arrow">→</span></span>
+      </a>
+      <a class="take-card is-recommended" href="chain-b.html">
+        <span class="take-letter"><span class="L">B</span> Take B <span class="rec-pill">Recommended</span></span>
+        <h3>Verification widget</h3>
+        <p class="tag">Embeddable in the auditor's working paper. They verify without learning blockchain. <em>Sufficiency agent · External auditor.</em></p>
+        <span class="open">Open mockup <span class="arrow">→</span></span>
+      </a>
+      <a class="take-card is-recommended" href="aiready-c.html">
+        <span class="take-letter"><span class="L">C</span> Take C <span class="rec-pill">Recommended</span></span>
+        <h3>Provenance graph</h3>
+        <p class="tag">Auditable lineage from source-of-record to receipt. Provenance is the substrate of trust. <em>Sufficiency agent · Reviewer + auditor.</em></p>
+        <span class="open">Open mockup <span class="arrow">→</span></span>
+      </a>
+    </div>
+  </div>
 
-    <a class="take-card" href="slack-c.html">
-      <span class="take-letter"><span class="L">C</span> Take C</span>
-      <h3>Conversational intake</h3>
-      <p class="tag">Weston DMs the bot in natural language. No card UI. AI parses, asks clarifications if needed, files.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
+  <div class="phase-row is-p3">
+    <div class="head">
+      <span class="ph-tag">Phase 3+ · 18mo+</span>
+      <span class="ph-title">Differentiate &amp; flagship</span>
+      <span class="ph-sub">Causal explanation · committee surface</span>
+    </div>
+    <div class="takes-grid">
+      <a class="take-card is-recommended" href="causal-a.html">
+        <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
+        <h3>Root-cause analysis</h3>
+        <p class="tag">One finding becomes two outcomes: symptom fix + cause fix. <em>Sufficiency agent · Reviewer + PMO.</em></p>
+        <span class="open">Open mockup <span class="arrow">→</span></span>
+      </a>
+      <a class="take-card is-recommended" href="chain-a.html">
+        <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
+        <h3>Receipt with chain narration</h3>
+        <p class="tag">Plain-English chain summary for CFO and committee. <em>Sufficiency agent · PMO.</em></p>
+        <span class="open">Open mockup <span class="arrow">→</span></span>
+      </a>
+      <a class="take-card is-recommended" href="chain-c.html">
+        <span class="take-letter"><span class="L">C</span> Take C <span class="rec-pill">Recommended</span></span>
+        <h3>Audit committee dashboard</h3>
+        <p class="tag">Quarterly governance readout with chain as verifiable substrate. <em>Sufficiency agent · Committee.</em></p>
+        <span class="open">Open mockup <span class="arrow">→</span></span>
+      </a>
+    </div>
   </div>
 </section>
 
-<!-- ============== Surface 3: Mobile ============== -->
+<!-- ============== Section 3: Honest caveat ============== -->
+<section class="surface-section">
+  <div class="caveat-card">
+    <div class="label">3 — The honest caveat</div>
+    <h3>The prototypes prove the design is plausible — not that the strategy is right</h3>
+    <p>Three load-bearing assumptions are still untested. The prototypes test design intent. The strategy gets tested by data.</p>
+    <div class="caveat-assumptions">
+      <div class="caveat-assumption">
+        <div class="num">Assumption 1</div>
+        <div class="what">Sufficiency is one ownable problem</div>
+        <div class="test">Test: shadow study with substantive-sufficiency vs. Midship reperformance</div>
+      </div>
+      <div class="caveat-assumption">
+        <div class="num">Assumption 2</div>
+        <div class="what">Calling teams will adopt the primitive</div>
+        <div class="test">Test: interface-contract workshop with one calling team</div>
+      </div>
+      <div class="caveat-assumption">
+        <div class="num">Assumption 3</div>
+        <div class="what">External auditors accept AI-gated evidence</div>
+        <div class="test">Test: Big Four advisory conversation before chain implementation locks</div>
+      </div>
+    </div>
+    <p class="closer">Shadow-study data before platform architecture locks.</p>
+  </div>
+</section>
+
+<!-- ============== Section 4: Anti-portfolio ============== -->
 <section class="surface-section">
   <div class="section-head">
     <div class="left">
-      <span class="section-eyebrow">Surface 3 · Phone</span>
-      <h2>Mobile</h2>
-      <p class="section-sub">
-        IT leads do half their work from airports. Three different shapes for a phone-native SOX experience.
-      </p>
-    </div>
-    <div class="right">
-      <div class="lbl">Persona</div>
-      <div class="what">Weston Prohaska · Owner</div>
+      <span class="section-eyebrow" style="color: var(--luna-red-700);">4 — Anti-portfolio</span>
+      <h2>18 takes deliberately declined</h2>
+      <p class="section-sub">Several will get demo-loved but fail PCAOB scrutiny. Worth a leadership decline list now, before they re-emerge by demo gravity. Every card below is still browsable — muted because it shouldn't ship, not because it shouldn't exist.</p>
     </div>
   </div>
 
-  <div class="takes-grid">
-    <a class="take-card is-recommended" href="mobile-a.html">
-      <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
-      <h3>Push + camera intake</h3>
-      <p class="tag">Push notification → camera shortcut → AI auto-classifies + files. 12 seconds, no app loaded.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card" href="mobile-b.html">
-      <span class="take-letter"><span class="L">B</span> Take B</span>
-      <h3>Pocket triage</h3>
-      <p class="tag">Mobile dashboard of your SOX week. Swipe-to-triage. Each row carries an AI summary.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card" href="mobile-c.html">
-      <span class="take-letter"><span class="L">C</span> Take C</span>
-      <h3>Voice-first capture</h3>
-      <p class="tag">"Hey ECM, filed Q3 AR for prod-db." Speech-to-evidence pipeline. Hands-busy moments.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-  </div>
-</section>
-
-<!-- ============== Surface 4: iPad ============== -->
-<section class="surface-section">
-  <div class="section-head">
-    <div class="left">
-      <span class="section-eyebrow">Surface 4 · Tablet</span>
-      <h2>iPad — reviewer fieldwork</h2>
-      <p class="section-sub">
-        Larger than a phone, more tactile than a laptop. Three ways AI can support the reviewer's judgment.
-      </p>
+  <div class="ap-grid">
+    <div class="ap-group is-red">
+      <div class="label">GRC red flags · will fail PCAOB scrutiny</div>
+      <div class="ap-list">
+        <a class="ap-card is-red" href="mobile-a.html"><span class="ap-name">mobile-A</span><span class="ap-why">audit-evidence integrity (photo-of-screen)</span></a>
+        <a class="ap-card is-red" href="mobile-b.html"><span class="ap-name">mobile-B</span><span class="ap-why">SoD violation (delegates SOX 302)</span></a>
+        <a class="ap-card is-red" href="mobile-c.html"><span class="ap-name">mobile-C</span><span class="ap-why">voice attribution; weak chain of custody</span></a>
+        <a class="ap-card is-red" href="slack-c.html"><span class="ap-name">slack-C</span><span class="ap-why">NL-parse wrapper risk; no moat</span></a>
+        <a class="ap-card is-red" href="ipad-c.html"><span class="ap-name">ipad-C</span><span class="ap-why">judgment migration; AI narrates verdict</span></a>
+      </div>
     </div>
-    <div class="right">
-      <div class="lbl">Persona</div>
-      <div class="what">Dana Cho · Reviewer</div>
+
+    <div class="ap-group is-amber">
+      <div class="label">No business case · demo eye-candy</div>
+      <div class="ap-list">
+        <a class="ap-card is-amber" href="wearable-a.html"><span class="ap-name">wearable-A</span><span class="ap-why">no durable revenue; can't be primary attestation</span></a>
+        <a class="ap-card is-amber" href="wearable-b.html"><span class="ap-name">wearable-B</span><span class="ap-why">ambient dashboard; no durable revenue</span></a>
+        <a class="ap-card is-amber" href="wearable-c.html"><span class="ap-name">wearable-C</span><span class="ap-why">no durable revenue</span></a>
+        <a class="ap-card is-amber" href="slack-b.html"><span class="ap-name">slack-B</span><span class="ap-why">channel sprawl (50 controls = 50 channels)</span></a>
+      </div>
     </div>
-  </div>
 
-  <div class="takes-grid">
-    <a class="take-card" href="ipad-a.html">
-      <span class="take-letter"><span class="L">A</span> Take A</span>
-      <h3>Pencil + findings panel</h3>
-      <p class="tag">Read the PDF like always. AI side-panel flags drift vs. last quarter, suggests verdict.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card is-recommended" href="ipad-b.html">
-      <span class="take-letter"><span class="L">B</span> Take B <span class="rec-pill">Recommended</span></span>
-      <h3>Side-by-side compare</h3>
-      <p class="tag">This quarter on left, last quarter on right. AI aligns rows + highlights deltas. Pencil to ratify or dispute each delta.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card" href="ipad-c.html">
-      <span class="take-letter"><span class="L">C</span> Take C</span>
-      <h3>Narrated walk-through</h3>
-      <p class="tag">AI generates a Loom-style narrated video of the evidence. Dana scrubs through, taps to dispute moments.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-  </div>
-</section>
-
-<!-- ============== Surface 5: Wearable ============== -->
-<section class="surface-section">
-  <div class="section-head">
-    <div class="left">
-      <span class="section-eyebrow">Surface 5 · Wrist</span>
-      <h2>Wearable</h2>
-      <p class="section-sub">
-        Almost no UI to work with. Three takes on what, if anything, a SOX agent should do on a watch.
-      </p>
+    <div class="ap-group is-gray">
+      <div class="label">Subsumed by a recommended take</div>
+      <div class="ap-list">
+        <a class="ap-card is-gray" href="palette-a.html"><span class="ap-name">palette-A</span><span class="ap-why">subsumed by palette-C</span></a>
+        <a class="ap-card is-gray" href="palette-b.html"><span class="ap-name">palette-B</span><span class="ap-why">subsumed by palette-C</span></a>
+        <a class="ap-card is-gray" href="ipad-a.html"><span class="ap-name">ipad-A</span><span class="ap-why">subsumed by ipad-B</span></a>
+      </div>
     </div>
-    <div class="right">
-      <div class="lbl">Persona</div>
-      <div class="what">Weston Prohaska · Owner</div>
+
+    <div class="ap-group is-gray">
+      <div class="label">Research-stage · revisit later</div>
+      <div class="ap-list">
+        <a class="ap-card is-gray" href="causal-b.html"><span class="ap-name">causal-B</span><span class="ap-why">counterfactuals — research-stage</span></a>
+        <a class="ap-card is-gray" href="causal-c.html"><span class="ap-name">causal-C</span><span class="ap-why">presupposes a full control graph</span></a>
+      </div>
     </div>
-  </div>
 
-  <div class="takes-grid">
-    <a class="take-card is-recommended" href="wearable-a.html">
-      <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
-      <h3>Confidence ring + tap</h3>
-      <p class="tag">Wrist buzz on high-confidence pattern match. Ring shows confidence. One tap confirms.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card" href="wearable-b.html">
-      <span class="take-letter"><span class="L">B</span> Take B</span>
-      <h3>Glanceable program status</h3>
-      <p class="tag">Watch complication shows program-wide SOX health. Tap → drill into pending.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card" href="wearable-c.html">
-      <span class="take-letter"><span class="L">C</span> Take C</span>
-      <h3>Escalation-only</h3>
-      <p class="tag">No watch UI at all. Watch only haptics when AI escalates something needing eyeballs on the phone.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-  </div>
-</section>
-
-<!-- ============== Surface 6: Blockchain ============== -->
-<section class="surface-section">
-  <div class="section-head">
-    <div class="left">
-      <span class="section-eyebrow">Surface 6 · Audit-grade output</span>
-      <h2>Blockchain receipt</h2>
-      <p class="section-sub">
-        Tamper-proof attestations after sign-off. Three takes on how (and whether) auditors and the audit committee should see the chain.
-      </p>
+    <div class="ap-group is-gray" style="grid-column: span 2;">
+      <div class="label">Build, don't sell · engineering scope or internal tooling</div>
+      <div class="ap-list is-quad">
+        <a class="ap-card is-gray" href="aiready-a.html"><span class="ap-name">aiready-A</span><span class="ap-why is-block">connectors · engineering scope</span></a>
+        <a class="ap-card is-gray" href="aiready-b.html"><span class="ap-name">aiready-B</span><span class="ap-why is-block">schema templates · engineering</span></a>
+        <a class="ap-card is-gray" href="gov-a.html"><span class="ap-name">gov-A</span><span class="ap-why is-block">model card · internal artifact</span></a>
+        <a class="ap-card is-gray" href="gov-b.html"><span class="ap-name">gov-B</span><span class="ap-why is-block">override registry · internal tooling</span></a>
+      </div>
     </div>
-    <div class="right">
-      <div class="lbl">Persona</div>
-      <div class="what">Sarah Park · PMO</div>
-    </div>
-  </div>
-
-  <div class="takes-grid">
-    <a class="take-card is-recommended" href="chain-a.html">
-      <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
-      <h3>Receipt with chain narration</h3>
-      <p class="tag">Card with artifact + chain of attestations. AI translates the chain in plain English.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card" href="chain-b.html">
-      <span class="take-letter"><span class="L">B</span> Take B</span>
-      <h3>Verification widget</h3>
-      <p class="tag">Embeddable badge the external auditor drops into fieldwork docs. Pulls the latest hash, confirms in one click.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card" href="chain-c.html">
-      <span class="take-letter"><span class="L">C</span> Take C</span>
-      <h3>Audit committee dashboard</h3>
-      <p class="tag">Public-share URL of the whole program's chain, visualized for the quarterly committee meeting.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-  </div>
-</section>
-
-<!-- ============== Axis separator: capability surfaces ============== -->
-<section class="surface-section" style="margin-top: 96px;">
-  <div style="max-width: 1080px; margin: 0 auto; padding: 32px 28px; background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50)); border: 1px solid var(--luna-purple-100); border-radius: var(--luna-radius-md);">
-    <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--luna-purple-700); margin-bottom: 8px; display: inline-flex; align-items: center; gap: 8px;">
-      <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--luna-purple-500);"></span>
-      Different axis · Capability surfaces
-    </div>
-    <h2 style="font-size: 28px; font-weight: 700; color: var(--luna-gray-900); margin: 0 0 8px; letter-spacing: -0.015em;">What makes Optro ECM defensible.</h2>
-    <p style="font-size: 14px; color: var(--luna-gray-700); line-height: 1.6; margin: 0; max-width: 720px;">
-      The first six surfaces explore <em>where</em> ECM lives. The next three explore <em>what makes ECM credible enough to live anywhere</em> — the data plumbing,
-      the governance, and the causal reasoning underneath. Same problem (diagnosis is the cost; the agent moves judgment upstream), different layer of the answer.
-    </p>
-  </div>
-</section>
-
-<!-- ============== Surface 7: AI-ready data ============== -->
-<section class="surface-section">
-  <div class="section-head">
-    <div class="left">
-      <span class="section-eyebrow" style="color: var(--luna-purple-700);">Surface 7 · Capability layer</span>
-      <h2>AI-ready data</h2>
-      <p class="section-sub">
-        Diagnosis disappears when the schema is enforced upstream. Three ways the agent gets evidence it can actually judge.
-      </p>
-    </div>
-    <div class="right">
-      <div class="lbl">Persona</div>
-      <div class="what">Mixed · Eng + PMO + Owner</div>
-    </div>
-  </div>
-
-  <div class="takes-grid">
-    <a class="take-card is-recommended" href="aiready-a.html">
-      <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
-      <h3>Write-time classification connectors</h3>
-      <p class="tag">ServiceNow / JIRA / Salesforce / ERP connectors classify events to controls at write time. When a change ticket closes, it's already tagged with the controls it touches.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card" href="aiready-b.html">
-      <span class="take-letter"><span class="L">B</span> Take B</span>
-      <h3>Schema-aware evidence templates</h3>
-      <p class="tag">The control's evidence requirement is a typed schema. Submissions get parsed against it; the owner sees structural gaps live before they upload.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card" href="aiready-c.html">
-      <span class="take-letter"><span class="L">C</span> Take C</span>
-      <h3>Provenance graph</h3>
-      <p class="tag">Every artifact carries a verifiable source chain. ECM (and the auditor) can answer "is this fresh, where did it come from, has it been edited" from the graph, not from human testimony.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-  </div>
-</section>
-
-<!-- ============== Surface 8: AI governance ============== -->
-<section class="surface-section">
-  <div class="section-head">
-    <div class="left">
-      <span class="section-eyebrow" style="color: var(--luna-purple-700);">Surface 8 · Capability layer</span>
-      <h2>AI governance</h2>
-      <p class="section-sub">
-        ECM is itself in SOX scope — the agent is a control that operates. Three ways to make its judgment as reviewable as a control matrix.
-      </p>
-    </div>
-    <div class="right">
-      <div class="lbl">Persona</div>
-      <div class="what">Sarah Park · PMO + Audit committee</div>
-    </div>
-  </div>
-
-  <div class="takes-grid">
-    <a class="take-card" href="gov-a.html">
-      <span class="take-letter"><span class="L">A</span> Take A</span>
-      <h3>Model card + change log</h3>
-      <p class="tag">Public-facing model card showing what ECM does, what it doesn't, what changed and when. Every rule update is human-signed and logged. Audit committee reviews before sign-off.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card" href="gov-b.html">
-      <span class="take-letter"><span class="L">B</span> Take B</span>
-      <h3>Override registry</h3>
-      <p class="tag">Every human override of ECM is logged with reason. Statistical drift across controls shows where the agent is misaligned. Reviewers can see how often ECM has been wrong on a given control.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card is-recommended" href="gov-c.html">
-      <span class="take-letter"><span class="L">C</span> Take C <span class="rec-pill">Recommended</span></span>
-      <h3>Policy-as-code</h3>
-      <p class="tag">ECM's rules are explicit, versioned, signed code. Changing a rule is a PR-style approval flow with management sign-off. Rules are enumerable and tied to specific controls.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-  </div>
-</section>
-
-<!-- ============== Surface 9: Causal AI ============== -->
-<section class="surface-section">
-  <div class="section-head">
-    <div class="left">
-      <span class="section-eyebrow" style="color: var(--luna-purple-700);">Surface 9 · Capability layer</span>
-      <h2>Causal AI</h2>
-      <p class="section-sub">
-        ECM doesn't just match patterns — it explains the chain from artifact to control to risk. Causality replaces correlation in the diagnosis step.
-      </p>
-    </div>
-    <div class="right">
-      <div class="lbl">Persona</div>
-      <div class="what">Mixed · Reviewer + Owner + PMO</div>
-    </div>
-  </div>
-
-  <div class="takes-grid">
-    <a class="take-card is-recommended" href="causal-a.html">
-      <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
-      <h3>Root-cause finding analysis</h3>
-      <p class="tag">When a finding occurs, the agent identifies the upstream control cause, not just the symptom. The escalation finding traces back to a change-approval design weakness, not a review weakness.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card" href="causal-b.html">
-      <span class="take-letter"><span class="L">B</span> Take B</span>
-      <h3>Counterfactual evidence asks</h3>
-      <p class="tag">"If you had filed X instead of Y, would Midship have accepted it?" The agent simulates alternative submissions and shows which would pass. Direct attack on the chase-for-corrections cost.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
-
-    <a class="take-card" href="causal-c.html">
-      <span class="take-letter"><span class="L">C</span> Take C</span>
-      <h3>Risk propagation map</h3>
-      <p class="tag">Causal graph of controls → risks → assertions. When a control fails, the graph shows downstream impact: which assertions are now at risk, which material misstatement risks become possible.</p>
-      <span class="open">Open mockup <span class="arrow">→</span></span>
-    </a>
   </div>
 </section>
 
