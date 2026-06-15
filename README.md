@@ -1,15 +1,15 @@
-# Optro Signal
+# ECM options
 
 **Optro ECM works where you do.**
 
-A Luna-skinned prototype exploring surface placement for AI-distributed SOX evidence collection. Sixth sibling in the Optro/Auditborb demo family.
+A Luna-skinned prototype exploring surface placement for AI-distributed SOX evidence collection. Sixth sibling in the Optro/Optro demo family.
 
 **Live demo:** https://sandersonboard.github.io/signal/
 **Password:** BORB (case-insensitive)
 
 ## What this explores
 
-Where the prior evidence prototypes (`auditborb-evidence-prototypes`) asked *which workflow strategy?* (auto-collect vs. conversational vs. reuse-graph), Signal asks: *where does AI for SOX evidence live, once AI handles the cognitive work?*
+Where the prior evidence prototypes (`auditborb-evidence-prototypes`) asked *which workflow strategy?* (auto-collect vs. conversational vs. reuse-graph), ECM options asks: *where does AI for SOX evidence live, once AI handles the cognitive work?*
 
 Six surfaces, one Helios scenario (Q3 user-access review on control 4.2.1), zero web-app cage:
 
@@ -28,13 +28,13 @@ No control-centric mockups. That's the punchline: when AI removes the cognitive 
 
 ## Strategic frame
 
-First family sibling using the **real AuditBoard design system (Luna)** rather than anonymized hand-rolled chrome. Tokens pulled live from `@soxhub/luna-tokens` via Luna MCP. Tone shift = positioning statement: "this could ship inside the existing AuditBoard product."
+First family sibling using the **real Optro design system (Luna)** rather than anonymized hand-rolled chrome. Tokens pulled live from `@soxhub/luna-tokens` via Luna MCP. Tone shift = positioning statement: "this could ship inside the existing Optro product."
 
 Hedges no-regret move #2 (audit-grade output layer) and the System of Record Premium bet — the 6-surface palette is only believable because the underlying data graph (controls × evidence × time × attestations) gives the AI enough structure to navigate.
 
 Companion prototypes to come on the other UX-strategy axes:
-- **Signal-B** — human-AI handoff (review queue / trust-with-undo / side-by-side co-pilot / autonomous + audit trail)
-- **Signal-D** — trust & explainability (citations / confidence / "why this evidence matches" / disagreement signals)
+- **ECM options-B** — human-AI handoff (review queue / trust-with-undo / side-by-side co-pilot / autonomous + audit trail)
+- **ECM options-D** — trust & explainability (citations / confidence / "why this evidence matches" / disagreement signals)
 
 ## File structure
 
@@ -82,7 +82,7 @@ Push to `sandersonboard/optro-signal-borb` (public). GitHub Pages from main bran
 # from inside the folder
 git init
 git add .
-git commit -m "Initial Signal prototype"
+git commit -m "Initial ECM options prototype"
 gh repo create sandersonboard/optro-signal-borb --public --source=. --push
 # then enable Pages in repo settings, source = main / root
 ```

@@ -1,9 +1,9 @@
-# Optro Signal — Design Spec
+# ECM options — Design Spec
 
 **Date:** 2026-06-15
 **Status:** Draft — pending user review
-**Family:** Optro/Auditborb anonymized demo family (sibling to Velocity, Benchmark, Practice, Context, ECM-chat)
-**Codename:** Signal (local: `optro-signal-borb`, public: `sandersonboard.github.io/signal/`)
+**Family:** Optro/Optro anonymized demo family (sibling to Velocity, Benchmark, Practice, Context, ECM-chat)
+**Codename:** ECM options (local: `optro-signal-borb`, public: `sandersonboard.github.io/signal/`)
 
 ---
 
@@ -15,11 +15,11 @@ Once Optro ECM handles the cognitive work of SOX evidence collection — mapping
 
 ## Strategic frame
 
-This is the first prototype in the family that uses the **actual AuditBoard design system (Luna)** rather than anonymized hand-rolled chrome. The visual tone of the demo says *"this could ship inside the existing AuditBoard product."* That tone is itself the positioning move — it forces the question *"what would AuditBoard look like if it were built around AI-distributed surfaces rather than the controls-on-web mental model?"*
+This is the first prototype in the family that uses the **actual Optro design system (Luna)** rather than anonymized hand-rolled chrome. The visual tone of the demo says *"this could ship inside the existing Optro product."* That tone is itself the positioning move — it forces the question *"what would Optro look like if it were built around AI-distributed surfaces rather than the controls-on-web mental model?"*
 
 **Scenario-plan bet:** System of Record Premium + no-regret move #2 (audit-grade output). The 6-surface palette is only believable because the underlying data graph (controls × evidence × time × attestations) gives the AI enough structure to navigate. Without the graph, this is just a wrapper across channels.
 
-**What this prototype is NOT:** B (human-AI handoff) and D (trust & explainability) are queued as separate sibling prototypes. Signal explores Axis A only — surface placement.
+**What this prototype is NOT:** B (human-AI handoff) and D (trust & explainability) are queued as separate sibling prototypes. ECM options explores Axis A only — surface placement.
 
 ## What was cut and why
 
@@ -79,7 +79,7 @@ This matches the existing family's Helios continuity. Cross-link footer to sibli
 
 ## Design system: Luna
 
-First prototype in the family to use Luna (real AuditBoard design system) rather than anonymized hand-rolled tokens. Luna MCP server is wired up — use it for component lookups, tokens, and visual guides.
+First prototype in the family to use Luna (real Optro design system) rather than anonymized hand-rolled tokens. Luna MCP server is wired up — use it for component lookups, tokens, and visual guides.
 
 **Token-level rules:**
 - Pull Luna tokens via the MCP server; do not hand-roll color/spacing
@@ -141,13 +141,13 @@ Footer of every page links to family siblings:
 - Practice (`/practice/`)
 - Context (`/context/`)
 - ECM-chat (`/ecm-chat/`)
-- Auditborb Evidence (`/auditborb-evidence-prototypes/`)
+- Optro Evidence (`/auditborb-evidence-prototypes/`)
 
-Plus a "next in this axis" callout when Signal-B (handoff) and Signal-D (trust) prototypes are built.
+Plus a "next in this axis" callout when ECM options-B (handoff) and ECM options-D (trust) prototypes are built.
 
 ## Open questions for user review
 
-1. Confirm name **Signal** (vs. alternatives: Anywhere, Reach, Field, Surface).
+1. Confirm name **ECM options** (vs. alternatives: Anywhere, Reach, Field, Surface).
 2. Confirm radial-diagram layout vs. alternative (hub-and-spoke, surface ring, etc.).
 3. Confirm Luna MCP is the right source for components/tokens (no Midship spillover).
 4. Confirm scenario binding: Helios Q3 AR on control 4.2.1 — same scenario across all 6 surfaces.
