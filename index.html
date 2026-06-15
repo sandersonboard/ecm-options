@@ -163,14 +163,16 @@
   }
   .take-card.is-recommended .take-letter .L { background: var(--luna-teal-500); color: var(--luna-white); }
   .take-card .rec-pill {
-    display: inline-flex; align-items: center;
-    padding: 2px 8px;
-    background: var(--luna-teal-500);
-    color: var(--luna-white);
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 1px 7px 1px 4px;
+    background: var(--luna-teal-50);
+    color: var(--luna-teal-700);
+    border: 1px solid var(--luna-teal-200, #c9ecee);
     border-radius: var(--luna-radius-full);
     font-size: 10px; font-weight: 700;
     letter-spacing: 0.04em; text-transform: uppercase;
   }
+  .take-card .rec-pill::before { content: "★"; color: var(--luna-teal-500); font-size: 9px; }
   .take-card h3 {
     font-size: 17px; font-weight: 700;
     color: var(--luna-gray-900);
@@ -207,15 +209,6 @@
   }
   .take-card .open .arrow { transition: transform 0.15s; }
   .take-card:hover .open .arrow { transform: translateX(3px); }
-  .take-card .noun-tag {
-    position: absolute; top: 16px; right: 16px;
-    padding: 1px 8px;
-    background: var(--luna-gray-100);
-    border-radius: var(--luna-radius-full);
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 0.04em; text-transform: uppercase;
-    color: var(--luna-gray-600);
-  }
 
   .bottom-block { max-width: 1080px; margin: 80px auto 0; padding: 0 24px; }
   .scenario-card {
@@ -281,7 +274,6 @@
 
   <div class="takes-grid">
     <a class="take-card" href="palette-a.html">
-      <span class="noun-tag">Task</span>
       <span class="take-letter"><span class="L">A</span> Take A</span>
       <h3>Smart search</h3>
       <p class="tag">Pure fuzzy navigation. Type → match → enter. AI just ranks results by intent.</p>
@@ -289,7 +281,6 @@
     </a>
 
     <a class="take-card" href="palette-b.html">
-      <span class="noun-tag">Task</span>
       <span class="take-letter"><span class="L">B</span> Take B</span>
       <h3>Agentic dialog</h3>
       <p class="tag">Multi-turn chat in a box. AI asks clarifying questions, proposes evidence, files when confirmed.</p>
@@ -297,7 +288,6 @@
     </a>
 
     <a class="take-card is-recommended" href="palette-c.html">
-      <span class="noun-tag">Task</span>
       <span class="take-letter"><span class="L">C</span> Take C <span class="rec-pill">Recommended</span></span>
       <h3>Prepped drafts</h3>
       <p class="tag">Opens already half-done. Top hits are AI-drafted evidence tasks for what's due this week.</p>
@@ -324,7 +314,6 @@
 
   <div class="takes-grid">
     <a class="take-card is-recommended" href="slack-a.html">
-      <span class="noun-tag">Task</span>
       <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
       <h3>Bot DM + rich card</h3>
       <p class="tag">One DM, one approve. Prefilled card with confidence bar, one-tap file.</p>
@@ -332,7 +321,6 @@
     </a>
 
     <a class="take-card" href="slack-b.html">
-      <span class="noun-tag">Control</span>
       <span class="take-letter"><span class="L">B</span> Take B</span>
       <h3>Channel-per-control</h3>
       <p class="tag">Each control becomes a Slack channel. Persistent context. AI posts weekly digests, owners drop evidence, reviewers thumbs up.</p>
@@ -340,7 +328,6 @@
     </a>
 
     <a class="take-card" href="slack-c.html">
-      <span class="noun-tag">Task</span>
       <span class="take-letter"><span class="L">C</span> Take C</span>
       <h3>Conversational intake</h3>
       <p class="tag">Weston DMs the bot in natural language. No card UI. AI parses, asks clarifications if needed, files.</p>
@@ -367,7 +354,6 @@
 
   <div class="takes-grid">
     <a class="take-card is-recommended" href="mobile-a.html">
-      <span class="noun-tag">Task</span>
       <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
       <h3>Push + camera intake</h3>
       <p class="tag">Push notification → camera shortcut → AI auto-classifies + files. 12 seconds, no app loaded.</p>
@@ -375,7 +361,6 @@
     </a>
 
     <a class="take-card" href="mobile-b.html">
-      <span class="noun-tag">Task</span>
       <span class="take-letter"><span class="L">B</span> Take B</span>
       <h3>Pocket triage</h3>
       <p class="tag">Mobile dashboard of your SOX week. Swipe-to-triage. Each row carries an AI summary.</p>
@@ -383,7 +368,6 @@
     </a>
 
     <a class="take-card" href="mobile-c.html">
-      <span class="noun-tag">Task</span>
       <span class="take-letter"><span class="L">C</span> Take C</span>
       <h3>Voice-first capture</h3>
       <p class="tag">"Hey ECM, filed Q3 AR for prod-db." Speech-to-evidence pipeline. Hands-busy moments.</p>
@@ -410,7 +394,6 @@
 
   <div class="takes-grid">
     <a class="take-card" href="ipad-a.html">
-      <span class="noun-tag">Evidence</span>
       <span class="take-letter"><span class="L">A</span> Take A</span>
       <h3>Pencil + findings panel</h3>
       <p class="tag">Read the PDF like always. AI side-panel flags drift vs. last quarter, suggests verdict.</p>
@@ -418,7 +401,6 @@
     </a>
 
     <a class="take-card is-recommended" href="ipad-b.html">
-      <span class="noun-tag">Evidence</span>
       <span class="take-letter"><span class="L">B</span> Take B <span class="rec-pill">Recommended</span></span>
       <h3>Side-by-side compare</h3>
       <p class="tag">This quarter on left, last quarter on right. AI aligns rows + highlights deltas. Pencil to ratify or dispute each delta.</p>
@@ -426,7 +408,6 @@
     </a>
 
     <a class="take-card" href="ipad-c.html">
-      <span class="noun-tag">Evidence</span>
       <span class="take-letter"><span class="L">C</span> Take C</span>
       <h3>Narrated walk-through</h3>
       <p class="tag">AI generates a Loom-style narrated video of the evidence. Dana scrubs through, taps to dispute moments.</p>
@@ -453,7 +434,6 @@
 
   <div class="takes-grid">
     <a class="take-card is-recommended" href="wearable-a.html">
-      <span class="noun-tag">Task</span>
       <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
       <h3>Confidence ring + tap</h3>
       <p class="tag">Wrist buzz on high-confidence pattern match. Ring shows confidence. One tap confirms.</p>
@@ -461,7 +441,6 @@
     </a>
 
     <a class="take-card" href="wearable-b.html">
-      <span class="noun-tag">Task</span>
       <span class="take-letter"><span class="L">B</span> Take B</span>
       <h3>Glanceable program status</h3>
       <p class="tag">Watch complication shows program-wide SOX health. Tap → drill into pending.</p>
@@ -469,7 +448,6 @@
     </a>
 
     <a class="take-card" href="wearable-c.html">
-      <span class="noun-tag">Task</span>
       <span class="take-letter"><span class="L">C</span> Take C</span>
       <h3>Escalation-only</h3>
       <p class="tag">No watch UI at all. Watch only haptics when AI escalates something needing eyeballs on the phone.</p>
@@ -496,7 +474,6 @@
 
   <div class="takes-grid">
     <a class="take-card is-recommended" href="chain-a.html">
-      <span class="noun-tag">Evidence</span>
       <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
       <h3>Receipt with chain narration</h3>
       <p class="tag">Card with artifact + chain of attestations. AI translates the chain in plain English.</p>
@@ -504,7 +481,6 @@
     </a>
 
     <a class="take-card" href="chain-b.html">
-      <span class="noun-tag">Evidence</span>
       <span class="take-letter"><span class="L">B</span> Take B</span>
       <h3>Verification widget</h3>
       <p class="tag">Embeddable badge the external auditor drops into fieldwork docs. Pulls the latest hash, confirms in one click.</p>
@@ -512,7 +488,6 @@
     </a>
 
     <a class="take-card" href="chain-c.html">
-      <span class="noun-tag">Evidence</span>
       <span class="take-letter"><span class="L">C</span> Take C</span>
       <h3>Audit committee dashboard</h3>
       <p class="tag">Public-share URL of the whole program's chain, visualized for the quarterly committee meeting.</p>
@@ -554,7 +529,6 @@
 
   <div class="takes-grid">
     <a class="take-card is-recommended" href="aiready-a.html">
-      <span class="noun-tag">Source-of-record</span>
       <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
       <h3>Write-time classification connectors</h3>
       <p class="tag">ServiceNow / JIRA / Salesforce / ERP connectors classify events to controls at write time. When a change ticket closes, it's already tagged with the controls it touches.</p>
@@ -562,7 +536,6 @@
     </a>
 
     <a class="take-card" href="aiready-b.html">
-      <span class="noun-tag">Schema</span>
       <span class="take-letter"><span class="L">B</span> Take B</span>
       <h3>Schema-aware evidence templates</h3>
       <p class="tag">The control's evidence requirement is a typed schema. Submissions get parsed against it; the owner sees structural gaps live before they upload.</p>
@@ -570,7 +543,6 @@
     </a>
 
     <a class="take-card" href="aiready-c.html">
-      <span class="noun-tag">Lineage</span>
       <span class="take-letter"><span class="L">C</span> Take C</span>
       <h3>Provenance graph</h3>
       <p class="tag">Every artifact carries a verifiable source chain. ECM (and the auditor) can answer "is this fresh, where did it come from, has it been edited" from the graph, not from human testimony.</p>
@@ -597,7 +569,6 @@
 
   <div class="takes-grid">
     <a class="take-card" href="gov-a.html">
-      <span class="noun-tag">Model</span>
       <span class="take-letter"><span class="L">A</span> Take A</span>
       <h3>Model card + change log</h3>
       <p class="tag">Public-facing model card showing what ECM does, what it doesn't, what changed and when. Every rule update is human-signed and logged. Audit committee reviews before sign-off.</p>
@@ -605,7 +576,6 @@
     </a>
 
     <a class="take-card" href="gov-b.html">
-      <span class="noun-tag">Override</span>
       <span class="take-letter"><span class="L">B</span> Take B</span>
       <h3>Override registry</h3>
       <p class="tag">Every human override of ECM is logged with reason. Statistical drift across controls shows where the agent is misaligned. Reviewers can see how often ECM has been wrong on a given control.</p>
@@ -613,7 +583,6 @@
     </a>
 
     <a class="take-card is-recommended" href="gov-c.html">
-      <span class="noun-tag">Policy</span>
       <span class="take-letter"><span class="L">C</span> Take C <span class="rec-pill">Recommended</span></span>
       <h3>Policy-as-code</h3>
       <p class="tag">ECM's rules are explicit, versioned, signed code. Changing a rule is a PR-style approval flow with management sign-off. Rules are enumerable and tied to specific controls.</p>
@@ -640,7 +609,6 @@
 
   <div class="takes-grid">
     <a class="take-card is-recommended" href="causal-a.html">
-      <span class="noun-tag">Cause</span>
       <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
       <h3>Root-cause finding analysis</h3>
       <p class="tag">When a finding occurs, the agent identifies the upstream control cause, not just the symptom. The escalation finding traces back to a change-approval design weakness, not a review weakness.</p>
@@ -648,7 +616,6 @@
     </a>
 
     <a class="take-card" href="causal-b.html">
-      <span class="noun-tag">Counterfactual</span>
       <span class="take-letter"><span class="L">B</span> Take B</span>
       <h3>Counterfactual evidence asks</h3>
       <p class="tag">"If you had filed X instead of Y, would Midship have accepted it?" The agent simulates alternative submissions and shows which would pass. Direct attack on the chase-for-corrections cost.</p>
@@ -656,7 +623,6 @@
     </a>
 
     <a class="take-card" href="causal-c.html">
-      <span class="noun-tag">Risk</span>
       <span class="take-letter"><span class="L">C</span> Take C</span>
       <h3>Risk propagation map</h3>
       <p class="tag">Causal graph of controls → risks → assertions. When a control fails, the graph shows downstream impact: which assertions are now at risk, which material misstatement risks become possible.</p>
