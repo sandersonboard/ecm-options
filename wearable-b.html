@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wearable · Take B — Glanceable status · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .watch-stage { display: flex; gap: 60px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+  .stage-side { flex: 1; min-width: 280px; max-width: 380px; padding: 14px 0; }
+  .stage-side h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--luna-teal-500); margin: 0 0 6px; }
+  .stage-side p { font-size: 14px; color: var(--luna-gray-700); line-height: 1.55; margin: 0 0 12px; }
+  .stage-side .step-detail { padding: 12px 14px; background: var(--luna-gray-50); border-left: 3px solid var(--luna-teal-500); border-radius: 0 6px 6px 0; margin-bottom: 14px; }
+  .stage-side .step-detail .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 4px; }
+  .stage-side .step-detail p { font-size: 13px; color: var(--luna-gray-800); margin: 0; line-height: 1.5; }
+  .stage-side .step-detail.is-purple { border-left-color: var(--luna-purple-500); background: var(--luna-purple-50); }
+  .stage-side .step-detail.is-purple .lbl { color: var(--luna-purple-700); }
+
+  .complication-face { height: 100%; background: radial-gradient(circle at 50% 30%, #0e5371, #0a1834 70%); padding: 18px 14px; display: flex; flex-direction: column; color: #fff; }
+  .complication-face .top-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 4px; }
+  .complication-face .clock { font-size: 18px; font-weight: 700; color: #f1d01b; letter-spacing: -0.01em; font-feature-settings: "tnum"; }
+  .complication-face .label { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #84b8d1; }
+  .gauge-row { display: flex; justify-content: center; margin: 10px 0 8px; cursor: pointer; }
+  .gauge { position: relative; width: 100px; height: 100px; }
+  .gauge svg { transform: rotate(-90deg); }
+  .gauge .label-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; }
+  .gauge .label-center .big { font-size: 22px; font-weight: 700; line-height: 1; }
+  .gauge .label-center .small { font-size: 9px; color: #84b8d1; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+  .quad { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
+  .quad .cell { background: rgba(255,255,255,0.06); border-radius: 8px; padding: 6px 8px; display: flex; flex-direction: column; cursor: pointer; }
+  .quad .cell .n { font-size: 18px; font-weight: 700; line-height: 1; font-feature-settings: "tnum"; }
+  .quad .cell .n.is-good { color: #99f2b5; }
+  .quad .cell .n.is-warn { color: #ffa94d; }
+  .quad .cell .n.is-bad { color: #f55151; }
+  .quad .cell .l { font-size: 8px; color: rgba(255,255,255,0.6); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
+  .ticker { margin-top: 4px; padding: 4px 6px; background: rgba(255,255,255,0.05); border-radius: 6px; font-size: 9px; color: #c9ecee; text-align: center; line-height: 1.3; }
+
+  .drill-face { height: 100%; background: #000; padding: 14px 12px 16px; display: flex; flex-direction: column; color: #fff; }
+  .drill-face .head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .drill-face .head .name { font-size: 11px; font-weight: 700; }
+  .drill-face .head .time { font-size: 11px; color: #f1d01b; font-feature-settings: "tnum"; }
+  .drill-list { flex: 1; overflow: auto; margin-top: 6px; }
+  .drill-list .chip { display: flex; align-items: center; gap: 8px; padding: 8px 8px; background: rgba(255,255,255,0.04); border-radius: 8px; margin-bottom: 4px; font-size: 11px; cursor: pointer; }
+  .drill-list .chip .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .drill-list .chip .dot.is-bad { background: #f55151; }
+  .drill-list .chip .dot.is-warn { background: #ffa94d; }
+  .drill-list .chip .dot.is-info { background: #84b8d1; }
+  .drill-list .chip .name { flex: 1; font-weight: 500; }
+  .drill-list .chip .meta { font-size: 9px; color: rgba(255,255,255,0.5); }
+  .drill-back { padding: 4px 8px; background: rgba(255,255,255,0.1); border: none; color: #fff; border-radius: 4px; font-size: 10px; cursor: pointer; }
+
+  .tap-face { height: 100%; background: linear-gradient(180deg, #1b4a2c, #062412 70%); padding: 16px; display: flex; flex-direction: column; color: #fff; align-items: center; justify-content: center; text-align: center; }
+  .tap-face .big-num { font-size: 56px; font-weight: 700; line-height: 1; color: #99f2b5; }
+  .tap-face .what { font-size: 11px; font-weight: 700; color: #99f2b5; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 4px; }
+  .tap-face .detail { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 12px; line-height: 1.4; }
+  .reset-btn { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); padding: 4px 10px; background: rgba(255,255,255,0.1); border: none; color: #fff; border-radius: 4px; font-size: 10px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Wearable · <span style="color:var(--luna-text);">Take B</span>
+      </div>
+      <h1 class="luna-heading-600">Your SOX program. On the wrist. Always there.</h1>
+      <p class="subtitle">A watch complication that shows program-wide SOX health as a glanceable gauge. Tap to drill in.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Control owner+PMO</span>
+      <span class="luna-badge">Noun · Task</span>
+      <span class="luna-badge is-purple">Take B</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="wearable-a.html">A · Confidence ring ★</a>
+    <span class="sep">·</span>
+    <a href="wearable-b.html" class="is-current">B · Glanceable status</a>
+    <span class="sep">·</span>
+    <a href="wearable-c.html">C · Escalation-only</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="glance"><span class="num">1</span> Glance</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="drill"><span class="num">2</span> Tap → drill</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="win"><span class="num">3</span> End of day</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <div class="flow-state" data-state="glance">
+      <div class="watch-stage">
+        <div class="stage-side">
+          <h3>Step 1 of 3 · Glance</h3>
+          <p>Weston checks the time. The complication shows the SOX program's health in passing — 89% ready, 5 pending, 2 overdue. She moves on.</p>
+          <div class="step-detail is-purple"><div class="lbl">Try it</div><p>Tap the gauge or the "5 pending" cell.</p></div>
+        </div>
+
+        <div class="watch">
+          <div class="watch-band-top"></div>
+          <div class="watch-screen">
+            <div class="complication-face">
+              <div class="top-row"><div class="label">Q3 SOX</div><div class="clock">3:12</div></div>
+              <div class="gauge-row" data-go="drill">
+                <div class="gauge">
+                  <svg width="100" height="100" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6" />
+                    <circle cx="50" cy="50" r="44" fill="none" stroke="#36844a" stroke-width="6" stroke-dasharray="276" stroke-dashoffset="30" stroke-linecap="round" />
+                  </svg>
+                  <div class="label-center"><div class="big">89%</div><div class="small">Ready</div></div>
+                </div>
+              </div>
+              <div class="quad">
+                <div class="cell"><div class="n is-good">42</div><div class="l">on track</div></div>
+                <div class="cell" data-go="drill"><div class="n is-warn">5</div><div class="l">pending</div></div>
+                <div class="cell"><div class="n is-bad">2</div><div class="l">overdue</div></div>
+                <div class="cell"><div class="n">2d</div><div class="l">close window</div></div>
+              </div>
+              <div class="ticker">ECM · Dana cleared 4 reviews this morning</div>
+            </div>
+          </div>
+          <div class="watch-band-bottom"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-state" data-state="drill">
+      <div class="watch-stage">
+        <div class="stage-side">
+          <h3>Step 2 of 3 · Tap → drill</h3>
+          <p>The pending list, scrollable on a tiny screen. Color-coded by urgency. Tap any item to surface the next-step action via voice or escalate to phone.</p>
+          <div class="step-detail is-purple"><div class="lbl">Try it</div><p>Tap any row, then "← Back" or wait for the next step.</p></div>
+        </div>
+
+        <div class="watch">
+          <div class="watch-band-top"></div>
+          <div class="watch-screen">
+            <div class="drill-face">
+              <div class="head">
+                <button class="drill-back" data-go="glance">←</button>
+                <div class="name">Pending (5)</div>
+                <div class="time">3:12</div>
+              </div>
+              <div class="drill-list">
+                <div class="chip" data-go="win"><span class="dot is-bad"></span><div style="flex:1;"><div class="name">4.2.1</div><div class="meta">AR · 3d</div></div></div>
+                <div class="chip" data-go="win"><span class="dot is-bad"></span><div style="flex:1;"><div class="name">5.1.3</div><div class="meta">CR sample · 4d over</div></div></div>
+                <div class="chip" data-go="win"><span class="dot is-warn"></span><div style="flex:1;"><div class="name">2.1.1</div><div class="meta">EOM-close · 5d</div></div></div>
+                <div class="chip" data-go="win"><span class="dot is-warn"></span><div style="flex:1;"><div class="name">2.1.2</div><div class="meta">SOC2 · 6d</div></div></div>
+                <div class="chip" data-go="win"><span class="dot is-info"></span><div style="flex:1;"><div class="name">3.3.1</div><div class="meta">Backup · auto-able</div></div></div>
+              </div>
+              <div style="font-size:9px;text-align:center;color:#84b8d1;margin-top:4px;">Long-press to dictate a note</div>
+            </div>
+          </div>
+          <div class="watch-band-bottom"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-state" data-state="win">
+      <div class="watch-stage">
+        <div class="stage-side">
+          <h3>Step 3 of 3 · End of day</h3>
+          <p>Weston cleared 4 items today. The watch summarizes — a quiet motivational moment, not a notification. Sarah noticed and pinged her in Slack.</p>
+          <div class="step-detail"><div class="lbl">Honesty check</div><p>This kind of "wrist achievement" pattern is the borderline of the surface. Useful for adoption; potentially annoying after the novelty fades. A/B-testable.</p></div>
+        </div>
+
+        <div class="watch" style="position:relative;">
+          <div class="watch-band-top"></div>
+          <div class="watch-screen">
+            <div class="tap-face">
+              <div class="big-num">4</div>
+              <div class="what">cleared today</div>
+              <div class="detail">
+                Your fastest Friday this quarter.
+                Sarah noticed — she's pinged you in
+                <span style="color:#c9ecee;">#sox-q3-close</span>.
+              </div>
+              <div style="margin-top:14px;font-size:9px;color:rgba(255,255,255,0.45);letter-spacing:0.04em;text-transform:uppercase;">Daily wrap · 3:12 PM</div>
+              <button class="reset-btn" data-go="reset">↻ Reset flow</button>
+            </div>
+          </div>
+          <div class="watch-band-bottom"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="surface-caption">
+    The watch shows ambient program telemetry rather than an action surface. ECM compresses program health into one number Weston can read in 200 milliseconds.
+  </p>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

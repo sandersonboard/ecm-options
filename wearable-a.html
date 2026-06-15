@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wearable · Take A — Confidence ring · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .watch-stage { display: flex; gap: 60px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+  .stage-side { flex: 1; min-width: 280px; max-width: 380px; padding: 14px 0; }
+  .stage-side h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--luna-teal-500); margin: 0 0 6px; }
+  .stage-side p { font-size: 14px; color: var(--luna-gray-700); line-height: 1.55; margin: 0 0 12px; }
+  .stage-side .step-detail { padding: 12px 14px; background: var(--luna-gray-50); border-left: 3px solid var(--luna-teal-500); border-radius: 0 6px 6px 0; margin-bottom: 14px; }
+  .stage-side .step-detail .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 4px; }
+  .stage-side .step-detail p { font-size: 13px; color: var(--luna-gray-800); margin: 0; line-height: 1.5; }
+  .stage-side .step-detail.is-purple { border-left-color: var(--luna-purple-500); background: var(--luna-purple-50); }
+  .stage-side .step-detail.is-purple .lbl { color: var(--luna-purple-700); }
+  .stage-side .step-detail.is-green { border-left-color: var(--luna-green-500); background: var(--luna-green-50); }
+
+  .ws-time { font-size: 14px; font-weight: 700; color: #f1d01b; }
+  .ws-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; }
+  .ws-head .app { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #84b8d1; font-weight: 600; }
+  .ws-head .app .mark { width: 14px; height: 14px; background: linear-gradient(135deg,#6931e3,#266c92); border-radius: 3px; }
+  .ws-title { font-size: 14px; font-weight: 700; line-height: 1.25; margin: 6px 0; }
+  .ws-body { font-size: 11px; line-height: 1.4; opacity: 0.85; margin-bottom: 8px; }
+  .ws-body .cite { color: #84b8d1; font-weight: 600; }
+  .ws-action { margin-top: auto; padding: 10px; background: linear-gradient(135deg, #266c92, #0e5371); border-radius: 12px; text-align: center; font-size: 13px; font-weight: 700; cursor: pointer; border: none; color: #fff; }
+  .ws-action.is-confirm { background: linear-gradient(135deg, #36844a, #1b4a2c); }
+  .ws-mini-actions { display: flex; gap: 4px; margin-top: 6px; }
+  .ws-mini-actions button { flex: 1; padding: 6px; background: rgba(255,255,255,0.12); border: none; color: #fff; font-size: 11px; font-weight: 600; border-radius: 8px; cursor: pointer; }
+  .conf-ring-wrap { display: flex; justify-content: center; align-items: center; margin: 4px 0 6px; }
+  .conf-ring { position: relative; width: 92px; height: 92px; }
+  .conf-ring svg { transform: rotate(-90deg); }
+  .conf-ring .track { stroke: rgba(255,255,255,0.15); }
+  .conf-ring .progress { stroke: #84b8d1; }
+  .conf-ring .label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; }
+  .conf-ring .label .pct { font-size: 22px; font-weight: 700; line-height: 1; }
+  .conf-ring .label .what { font-size: 9px; color: #84b8d1; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Wearable · <span style="color:var(--luna-text);">Take A ★</span>
+      </div>
+      <h1 class="luna-heading-600">A wrist tap. One yes.</h1>
+      <p class="subtitle">For low-risk reviews that match a prior pattern, AI surfaces a haptic on Weston's watch. Confidence ring on the face; one tap confirms.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Control owner</span>
+      <span class="luna-badge">Noun · Task</span>
+      <span class="luna-badge is-purple">Take A ★</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="wearable-a.html" class="is-current">A · Confidence ring ★</a>
+    <span class="sep">·</span>
+    <a href="wearable-b.html">B · Glanceable status</a>
+    <span class="sep">·</span>
+    <a href="wearable-c.html">C · Escalation-only</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="tap"><span class="num">1</span> Wrist buzz</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="ring"><span class="num">2</span> Confidence ring</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="filed"><span class="num">3</span> Filed</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- State 1: Tap -->
+    <div class="flow-state" data-state="tap">
+      <div class="watch-stage">
+        <div class="stage-side">
+          <h3>Step 1 of 3 · Wrist buzz</h3>
+          <p>Weston's watch buzzes. The face shows the smallest possible version of the ask — control number, what kind of review, why now. <strong>Tap to advance.</strong></p>
+          <div class="step-detail is-purple">
+            <div class="lbl">Try it</div>
+            <p>Tap the <strong>"Tap to confirm pattern"</strong> button.</p>
+          </div>
+        </div>
+
+        <div class="watch">
+          <div class="watch-band-top"></div>
+          <div class="watch-screen">
+            <div style="height:100%;background:radial-gradient(circle at 50% 30%,#0e5371,#0a1834 70%);padding:18px 14px;display:flex;flex-direction:column;color:#fff;">
+              <div class="ws-head">
+                <div class="app"><span class="mark"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;filter:brightness(0) invert(1);" /></span>Optro</div>
+                <div class="ws-time">3:12</div>
+              </div>
+              <div class="ws-title">AR review · prod-db-01</div>
+              <div class="ws-body">
+                Q3 quarterly · <span class="cite">control 4.2.1</span>.
+                Same shape as Q2. Same accounts. No drift.
+              </div>
+              <button class="ws-action" data-go="ring">Tap to confirm pattern →</button>
+            </div>
+          </div>
+          <div class="watch-band-bottom"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 2: Confidence ring -->
+    <div class="flow-state" data-state="ring">
+      <div class="watch-stage">
+        <div class="stage-side">
+          <h3>Step 2 of 3 · Confidence ring</h3>
+          <p>The watch shows how confident ECM is that this is a match. <strong>87%</strong> — high enough to ask for a tap rather than escalate to the phone.</p>
+          <div class="step-detail">
+            <div class="lbl">AI moment</div>
+            <p>Below the ring: 22 of 22 accounts unchanged, service auto-attest verbatim. Weston gets the headline without needing to open anything.</p>
+          </div>
+          <div class="step-detail is-purple">
+            <div class="lbl">Try it</div>
+            <p>Tap <strong>✓ Confirm</strong>.</p>
+          </div>
+        </div>
+
+        <div class="watch">
+          <div class="watch-band-top"></div>
+          <div class="watch-screen">
+            <div style="height:100%;background:radial-gradient(circle at 50% 30%,#0e5371,#0a1834 70%);padding:18px 14px;display:flex;flex-direction:column;color:#fff;">
+              <div class="ws-head">
+                <div class="app"><span class="mark"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;filter:brightness(0) invert(1);" /></span>Match check</div>
+                <div class="ws-time">3:12</div>
+              </div>
+              <div class="conf-ring-wrap">
+                <div class="conf-ring">
+                  <svg width="92" height="92" viewBox="0 0 92 92">
+                    <circle class="track" cx="46" cy="46" r="40" fill="none" stroke-width="8" />
+                    <circle class="progress" cx="46" cy="46" r="40" fill="none" stroke-width="8" stroke-dasharray="251" stroke-dashoffset="33" stroke-linecap="round" />
+                  </svg>
+                  <div class="label">
+                    <div class="pct">87%</div>
+                    <div class="what">match</div>
+                  </div>
+                </div>
+              </div>
+              <div class="ws-body" style="text-align:center;">
+                <span class="cite">22 of 22</span> accounts unchanged.
+                Service auto-attest matches Q2 verbatim.
+              </div>
+              <div class="ws-mini-actions">
+                <button data-go="tap">Details</button>
+                <button style="background:#36844a;" data-go="filed">✓ Confirm</button>
+              </div>
+            </div>
+          </div>
+          <div class="watch-band-bottom"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 3: Filed -->
+    <div class="flow-state" data-state="filed">
+      <div class="watch-stage">
+        <div class="stage-side">
+          <h3>Step 3 of 3 · Filed</h3>
+          <p>Three seconds, one tap. ECM filed the evidence, routed it to Dana. If Dana bounces anything, Weston gets another wrist tap — otherwise silence is success.</p>
+          <div class="step-detail is-green">
+            <div class="lbl">What happens next</div>
+            <p>Weston goes back to whatever he was doing. The chain commits in the background. Dana sees the routed item in her queue. Nobody opens AuditBoard.</p>
+          </div>
+          <div class="step-detail">
+            <div class="lbl">When this fails</div>
+            <p>Below ~80% confidence, ECM escalates to the phone instead of asking the watch. The watch is for high-confidence ratification only — never for ambiguity.</p>
+          </div>
+        </div>
+
+        <div class="watch">
+          <div class="watch-band-top"></div>
+          <div class="watch-screen" style="background: radial-gradient(circle at 50% 35%, #1b4a2c, #062412);">
+            <div style="height:100%;padding:18px 14px;display:flex;flex-direction:column;color:#fff;">
+              <div class="ws-head">
+                <div class="app" style="color:#99f2b5;"><span class="mark"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;filter:brightness(0) invert(1);" /></span>Filed</div>
+                <div class="ws-time" style="color:#99f2b5;">3:12</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;">
+                <div style="font-size:32px;line-height:1;margin-bottom:8px;">✓</div>
+                <div class="ws-title" style="margin:0 0 4px;">AR Q3 filed</div>
+                <div class="ws-body" style="opacity:0.8;">
+                  Routed to <span class="cite">Dana</span>.
+                  Tap on your phone if she pings back.
+                </div>
+              </div>
+              <button class="ws-action" data-go="reset" style="background:rgba(255,255,255,0.12);">↻ Reset flow</button>
+            </div>
+          </div>
+          <div class="watch-band-bottom"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="surface-caption">
+    The wrist-tap is enabled only for routine controls Weston has pre-approved for auto-attestation under a signed management policy. ECM compresses the review into a yes/no question only when the pattern match falls inside that policy's scope. Anything outside it — novel pattern, low confidence, any finding — escalates to the phone for the full review flow. A tap is not a substantive review; it's the execution of a pre-approved scope.
+  </p>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

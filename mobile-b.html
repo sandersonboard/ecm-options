@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mobile · Take B — Pocket triage · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .device-stage { display: flex; gap: 60px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+  .stage-side {
+    flex: 1; min-width: 280px; max-width: 380px;
+    padding: 14px 0;
+  }
+  .stage-side h3 {
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--luna-teal-500);
+    margin: 0 0 6px;
+  }
+  .stage-side p { font-size: 14px; color: var(--luna-gray-700); line-height: 1.55; margin: 0 0 12px; }
+  .stage-side .step-detail {
+    padding: 12px 14px;
+    background: var(--luna-gray-50);
+    border-left: 3px solid var(--luna-teal-500);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 14px;
+  }
+  .stage-side .step-detail .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 4px; }
+  .stage-side .step-detail p { font-size: 13px; color: var(--luna-gray-800); margin: 0; line-height: 1.5; }
+  .stage-side .step-detail.is-purple { border-left-color: var(--luna-purple-500); background: var(--luna-purple-50); }
+  .stage-side .step-detail.is-purple .lbl { color: var(--luna-purple-700); }
+
+  .triage-app { height: calc(100% - 36px); display: flex; flex-direction: column; background: var(--luna-gray-50); }
+  .triage-header { padding: 12px 16px 8px; background: var(--luna-white); border-bottom: 1px solid var(--luna-gray-200); }
+  .triage-header .title { font-size: 22px; font-weight: 700; color: var(--luna-gray-900); margin: 0; letter-spacing: -0.01em; }
+  .triage-header .sub { font-size: 12px; color: var(--luna-gray-600); margin-top: 2px; }
+  .triage-tabs { display: flex; gap: 0; margin-top: 10px; }
+  .triage-tabs .tab { flex: 1; padding: 8px 6px; font-size: 12px; font-weight: 600; color: var(--luna-gray-500); border-bottom: 2px solid transparent; text-align: center; }
+  .triage-tabs .tab.is-active { color: var(--luna-teal-500); border-bottom-color: var(--luna-teal-500); }
+  .triage-ai-strip {
+    margin: 10px 12px; padding: 10px 12px;
+    background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50));
+    border: 1px solid var(--luna-purple-100);
+    border-radius: 8px;
+    font-size: 12px; line-height: 1.5; color: var(--luna-gray-800);
+  }
+  .triage-ai-strip .head { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--luna-purple-700); margin-bottom: 4px; }
+  .triage-list { flex: 1; overflow-y: auto; padding: 0 12px 12px; }
+  .triage-group-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); padding: 12px 4px 4px; }
+  .triage-card { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 10px; padding: 12px; margin-bottom: 8px; position: relative; cursor: pointer; transition: transform 0.12s; }
+  .triage-card:hover { transform: translateY(-1px); }
+  .triage-card.is-urgent { border-left: 3px solid var(--luna-red-500); }
+  .triage-card.is-warn { border-left: 3px solid var(--luna-orange-500); }
+  .triage-card.is-quiet { opacity: 0.85; }
+  .triage-card.is-done { opacity: 0.4; }
+  .triage-card.is-done::after {
+    content: "✓"; position: absolute; top: 8px; right: 10px;
+    width: 22px; height: 22px;
+    background: var(--luna-green-500); color: var(--luna-white);
+    border-radius: 50%; display: grid; place-items: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .triage-card .top-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .triage-card .ctrl-id { font-size: 11px; font-family: ui-monospace, monospace; color: var(--luna-teal-700); background: var(--luna-teal-50); padding: 1px 6px; border-radius: 3px; font-weight: 600; }
+  .triage-card .when { font-size: 11px; color: var(--luna-gray-500); margin-left: auto; }
+  .triage-card .title { font-size: 14px; font-weight: 600; color: var(--luna-gray-900); margin-bottom: 4px; line-height: 1.3; }
+  .triage-card .ai-line { font-size: 12px; color: var(--luna-gray-700); line-height: 1.4; display: flex; gap: 6px; align-items: flex-start; margin-bottom: 6px; }
+  .triage-card .ai-line::before { content: "✦"; color: var(--luna-purple-500); flex-shrink: 0; font-weight: 700; }
+  .triage-card .bottom-row { display: flex; gap: 4px; align-items: center; }
+  .triage-card .pill { padding: 2px 8px; font-size: 10px; font-weight: 700; border-radius: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .triage-card .pill.is-do { background: var(--luna-teal-500); color: var(--luna-white); }
+  .triage-card .pill.is-skip { background: var(--luna-gray-100); color: var(--luna-gray-700); border: 1px solid var(--luna-gray-200); }
+  .triage-card .pill.is-review { background: var(--luna-orange-100); color: var(--luna-orange-700); }
+  .triage-bottombar { padding: 10px 16px; background: var(--luna-white); border-top: 1px solid var(--luna-gray-200); display: flex; justify-content: space-around; align-items: center; }
+  .triage-bottombar .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10px; color: var(--luna-gray-500); }
+  .triage-bottombar .nav-item.is-active { color: var(--luna-teal-500); }
+  .triage-bottombar .nav-item .ic { font-size: 18px; }
+
+  /* Detail screen */
+  .triage-detail { background: var(--luna-white); height: 100%; display: flex; flex-direction: column; }
+  .triage-detail .det-header {
+    padding: 12px 16px;
+    background: var(--luna-red-50);
+    border-bottom: 1px solid var(--luna-red-100);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .triage-detail .det-header .back {
+    background: none; border: none; cursor: pointer;
+    color: var(--luna-gray-700); font-size: 13px; padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .triage-detail .det-header .ctrl-id {
+    font-family: ui-monospace, monospace; font-size: 11px;
+    color: var(--luna-red-700); background: var(--luna-white);
+    padding: 1px 8px; border-radius: 3px; font-weight: 700;
+  }
+  .triage-detail .det-header .urgency {
+    margin-left: auto;
+    color: var(--luna-red-700); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .triage-detail .det-body { padding: 16px; flex: 1; overflow-y: auto; }
+  .triage-detail h2 { font-size: 18px; font-weight: 700; color: var(--luna-gray-900); margin: 0 0 8px; }
+  .triage-detail .meta { font-size: 12px; color: var(--luna-gray-600); margin-bottom: 16px; }
+  .triage-detail .ai-card {
+    padding: 12px;
+    background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50));
+    border: 1px solid var(--luna-purple-100);
+    border-left: 3px solid var(--luna-purple-500);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--luna-gray-800);
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .triage-detail .ai-card .head { font-size: 11px; font-weight: 700; color: var(--luna-purple-700); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .triage-detail .preview-thumb {
+    height: 110px;
+    background: linear-gradient(135deg,transparent 49%,var(--luna-gray-200) 50%,transparent 51%),linear-gradient(45deg,transparent 49%,var(--luna-gray-200) 50%,transparent 51%);
+    background-color: var(--luna-gray-100);
+    background-size: 14px 14px;
+    border-radius: 6px;
+    display: grid; place-items: center;
+    color: var(--luna-gray-500);
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+  .triage-detail h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--luna-gray-500); margin: 16px 0 6px; }
+  .triage-detail .checks { display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
+  .triage-detail .check-row { display: flex; gap: 8px; padding: 6px 0; }
+  .triage-detail .check-row .ic { color: var(--luna-green-500); flex-shrink: 0; }
+  .triage-detail .check-row .text { color: var(--luna-gray-800); }
+  .triage-detail .actions { display: flex; gap: 6px; padding: 12px 16px; background: var(--luna-white); border-top: 1px solid var(--luna-gray-200); }
+  .triage-detail .actions button { flex: 1; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 13px; border: none; cursor: pointer; }
+  .triage-detail .actions .primary { background: var(--luna-teal-500); color: var(--luna-white); }
+  .triage-detail .actions .secondary { background: var(--luna-gray-100); color: var(--luna-gray-700); }
+
+  /* Cleared state */
+  .triage-cleared {
+    text-align: center;
+    padding: 40px 16px;
+    color: var(--luna-gray-700);
+  }
+  .triage-cleared .big-check {
+    width: 64px; height: 64px;
+    background: var(--luna-green-50);
+    color: var(--luna-green-700);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    margin: 0 auto 12px;
+    font-size: 32px;
+    box-shadow: 0 0 0 8px var(--luna-green-100);
+  }
+  .triage-cleared h2 { font-size: 20px; font-weight: 700; margin: 0 0 4px; color: var(--luna-gray-900); }
+  .triage-cleared .stats { display: flex; justify-content: center; gap: 18px; margin: 14px 0; }
+  .triage-cleared .stat { text-align: center; }
+  .triage-cleared .stat .n { font-size: 22px; font-weight: 700; color: var(--luna-gray-900); }
+  .triage-cleared .stat .l { font-size: 10px; color: var(--luna-gray-500); letter-spacing: 0.04em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Mobile · <span style="color:var(--luna-text);">Take B</span>
+      </div>
+      <h1 class="luna-heading-600">Your SOX week, swipeable.</h1>
+      <p class="subtitle">Weston opens the app on the train. AI has already triaged the week — urgent up top, carryover amber, routine muted. Each card has one AI sentence. Swipe right to do it.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Control owner</span>
+      <span class="luna-badge">Noun · Task</span>
+      <span class="luna-badge is-purple">Take B</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="mobile-a.html">A · Push + camera ★</a>
+    <span class="sep">·</span>
+    <a href="mobile-b.html" class="is-current">B · Pocket triage</a>
+    <span class="sep">·</span>
+    <a href="mobile-c.html">C · Voice-first capture</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="list"><span class="num">1</span> Your week</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="detail"><span class="num">2</span> Open a card</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="cleared"><span class="num">3</span> Queue cleared</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- State 1: List -->
+    <div class="flow-state" data-state="list">
+      <div class="device-stage">
+        <div class="stage-side">
+          <h3>Step 1 of 3 · The triage view</h3>
+          <p>Weston opens the app. AI has pre-sorted: 2 things genuinely need him, 3 are routine that ECM can take on his behalf. The strip at the top is the agent's one-paragraph read of his week.</p>
+          <div class="step-detail">
+            <div class="lbl">AI moment</div>
+            <p>Triage is the work. AI hides the 39 routine controls that look healthy and surfaces only the 2 with actual signal. Less list = less fatigue.</p>
+          </div>
+          <div class="step-detail is-purple">
+            <div class="lbl">Try it</div>
+            <p>Tap the <strong>Q3 AR · prod-db-01</strong> card to open its detail.</p>
+          </div>
+        </div>
+
+        <div class="device is-phone">
+          <div class="device-screen">
+            <div class="device-statusbar"><span class="time">7:48</span><span class="icons"><span>5G</span><span>•</span><span>🔋 92%</span></span></div>
+            <div class="triage-app">
+              <div class="triage-header">
+                <h2 class="title">Your week</h2>
+                <div class="sub">5 things · 2 urgent · ECM has pre-drafted 4</div>
+                <div class="triage-tabs">
+                  <div class="tab is-active">This week</div>
+                  <div class="tab">Awaiting review</div>
+                  <div class="tab">Done</div>
+                </div>
+              </div>
+              <div class="triage-ai-strip">
+                <div class="head"><span class="ai-chip">Optro ECM</span> Friday afternoon read</div>
+                Two things genuinely need you. The other three I can file myself if you swipe yes.
+              </div>
+              <div class="triage-list">
+                <div class="triage-group-lbl">Urgent</div>
+                <div class="triage-card is-urgent" data-go="detail">
+                  <div class="top-row">
+                    <span class="ctrl-id">4.2.1</span>
+                    <span style="font-size:10px;color:var(--luna-red-700);font-weight:700;letter-spacing:0.04em;text-transform:uppercase;">3 days</span>
+                    <span class="when">Q3 AR</span>
+                  </div>
+                  <div class="title">Quarterly access review · prod-db-01</div>
+                  <div class="ai-line">Carryover finding from Q2 (contractor-svc-09 still admin). Same query as last quarter is ready.</div>
+                  <div class="bottom-row">
+                    <span class="pill is-do">Tap to open</span>
+                    <span class="pill is-skip">Defer</span>
+                  </div>
+                </div>
+                <div class="triage-card is-warn">
+                  <div class="top-row"><span class="ctrl-id">5.1.3</span><span style="font-size:10px;color:var(--luna-orange-700);font-weight:700;letter-spacing:0.04em;text-transform:uppercase;">Stale</span><span class="when">overdue 4d</span></div>
+                  <div class="title">Change-management ticket sample · CRM release 4.7</div>
+                  <div class="ai-line">Last quarter you escalated to Carlos. He hasn't responded since Wednesday. <strong>This is a re-route, not a re-do.</strong></div>
+                  <div class="bottom-row"><span class="pill is-review">Re-route to Carlos's manager</span></div>
+                </div>
+                <div class="triage-group-lbl">Routine — under policy POL-AT-2026 (Weston pre-approved scope)</div>
+                <div class="triage-card is-quiet">
+                  <div class="top-row"><span class="ctrl-id">2.1.1</span><span class="when">EOM-close</span></div>
+                  <div class="title">Month-end close · September</div>
+                  <div class="ai-line">All 12 sub-tasks ran clean. I can attest on your behalf — same shape as Q2.</div>
+                  <div class="bottom-row"><span class="pill is-do">Swipe to approve</span></div>
+                </div>
+                <div class="triage-card is-quiet">
+                  <div class="top-row"><span class="ctrl-id">2.1.2</span><span class="when">SOC 2 refresh</span></div>
+                  <div class="title">AWS · SOC 2 Type II annual refresh</div>
+                  <div class="ai-line">AWS posted the 2026 report Monday. No exceptions; same auditor. File as-is?</div>
+                  <div class="bottom-row"><span class="pill is-do">Swipe to approve</span></div>
+                </div>
+                <div class="triage-card is-quiet">
+                  <div class="top-row"><span class="ctrl-id">3.3.1</span><span class="when">Backup check</span></div>
+                  <div class="title">Weekly backup verification · prod-db</div>
+                  <div class="ai-line">System green; last 7 days all passed. Auto-attestable per the policy you approved.</div>
+                  <div class="bottom-row"><span class="pill is-do">Swipe to approve</span></div>
+                </div>
+              </div>
+              <div class="triage-bottombar">
+                <div class="nav-item is-active"><span class="ic">📥</span><span>Your week</span></div>
+                <div class="nav-item"><span class="ic">🗂</span><span>Controls</span></div>
+                <div class="nav-item"><span class="ic">📷</span><span>Capture</span></div>
+                <div class="nav-item"><span class="ic">⚙</span><span>Settings</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 2: Detail -->
+    <div class="flow-state" data-state="detail">
+      <div class="device-stage">
+        <div class="stage-side">
+          <h3>Step 2 of 3 · The detail card</h3>
+          <p>One tap into the urgent item. AI has the carryover finding pre-explained, the artifact pre-drafted, the cross-reference to HEL-3471 ready. Weston's job is to read 4 lines and tap.</p>
+          <div class="step-detail">
+            <div class="lbl">AI moment</div>
+            <p>Pre-flight checks happen before Weston sees the screen — AR pulled, contractor row status verified, query syntax confirmed clean, finding note auto-composed.</p>
+          </div>
+          <div class="step-detail is-purple">
+            <div class="lbl">Try it</div>
+            <p>Tap <strong>✓ File &amp; route</strong> to advance.</p>
+          </div>
+        </div>
+
+        <div class="device is-phone">
+          <div class="device-screen">
+            <div class="device-statusbar"><span class="time">7:49</span><span class="icons"><span>5G</span><span>•</span><span>🔋 92%</span></span></div>
+            <div class="triage-detail">
+              <div class="det-header">
+                <button class="back" data-go="list">←</button>
+                <span class="ctrl-id">4.2.1</span>
+                <span style="font-size:13px;font-weight:600;color:var(--luna-gray-900);">Q3 AR · prod-db-01</span>
+                <span class="urgency">3 days</span>
+              </div>
+              <div class="det-body">
+                <h2>Quarterly user access review</h2>
+                <div class="meta">Control 4.2.1 · Cycle Q3 FY26 · Reviewer: Dana Cho · Due in 3 days</div>
+
+                <div class="ai-card">
+                  <div class="head"><span class="ai-chip">Optro ECM</span> What I prepared while you were on the train</div>
+                  Same shape as Q2 — ServiceNow AR query is queued, DBA attestation drafted from Q2 template.
+                  <strong>contractor-svc-09 is still on the list</strong> (carryover finding from Q2; HEL-3471 still open).
+                  Filing with a carryover note attached. Routing to Dana on tap.
+                </div>
+
+                <h4>Drafted artifact</h4>
+                <div class="preview-thumb">snow-query-AR-prod-db.csv · 22 rows · prepped</div>
+
+                <h4>Pre-flight checks</h4>
+                <div class="checks">
+                  <div class="check-row"><span class="ic">✓</span><span class="text">Query syntax verified — same as Q2 sign-off</span></div>
+                  <div class="check-row"><span class="ic">✓</span><span class="text">22 active accounts pulled (matches AR schema)</span></div>
+                  <div class="check-row"><span class="ic">✓</span><span class="text">DBA attestation auto-drafted from Q2 template</span></div>
+                  <div class="check-row"><span class="ic">✓</span><span class="text">contractor-svc-09 carryover note attached</span></div>
+                  <div class="check-row"><span class="ic">✓</span><span class="text">Cross-link to HEL-3471 ready</span></div>
+                </div>
+              </div>
+
+              <div class="actions">
+                <button class="secondary" data-go="list">Edit query</button>
+                <button class="primary" data-go="cleared">✓ File &amp; route</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 3: Cleared -->
+    <div class="flow-state" data-state="cleared">
+      <div class="device-stage">
+        <div class="stage-side">
+          <h3>Step 3 of 3 · Queue cleared</h3>
+          <p>Three of the five swipe-approved as routine. One re-routed. One filed with finding. <strong>Total time on phone: 90 seconds.</strong></p>
+          <div class="step-detail">
+            <div class="lbl">AI moment</div>
+            <p>ECM watches the routing in the background. If anything bounces back (Dana asks a question, Carlos doesn't respond), Weston gets a wrist-tap. Otherwise — silence is success.</p>
+          </div>
+          <div class="step-detail" style="border-left-color: var(--luna-green-500);">
+            <div class="lbl">What happens next</div>
+            <p>Sarah (PMO) gets the weekly rollup. Dana sees Weston's filing in her review queue. The chain commits 5 attestations in the background.</p>
+          </div>
+        </div>
+
+        <div class="device is-phone">
+          <div class="device-screen">
+            <div class="device-statusbar"><span class="time">7:49</span><span class="icons"><span>5G</span><span>•</span><span>🔋 92%</span></span></div>
+            <div class="triage-app">
+              <div class="triage-header">
+                <h2 class="title">Your week</h2>
+                <div class="sub">5 of 5 cleared · ECM has it from here</div>
+                <div class="triage-tabs">
+                  <div class="tab">This week (0)</div>
+                  <div class="tab">Awaiting review (3)</div>
+                  <div class="tab is-active">Done (5)</div>
+                </div>
+              </div>
+
+              <div class="triage-cleared">
+                <div class="big-check">✓</div>
+                <h2>Queue cleared.</h2>
+                <p style="margin: 4px 0 0;font-size:13px;color:var(--luna-gray-600);">90 seconds. Your fastest Friday this quarter.</p>
+                <div class="stats">
+                  <div class="stat"><div class="n">5</div><div class="l">cleared</div></div>
+                  <div class="stat"><div class="n">1</div><div class="l">filed w/ finding</div></div>
+                  <div class="stat"><div class="n">1</div><div class="l">re-routed</div></div>
+                  <div class="stat"><div class="n">3</div><div class="l">auto-attest</div></div>
+                </div>
+              </div>
+
+              <div style="padding: 0 12px;">
+                <div class="triage-card is-done" style="cursor:default;">
+                  <div class="top-row"><span class="ctrl-id">4.2.1</span><span class="when">Q3 AR</span></div>
+                  <div class="title">Quarterly access review · prod-db-01</div>
+                  <div class="ai-line">Filed with carryover note. Routed to Dana. SLA 2 BD.</div>
+                </div>
+                <div class="triage-card is-done" style="cursor:default;">
+                  <div class="top-row"><span class="ctrl-id">5.1.3</span><span class="when">CR sample</span></div>
+                  <div class="title">CRM release 4.7 change-management</div>
+                  <div class="ai-line">Re-routed to Carlos's manager. Pinged in #release-board.</div>
+                </div>
+                <div class="triage-card is-done" style="cursor:default;">
+                  <div class="top-row"><span class="ctrl-id">2.1.1</span><span class="when">EOM-close</span></div>
+                  <div class="title">Month-end close · September</div>
+                  <div class="ai-line">ECM attested on your behalf. Same shape as Q2.</div>
+                </div>
+              </div>
+
+              <div style="padding: 12px 16px;">
+                <button class="luna-btn is-secondary" style="width:100%;justify-content:center;" data-go="reset">↻ Reset flow</button>
+              </div>
+
+              <div class="triage-bottombar">
+                <div class="nav-item"><span class="ic">📥</span><span>Your week</span></div>
+                <div class="nav-item"><span class="ic">🗂</span><span>Controls</span></div>
+                <div class="nav-item"><span class="ic">📷</span><span>Capture</span></div>
+                <div class="nav-item"><span class="ic">⚙</span><span>Settings</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="surface-caption">
+    The phone is an inbox, not a camera. ECM triages the week ahead — separating items that need Weston's substantive review from the routine ones that fall inside a pre-approved auto-attestation policy. The "ECM can take" lane is not delegation: it's execution of a signed management policy that enumerates which controls can be filed under standing approval. Anything outside the policy goes back to Weston's queue.
+  </p>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

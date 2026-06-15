@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI governance · Take A — Model card · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .cap-stage { max-width: 1100px; margin: 0 auto; }
+  .cap-panel { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); overflow: hidden; box-shadow: var(--luna-shadow-100); margin-bottom: 16px; }
+  .cap-panel .head { padding: 14px 18px; border-bottom: 1px solid var(--luna-gray-200); display: flex; align-items: center; gap: 10px; }
+  .cap-panel .head h3 { font-size: 14px; font-weight: 700; color: var(--luna-gray-900); margin: 0; flex: 1; }
+  .cap-panel .head .meta { font-size: 11px; color: var(--luna-gray-500); }
+
+  /* Model card layout */
+  .mc-hero { padding: 24px 28px; background: linear-gradient(135deg, var(--luna-gray-50), var(--luna-white)); border-bottom: 1px solid var(--luna-gray-200); }
+  .mc-hero h2 { font-size: 22px; font-weight: 700; margin: 0 0 4px; color: var(--luna-gray-900); letter-spacing: -0.01em; }
+  .mc-hero .sub { font-size: 13px; color: var(--luna-gray-600); }
+  .mc-hero .ver-row { display: flex; gap: 14px; margin-top: 14px; font-size: 12px; color: var(--luna-gray-700); }
+  .mc-hero .ver-row .k { color: var(--luna-gray-500); font-weight: 600; }
+
+  .mc-section { padding: 18px 28px; border-bottom: 1px solid var(--luna-gray-100); }
+  .mc-section:last-child { border-bottom: 0; }
+  .mc-section h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin: 0 0 8px; }
+  .mc-section p { font-size: 13.5px; color: var(--luna-gray-800); line-height: 1.6; margin: 0 0 8px; }
+  .mc-section p strong { color: var(--luna-gray-900); }
+  .mc-section ul { margin: 4px 0 0 18px; font-size: 13px; color: var(--luna-gray-800); }
+  .mc-section ul li { padding: 3px 0; line-height: 1.5; }
+  .mc-section ul li strong { color: var(--luna-gray-900); }
+
+  .does-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  .does-grid .col { padding: 12px 14px; background: var(--luna-gray-50); border-radius: 6px; font-size: 13px; }
+  .does-grid .col h5 { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-600); margin: 0 0 6px; }
+  .does-grid .col.is-does h5 { color: var(--luna-green-700); }
+  .does-grid .col.is-does { background: var(--luna-green-50); }
+  .does-grid .col.is-doesnt h5 { color: var(--luna-red-700); }
+  .does-grid .col.is-doesnt { background: var(--luna-red-50); }
+  .does-grid .col ul { margin: 0 0 0 18px; padding: 0; }
+  .does-grid .col li { padding: 2px 0; font-size: 12.5px; }
+
+  /* Change log */
+  .change-log-row { display: grid; grid-template-columns: 110px 1fr 200px; gap: 14px; padding: 12px 18px; border-bottom: 1px solid var(--luna-gray-100); font-size: 13px; align-items: flex-start; }
+  .change-log-row:last-child { border-bottom: 0; }
+  .change-log-row .when { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-gray-600); padding-top: 3px; }
+  .change-log-row .change h5 { margin: 0 0 4px; font-size: 13.5px; font-weight: 600; color: var(--luna-gray-900); }
+  .change-log-row .change .body { font-size: 12.5px; color: var(--luna-gray-700); line-height: 1.5; }
+  .change-log-row .change .body code { background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; }
+  .change-log-row .signers { font-size: 11px; color: var(--luna-gray-600); text-align: right; }
+  .change-log-row .signers .pill { display: inline-block; padding: 2px 8px; background: var(--luna-green-50); color: var(--luna-green-700); border: 1px solid var(--luna-green-100); border-radius: 999px; font-weight: 600; font-size: 10.5px; margin-bottom: 4px; }
+
+  /* Sign-off ceremony */
+  .signoff-grid { padding: 18px 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .signoff-card { padding: 14px 16px; background: var(--luna-gray-50); border: 1px solid var(--luna-gray-200); border-radius: 8px; }
+  .signoff-card.is-signed { background: linear-gradient(135deg, var(--luna-green-50), var(--luna-white)); border-color: var(--luna-green-200, #a7f3d0); }
+  .signoff-card .row1 { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .signoff-card .av { width: 36px; height: 36px; border-radius: 999px; background: var(--luna-teal-100); color: var(--luna-teal-700); display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+  .signoff-card .signoff-name { font-weight: 600; color: var(--luna-gray-900); }
+  .signoff-card .role { font-size: 11px; color: var(--luna-gray-500); }
+  .signoff-card .verdict { margin-left: auto; padding: 3px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .signoff-card.is-signed .verdict { background: var(--luna-green-500); color: var(--luna-white); }
+  .signoff-card .body { font-size: 12.5px; color: var(--luna-gray-700); line-height: 1.55; margin-top: 6px; }
+  .signoff-card .when { font-size: 11px; color: var(--luna-gray-500); font-family: ui-monospace, monospace; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · AI governance · <span style="color:var(--luna-text);">Take A</span>
+      </div>
+      <h1 class="luna-heading-600">A model card the audit committee actually reads.</h1>
+      <p class="subtitle">Optro ECM is itself in SOX scope — the agent makes judgment calls that affect the control environment. The model card is the public-facing specification of what ECM does, what it doesn't, and what's changed. Audit committee signs off on the card before they sign off on the program.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Audit committee</span>
+      <span class="luna-badge">Noun · Model</span>
+      <span class="luna-badge is-purple">Take A</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="gov-a.html" class="is-current">A · Model card + change log</a>
+    <span class="sep">·</span>
+    <a href="gov-b.html">B · Override registry</a>
+    <span class="sep">·</span>
+    <a href="gov-c.html">C · Policy-as-code ★</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="card"><span class="num">1</span> The model card</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="changes"><span class="num">2</span> Change log</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="signoff"><span class="num">3</span> Committee sign-off</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content cap-stage">
+
+    <!-- State 1: Model card -->
+    <div class="flow-state" data-state="card">
+      <div class="cap-panel">
+        <div class="mc-hero">
+          <h2>Optro ECM — Evidence sufficiency agent</h2>
+          <div class="sub">Helios Robotics, Inc. · SOX 404 program · FY2026</div>
+          <div class="ver-row">
+            <span><span class="k">Version</span> v0.3.2</span>
+            <span><span class="k">In production</span> 2026-07-01</span>
+            <span><span class="k">Last review</span> 2026-09-15 by S. Park (PMO)</span>
+            <span><span class="k">Next review</span> 2026-12-31 (Q4 close)</span>
+          </div>
+        </div>
+
+        <div class="mc-section">
+          <h4>Intended use</h4>
+          <p>
+            ECM pre-judges the <strong>structural sufficiency</strong> of SOX evidence at submission time. It checks that artifacts cover the required period, carry the required fields, and match the schema declared by the control's evidence template (see <code>aiready-b</code>). When a structural gap is detected, ECM blocks submission with a specific diagnostic; the owner sees what's missing before the package reaches the reviewer.
+          </p>
+          <p>
+            ECM is <strong>assistive</strong>. It does not author the substantive verdict, it does not attest on behalf of any party, and it does not bypass the reviewer. The reviewer's judgment and signature remain authoritative.
+          </p>
+        </div>
+
+        <div class="mc-section">
+          <h4>What ECM does and doesn't do</h4>
+          <div class="does-grid">
+            <div class="col is-does">
+              <h5>✓ ECM does</h5>
+              <ul>
+                <li>Parse submitted artifacts against the control's schema</li>
+                <li>Surface structural gaps at submission time</li>
+                <li>Retrieve carryover findings from prior sign-offs (verbatim)</li>
+                <li>Tag events from connected source systems to the controls they touch</li>
+                <li>Maintain provenance graph for every artifact</li>
+                <li>Propose evidence drafts based on prior-cycle patterns</li>
+              </ul>
+            </div>
+            <div class="col is-doesnt">
+              <h5>✗ ECM doesn't</h5>
+              <ul>
+                <li>Author the substantive sufficiency verdict</li>
+                <li>Attest to anything on behalf of management</li>
+                <li>Auto-accept any evidence — every submission requires a human action</li>
+                <li>Compose the reviewer's finding language</li>
+                <li>Make causal inferences without explicit human ratification</li>
+                <li>Hide its reasoning behind opaque model weights (see policy-as-code)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="mc-section">
+          <h4>Known limitations</h4>
+          <ul>
+            <li><strong>Substantive sufficiency varies by control.</strong> ECM's structural checks generalize across the control catalog; the substantive judgment doesn't and is reviewer-owned.</li>
+            <li><strong>NL parsing has error modes.</strong> Conversational intake (Slack-C, Mobile-C, palette-B) requires explicit owner confirmation of the parsed structured action before filing.</li>
+            <li><strong>Auto-attestation is policy-bounded.</strong> Only controls explicitly listed in <code>POL-AT-2026</code> can be filed under standing approval (see policy-as-code).</li>
+            <li><strong>Connector classifications are reversible.</strong> Any auto-tag can be overridden by the owner or reviewer, and overrides feed the training set for future tuning.</li>
+          </ul>
+        </div>
+
+        <div class="mc-section">
+          <h4>Evaluation</h4>
+          <p>
+            Agreement with human reviewers, measured quarterly over a 6-quarter rolling window:
+            <strong>structural checks</strong> 96.8% · <strong>substantive matches</strong> 81.3% · <strong>finding attribution</strong> 74.1%.
+            Substantive disagreement drives the training signal for the policy-as-code rule updates (see <a href="gov-c.html" style="color:var(--luna-teal-500);">Take C</a>).
+          </p>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 1.</strong> Model cards exist in adjacent industries (ML safety literature, healthcare AI). This one is SOX-shaped — what it does in the language of evidence and controls, what it doesn't do in the language of reviewer authority, known limitations a partner-level auditor can ask about. Click "Next" to see how changes are managed.
+      </p>
+    </div>
+
+    <!-- State 2: Change log -->
+    <div class="flow-state" data-state="changes">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Change log · Optro ECM at Helios Robotics</h3>
+          <span class="meta">14 changes since production · all PR-style approval</span>
+        </div>
+        <div class="change-log-row">
+          <div class="when">2026-09-18</div>
+          <div class="change">
+            <h5>Added rule: cross-approval check for IT.AC.1.C01</h5>
+            <div class="body">For any role escalation detected in <code>access_roster</code>, require a matching approval ticket from the ServiceNow CR queue. Scoped to control <code>IT.AC.1.C01</code>; does not apply to other access-review controls. <strong>Triggered by:</strong> Midship's Q3 false-pass finding on <code>r.taylor</code>.</div>
+          </div>
+          <div class="signers">
+            <span class="pill">3 of 3 signed</span><br/>
+            <span style="font-size:10.5px;">Sarah Park (PMO) ✓<br/>Dana Cho (IA) ✓<br/>Audit Committee ✓</span>
+          </div>
+        </div>
+        <div class="change-log-row">
+          <div class="when">2026-08-14</div>
+          <div class="change">
+            <h5>Expanded auto-attest scope: +6 routine controls</h5>
+            <div class="body">Added 6 controls to <code>POL-AT-2026</code> auto-attestation policy after 2 quarters of clean structural + substantive agreement. Net effect: 14 of 47 controls now auto-attestable (up from 8).</div>
+          </div>
+          <div class="signers">
+            <span class="pill">3 of 3 signed</span><br/>
+            <span style="font-size:10.5px;">Sarah Park (PMO) ✓<br/>Dana Cho (IA) ✓<br/>Audit Committee ✓</span>
+          </div>
+        </div>
+        <div class="change-log-row">
+          <div class="when">2026-08-02</div>
+          <div class="change">
+            <h5>Updated DBA attester active-employment check</h5>
+            <div class="body">Schema rule for <code>dba_attestation</code> now cross-checks Workday for active employment at the time of signature. Blocks attestations from departed personnel at submission time.</div>
+          </div>
+          <div class="signers">
+            <span class="pill">3 of 3 signed</span><br/>
+            <span style="font-size:10.5px;">Sarah Park (PMO) ✓<br/>Dana Cho (IA) ✓<br/>Audit Committee ✓</span>
+          </div>
+        </div>
+        <div class="change-log-row">
+          <div class="when">2026-07-22</div>
+          <div class="change">
+            <h5>Lowered confidence threshold for high-risk findings</h5>
+            <div class="body">Previously ECM auto-flagged carryover findings at 70% confidence. Audit committee requested escalation to human review at 85%, reasoning that false-positives on findings are less costly than missed substantive issues.</div>
+          </div>
+          <div class="signers">
+            <span class="pill">3 of 3 signed</span><br/>
+            <span style="font-size:10.5px;">Sarah Park (PMO) ✓<br/>Dana Cho (IA) ✓<br/>Audit Committee ✓</span>
+          </div>
+        </div>
+        <div class="change-log-row">
+          <div class="when">2026-07-01</div>
+          <div class="change">
+            <h5>v0.3.0 — initial production deployment</h5>
+            <div class="body">ECM cleared parallel-run period (Q1+Q2 FY26). Agreement with reviewers exceeded 80% on structural checks for 6 consecutive cycles. Committee approved production deployment.</div>
+          </div>
+          <div class="signers">
+            <span class="pill">5 of 5 signed</span><br/>
+            <span style="font-size:10.5px;">CFO ✓ · CTO ✓<br/>Audit Committee ✓<br/>External auditor consulted ✓</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 2.</strong> Every change to ECM's behavior gets PR-style approval, signed by named humans, with a documented reason. There are no silent updates and no opaque model retrains; if ECM is going to do something different in Q4 than it did in Q3, that change is in the log. Click "Next" to see the committee sign-off ceremony.
+      </p>
+    </div>
+
+    <!-- State 3: Sign-off -->
+    <div class="flow-state" data-state="signoff">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Audit committee sign-off · Q3 FY26 ECM model card</h3>
+          <span class="meta">ratified 2026-10-14 · committee meeting recording</span>
+        </div>
+        <div class="signoff-grid">
+          <div class="signoff-card is-signed">
+            <div class="row1">
+              <div class="av">JV</div>
+              <div>
+                <div class="signoff-name">J. Vargas</div>
+                <div class="role">Audit committee chair</div>
+              </div>
+              <div class="verdict">✓ Ratified</div>
+            </div>
+            <div class="body">"The change log and the limitations section answer the questions my external auditor will ask. Signing."</div>
+            <div class="when">2026-10-14 14:08 UTC</div>
+          </div>
+          <div class="signoff-card is-signed">
+            <div class="row1">
+              <div class="av" style="background:var(--luna-purple-100);color:var(--luna-purple-700);">RG</div>
+              <div>
+                <div class="signoff-name">R. Goldberg</div>
+                <div class="role">Audit committee · independent director</div>
+              </div>
+              <div class="verdict">✓ Ratified</div>
+            </div>
+            <div class="body">"Confidence threshold change in July was the right call. Glad it's documented at this level of specificity."</div>
+            <div class="when">2026-10-14 14:11 UTC</div>
+          </div>
+          <div class="signoff-card is-signed">
+            <div class="row1">
+              <div class="av" style="background:var(--luna-orange-100, #ffedd5);color:var(--luna-orange-700);">MP</div>
+              <div>
+                <div class="signoff-name">M. Patel</div>
+                <div class="role">CFO</div>
+              </div>
+              <div class="verdict">✓ Ratified</div>
+            </div>
+            <div class="body">"302 certification language is unchanged. ECM is in scope as an ITGC and described as such in the SOX scoping memo."</div>
+            <div class="when">2026-10-14 14:15 UTC</div>
+          </div>
+          <div class="signoff-card is-signed">
+            <div class="row1">
+              <div class="av" style="background:var(--luna-green-100);color:var(--luna-green-700);">KO</div>
+              <div>
+                <div class="signoff-name">K. Okonkwo</div>
+                <div class="role">CTO</div>
+              </div>
+              <div class="verdict">✓ Ratified</div>
+            </div>
+            <div class="body">"ECM's role and its limits are stated clearly enough for engineering to maintain the boundaries in code. Signed."</div>
+            <div class="when">2026-10-14 14:18 UTC</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 3.</strong> The committee doesn't just rubber-stamp ECM — each named director ratifies the model card with a reasoned attestation. That signed ratification goes into the chain (see Take Chain-A) alongside the evidence it gated. When the external auditor asks "did management oversee the AI control," the answer is here.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

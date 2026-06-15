@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>iPad · Take A — Pencil + findings · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .ipad-app { display: grid; grid-template-columns: 1fr 280px; gap: 12px; padding: 12px; background: var(--luna-gray-100); height: 100%; font-size: 13px; }
+  .ipad-toolbar { grid-column: 1 / -1; background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; }
+  .ipad-toolbar .title { font-weight: 700; font-size: 14px; color: var(--luna-gray-900); }
+  .ipad-toolbar .meta { font-size: 12px; color: var(--luna-gray-500); margin-left: 6px; }
+  .ipad-toolbar .tool { padding: 4px 10px; border-radius: 4px; background: var(--luna-gray-100); color: var(--luna-gray-700); font-weight: 600; font-size: 12px; cursor: pointer; }
+  .ipad-toolbar .tool.is-active { background: var(--luna-teal-500); color: var(--luna-white); }
+
+  .ipad-doc { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 8px; padding: 20px; overflow: auto; position: relative; }
+  .doc-head { padding-bottom: 12px; border-bottom: 1px solid var(--luna-gray-200); margin-bottom: 12px; }
+  .doc-head h2 { margin: 0 0 4px; font-size: 16px; }
+  .doc-head .meta { font-size: 11px; color: var(--luna-gray-500); }
+  .doc-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 16px; }
+  .doc-table th, .doc-table td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--luna-gray-100); }
+  .doc-table th { background: var(--luna-gray-50); font-weight: 700; color: var(--luna-gray-700); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .doc-row-flag { position: relative; background: var(--luna-yellow-50); }
+  .doc-row-flag::before { content: ""; position: absolute; left: -8px; top: 50%; width: 12px; height: 12px; background: var(--luna-yellow-500); border-radius: 50%; transform: translateY(-50%); box-shadow: 0 0 0 4px rgba(228, 185, 19, 0.2); }
+  .doc-pencil { position: absolute; border: 2px solid var(--luna-orange-500); border-radius: 2px; background: rgba(204, 78, 0, 0.06); animation: pencil-fade 0.3s ease-out; }
+  .doc-pencil-note { position: absolute; background: var(--luna-orange-500); color: var(--luna-white); padding: 2px 8px; border-radius: 4px 4px 0 4px; font-size: 10px; font-weight: 600; font-family: var(--luna-fontFamily); transform: translateY(-100%); animation: pencil-fade 0.3s ease-out; }
+  @keyframes pencil-fade { from { opacity: 0; } to { opacity: 1; } }
+  .doc-attestation { padding: 10px 12px; background: var(--luna-gray-50); border: 1px dashed var(--luna-gray-300); border-radius: 4px; font-size: 11px; color: var(--luna-gray-700); }
+  .ipad-side { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 8px; padding: 14px; overflow: auto; display: flex; flex-direction: column; gap: 12px; }
+  .ipad-side h3 { margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); display: flex; align-items: center; gap: 6px; }
+  .ai-finding { padding: 10px 12px; background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50)); border: 1px solid var(--luna-purple-100); border-left: 3px solid var(--luna-purple-500); border-radius: 4px; }
+  .ai-finding .head { font-size: 12px; font-weight: 600; color: var(--luna-purple-700); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .ai-finding .body { font-size: 12px; color: var(--luna-gray-800); line-height: 1.5; }
+  .ai-finding.is-warn { background: linear-gradient(135deg, var(--luna-orange-50), var(--luna-yellow-50)); border-color: var(--luna-orange-100); border-left-color: var(--luna-orange-500); }
+  .ai-finding.is-warn .head { color: var(--luna-orange-700); }
+  .ai-finding.is-good { background: var(--luna-green-50); border-color: var(--luna-green-100); border-left-color: var(--luna-green-500); }
+  .ai-finding.is-good .head { color: var(--luna-green-700); }
+  .verdict-card { background: var(--luna-gray-50); border: 1px solid var(--luna-gray-200); border-radius: 6px; padding: 12px; }
+  .verdict-card .label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 6px; }
+  .verdict-card .options { display: flex; flex-direction: column; gap: 6px; }
+  .verdict-card .opt { padding: 8px 10px; background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 4px; font-size: 12px; color: var(--luna-gray-700); display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .verdict-card .opt.is-suggested { border-color: var(--luna-purple-300); background: var(--luna-purple-50); color: var(--luna-purple-700); font-weight: 600; }
+  .verdict-card .opt .check { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--luna-gray-300); flex-shrink: 0; }
+  .verdict-card .opt.is-suggested .check { border-color: var(--luna-purple-500); background: radial-gradient(circle, var(--luna-purple-500) 40%, var(--luna-white) 50%); }
+  .conf-mini { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--luna-gray-600); margin-top: 6px; }
+
+  .signed-banner {
+    padding: 14px 16px;
+    background: var(--luna-green-50);
+    border: 1px solid var(--luna-green-100);
+    border-left: 4px solid var(--luna-green-500);
+    border-radius: 8px;
+    color: var(--luna-green-700);
+  }
+  .signed-banner .head { font-size: 13px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .signed-banner .body { font-size: 12px; color: var(--luna-gray-800); line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · iPad · <span style="color:var(--luna-text);">Take A</span>
+      </div>
+      <h1 class="luna-heading-600">Pencil markup. AI flags the drift.</h1>
+      <p class="subtitle">Dana opens the AR on her iPad. AI's side-panel surfaces findings before she even touches the Pencil. She marks one row; AI recommends a verdict; she signs off.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Reviewer</span>
+      <span class="luna-badge is-purple">Noun · Evidence</span>
+      <span class="luna-badge is-purple">Take A</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="ipad-a.html" class="is-current">A · Pencil + findings</a>
+    <span class="sep">·</span>
+    <a href="ipad-b.html">B · Side-by-side compare ★</a>
+    <span class="sep">·</span>
+    <a href="ipad-c.html">C · Narrated walk-through</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="open"><span class="num">1</span> Open artifact</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="markup"><span class="num">2</span> Pencil markup</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="signed"><span class="num">3</span> Signed off</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- State 1: Open artifact (AI populates findings, no Pencil yet) -->
+    <div class="flow-state" data-state="open">
+      <div class="device is-tablet">
+        <div class="device-screen">
+          <div class="ipad-app">
+            <div class="ipad-toolbar">
+              <span class="title">AR-Q3FY26-prod-db.pdf</span>
+              <span class="meta">Filed by Weston Prohaska · 18 hours ago · Control 4.2.1</span>
+              <span style="flex:1;"></span>
+              <span class="tool">✎ Pencil</span>
+              <span class="tool is-active">AI assist</span>
+              <span class="tool">↻ Compare Q2</span>
+            </div>
+
+            <div class="ipad-doc">
+              <div class="doc-head">
+                <h2>Q3 FY2026 Production Database Access Review</h2>
+                <div class="meta">prod-db-01.helios · exported 2026-09-25 via ServiceNow · 22 active accounts</div>
+              </div>
+              <table class="doc-table">
+                <thead><tr><th>User</th><th>Role</th><th>Last login</th><th>Manager attested</th></tr></thead>
+                <tbody>
+                  <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-09-25</td><td>✓</td></tr>
+                  <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-09-22</td><td>✓</td></tr>
+                  <tr class="doc-row-flag"><td>contractor-svc-09</td><td>dba-admin</td><td>2026-04-12</td><td>—</td></tr>
+                  <tr><td>k.singh@helios.com</td><td>dba-read</td><td>2026-09-19</td><td>✓</td></tr>
+                  <tr><td>app-svc-prod</td><td>app-svc</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                  <tr><td>r.taylor@helios.com</td><td>dba-read</td><td>2026-09-11</td><td>✓</td></tr>
+                  <tr><td>backups-svc</td><td>backups</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                  <tr><td>etl-svc</td><td>etl</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                </tbody>
+              </table>
+              <div class="doc-attestation"><strong>DBA attestation</strong> — Weston Prohaska. "All accounts reviewed. Service accounts attest via automation."</div>
+            </div>
+
+            <aside class="ipad-side">
+              <h3><span class="ai-chip">Optro ECM</span> Findings (pre-Pencil)</h3>
+              <div class="ai-finding is-warn">
+                <div class="head">⚠ Drift vs. Q2</div>
+                <div class="body"><code>contractor-svc-09</code> still holds <strong>dba-admin</strong> and hasn't logged in since <strong>April</strong>. Same row as your Q2 finding.</div>
+              </div>
+              <div class="ai-finding">
+                <div class="head">✦ Pattern match</div>
+                <div class="body">Service-account auto-attestations match Q2 format. <strong>Coverage identical (4 of 4).</strong></div>
+              </div>
+              <div style="padding:10px 12px;background:var(--luna-gray-50);border:1px dashed var(--luna-gray-300);border-radius:4px;font-size:12px;color:var(--luna-gray-600);">
+                <strong>Waiting on Pencil.</strong><br/>
+                Mark the contractor row with the Pencil and I'll propose a verdict.
+              </div>
+              <button class="luna-btn" style="width:100%;justify-content:center;" data-go="markup">✎ Apply Pencil to flagged row</button>
+            </aside>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 1.</strong> Dana opens the artifact. AI's findings are already populated, but no verdict suggested yet — it's waiting for her Pencil to confirm she sees the same row. Click the Pencil button.</p>
+    </div>
+
+    <!-- State 2: Pencil markup -->
+    <div class="flow-state" data-state="markup">
+      <div class="device is-tablet">
+        <div class="device-screen">
+          <div class="ipad-app">
+            <div class="ipad-toolbar">
+              <span class="title">AR-Q3FY26-prod-db.pdf</span>
+              <span class="meta">Filed by Weston Prohaska · 18 hours ago · Control 4.2.1</span>
+              <span style="flex:1;"></span>
+              <span class="tool is-active">✎ Pencil</span>
+              <span class="tool is-active">AI assist</span>
+              <span class="tool">↻ Compare Q2</span>
+            </div>
+
+            <div class="ipad-doc">
+              <div class="doc-head">
+                <h2>Q3 FY2026 Production Database Access Review</h2>
+                <div class="meta">prod-db-01.helios · exported 2026-09-25 via ServiceNow · 22 active accounts</div>
+              </div>
+              <table class="doc-table">
+                <thead><tr><th>User</th><th>Role</th><th>Last login</th><th>Manager attested</th></tr></thead>
+                <tbody>
+                  <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-09-25</td><td>✓</td></tr>
+                  <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-09-22</td><td>✓</td></tr>
+                  <tr class="doc-row-flag"><td>contractor-svc-09</td><td>dba-admin</td><td>2026-04-12</td><td>—</td></tr>
+                  <tr><td>k.singh@helios.com</td><td>dba-read</td><td>2026-09-19</td><td>✓</td></tr>
+                  <tr><td>app-svc-prod</td><td>app-svc</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                  <tr><td>r.taylor@helios.com</td><td>dba-read</td><td>2026-09-11</td><td>✓</td></tr>
+                  <tr><td>backups-svc</td><td>backups</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                  <tr><td>etl-svc</td><td>etl</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                </tbody>
+              </table>
+              <div class="doc-attestation"><strong>DBA attestation</strong> — Weston Prohaska. "All accounts reviewed."</div>
+
+              <div class="doc-pencil" style="top:182px;left:20px;right:20px;height:24px;"></div>
+              <div class="doc-pencil-note" style="top:182px;left:20px;">contractor still admin?</div>
+            </div>
+
+            <aside class="ipad-side">
+              <h3><span class="ai-chip">Optro ECM</span> Findings</h3>
+              <div class="ai-finding is-warn">
+                <div class="head">⚠ Drift vs. Q2</div>
+                <div class="body"><code>contractor-svc-09</code> still holds <strong>dba-admin</strong> and hasn't logged in since <strong>April</strong>. In Q2 you flagged this same row as <span class="ai-citation">stale</span> and Weston committed to deprovision by end of Q2.</div>
+              </div>
+              <div class="ai-finding">
+                <div class="head">✦ Pattern match</div>
+                <div class="body">Service-account auto-attestations match Q2 format verbatim. <strong>Coverage identical (4 of 4).</strong></div>
+              </div>
+
+              <div class="verdict-card">
+                <div class="label">Suggested verdict (matches your Pencil)</div>
+                <div class="options">
+                  <div class="opt"><span class="check"></span> Adequate</div>
+                  <div class="opt is-suggested"><span class="check"></span> Adequate with finding</div>
+                  <div class="opt"><span class="check"></span> Inadequate — re-request</div>
+                </div>
+                <div class="conf-mini">
+                  Confidence
+                  <div class="ai-confidence-bar" style="flex:1;"><span style="width:78%;"></span></div>
+                  <strong>78%</strong>
+                </div>
+              </div>
+
+              <button class="luna-btn" style="width:100%;justify-content:center;" data-go="signed">Sign off as 'adequate with finding' ✎</button>
+            </aside>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 2.</strong> Dana annotated the contractor row. AI's verdict suggestion locks to her highlight. She ratifies in one tap.</p>
+    </div>
+
+    <!-- State 3: Signed off -->
+    <div class="flow-state" data-state="signed">
+      <div class="device is-tablet">
+        <div class="device-screen">
+          <div class="ipad-app">
+            <div class="ipad-toolbar">
+              <span class="title">AR-Q3FY26-prod-db.pdf</span>
+              <span class="meta" style="color:var(--luna-green-700);font-weight:600;">✓ Signed off · just now</span>
+              <span style="flex:1;"></span>
+              <span class="tool">✎ Pencil</span>
+              <span class="tool">AI assist</span>
+              <span class="tool">↻ Compare Q2</span>
+            </div>
+
+            <div class="ipad-doc">
+              <div class="signed-banner">
+                <div class="head">✓ Adequate with finding · sign-off recorded</div>
+                <div class="body">
+                  <strong>Dana Cho · Internal Audit</strong> · 2026-09-26 09:42 PT.
+                  Pencil annotation kept inline ("contractor still admin?"). Carryover note: contractor-svc-09 deprovision pending under HEL-3471.
+                  Committed to chain at <span class="ai-citation">block #4,182,118</span>.
+                </div>
+              </div>
+
+              <div class="doc-head" style="margin-top: 16px;">
+                <h2>Q3 FY2026 Production Database Access Review</h2>
+                <div class="meta">prod-db-01.helios · exported 2026-09-25 · 22 active accounts</div>
+              </div>
+              <table class="doc-table">
+                <thead><tr><th>User</th><th>Role</th><th>Last login</th><th>Attested</th></tr></thead>
+                <tbody>
+                  <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-09-25</td><td>✓</td></tr>
+                  <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-09-22</td><td>✓</td></tr>
+                  <tr class="doc-row-flag"><td>contractor-svc-09</td><td>dba-admin</td><td>2026-04-12</td><td>— · carryover finding</td></tr>
+                  <tr style="opacity:0.6;"><td>k.singh@helios.com</td><td>dba-read</td><td>2026-09-19</td><td>✓</td></tr>
+                  <tr style="opacity:0.6;"><td>app-svc-prod</td><td>app-svc</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                  <tr style="opacity:0.6;"><td colspan="4" style="text-align:center;color:var(--luna-gray-500);font-size:10px;">…and 17 more rows, all clean</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <aside class="ipad-side">
+              <h3><span style="background: var(--luna-green-500); color: var(--luna-white); padding: 1px 6px; border-radius: 10px; font-size: 9px; letter-spacing: 0.06em; font-weight: 700;">✓ SIGNED</span> Recorded</h3>
+              <div class="ai-finding is-good">
+                <div class="head">✓ Verdict committed</div>
+                <div class="body">
+                  Adequate with finding · signed off by Dana Cho · 09:42 PT today.
+                  Pencil annotation preserved. Carryover finding flagged in receipt.
+                </div>
+              </div>
+
+              <div style="padding:12px;background:var(--luna-gray-50);border:1px solid var(--luna-gray-200);border-radius:6px;font-size:12px;color:var(--luna-gray-700);line-height:1.5;">
+                <strong>What happens next:</strong>
+                <ol style="margin:6px 0 0 18px;padding:0;">
+                  <li>Weston gets a wrist-tap notifying him of sign-off</li>
+                  <li>Sarah (PMO) sees Q3 4.2.1 marked sealed</li>
+                  <li>HEL-3471 reminder fires when Q4 cycle opens</li>
+                </ol>
+              </div>
+
+              <button class="luna-btn is-secondary" style="width:100%;justify-content:center;" data-go="reset">↻ Open another artifact</button>
+              <a href="chain-a.html" class="luna-btn is-ghost" style="width:100%;justify-content:center;text-decoration:none;">View chain receipt ↗</a>
+            </aside>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 3.</strong> Done. Sign-off committed to the chain, Pencil annotation preserved as part of the trail. Dana moves to her next artifact.</p>
+    </div>
+
+  </div>
+
+  <p class="surface-caption" style="margin-top:32px;">
+    ECM reads the artifact alongside Dana, flagging drift from prior quarters and pre-computing a verdict. Dana's Pencil confirms or disputes; she never has to read the table from scratch.
+  </p>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

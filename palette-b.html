@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Palette · Take B — Agentic dialog · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .pal-thread {
+    max-height: 540px;
+    overflow-y: auto;
+    padding: 18px 22px 8px;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .turn { display: flex; gap: 12px; }
+  .turn .av {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: grid; place-items: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .turn.user .av { background: var(--luna-teal-100); color: var(--luna-teal-700); }
+  .turn.bot .av { background: linear-gradient(135deg, var(--luna-purple-100), var(--luna-blue-100)); color: var(--luna-purple-700); }
+  .turn .body { flex: 1; min-width: 0; }
+  .turn .head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+  .turn .head .name { font-size: 13px; font-weight: 700; color: var(--luna-gray-900); }
+  .turn .head .role { font-size: 11px; color: var(--luna-gray-500); }
+  .turn .head .tag { background: var(--luna-purple-100); color: var(--luna-purple-700); font-size: 10px; padding: 1px 6px; border-radius: 3px; font-weight: 700; }
+  .turn p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--luna-gray-800); }
+  .turn p code { font-size: 12px; background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; color: var(--luna-gray-800); }
+  .turn .typing {
+    display: inline-flex; gap: 3px;
+    padding: 6px 10px;
+    background: var(--luna-gray-100);
+    border-radius: 12px;
+    margin-top: 2px;
+  }
+  .turn .typing span {
+    width: 6px; height: 6px;
+    background: var(--luna-gray-500);
+    border-radius: 50%;
+    animation: blink 1.2s infinite ease-in-out;
+  }
+  .turn .typing span:nth-child(2) { animation-delay: 0.15s; }
+  .turn .typing span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+
+  .agent-action-card {
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50));
+    border: 1px solid var(--luna-purple-100);
+    border-left: 3px solid var(--luna-purple-500);
+    border-radius: 6px;
+  }
+  .agent-action-card .act-title { font-size: 12px; font-weight: 700; color: var(--luna-purple-700); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .agent-action-card .act-body { font-size: 12px; color: var(--luna-gray-800); line-height: 1.5; }
+  .agent-action-card .act-row { display: flex; align-items: center; gap: 8px; font-size: 12px; margin: 4px 0; }
+  .agent-action-card .act-row .k { color: var(--luna-gray-600); min-width: 80px; }
+  .agent-action-card .act-row .v { color: var(--luna-gray-900); font-weight: 500; }
+  .agent-action-card .actions { display: flex; gap: 6px; margin-top: 10px; }
+  .agent-action-card .actions button {
+    padding: 5px 10px; font-size: 12px; font-weight: 600;
+    background: var(--luna-white); border: 1px solid var(--luna-gray-300); color: var(--luna-gray-700);
+    border-radius: 4px; cursor: pointer;
+  }
+  .agent-action-card .actions button.primary { background: var(--luna-teal-500); color: var(--luna-white); border-color: var(--luna-teal-500); }
+  .agent-action-card .actions button:hover { border-color: var(--luna-teal-300); }
+  .agent-action-card .actions button.primary:hover { background: var(--luna-teal-600); }
+
+  .pal-bottom-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 22px;
+    border-top: 1px solid var(--luna-gray-100);
+    background: var(--luna-gray-50);
+  }
+  .pal-bottom-row input {
+    flex: 1; border: 1px solid var(--luna-gray-200);
+    background: var(--luna-white);
+    padding: 8px 12px;
+    font-size: 14px; outline: none; border-radius: 6px;
+    font-family: var(--luna-fontFamily);
+    color: var(--luna-gray-900);
+  }
+  .pal-bottom-row input:focus { border-color: var(--luna-teal-500); }
+  .pal-bottom-row .kbd { font-family: ui-monospace, monospace; padding: 2px 6px; background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 3px; font-size: 11px; color: var(--luna-gray-600); }
+  .pal-bottom-row .send-btn {
+    padding: 6px 12px;
+    background: var(--luna-teal-500); color: var(--luna-white);
+    border: none; border-radius: 6px; cursor: pointer;
+    font-size: 13px; font-weight: 600;
+  }
+  .pal-bottom-row .send-btn:hover { background: var(--luna-teal-600); }
+
+  .pal-header-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 22px;
+    border-bottom: 1px solid var(--luna-gray-100);
+  }
+  .pal-header-bar .title { font-size: 13px; font-weight: 700; color: var(--luna-gray-900); flex: 1; }
+  .pal-header-bar .meta { font-size: 11px; color: var(--luna-gray-500); }
+
+  .palette-window.is-tall { max-width: 720px; }
+
+  .pal-empty-thread {
+    padding: 60px 22px 40px;
+    text-align: center;
+    color: var(--luna-gray-500);
+  }
+  .pal-empty-thread .big-ic { font-size: 36px; opacity: 0.4; margin-bottom: 10px; }
+  .pal-empty-thread .title { font-size: 14px; font-weight: 600; color: var(--luna-gray-700); }
+  .pal-empty-thread .sub { font-size: 12px; margin-top: 4px; }
+  .pal-empty-thread .examples { margin-top: 18px; display: flex; flex-direction: column; gap: 4px; }
+  .pal-empty-thread .ex {
+    padding: 6px 10px; background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
+    font-size: 12px; color: var(--luna-gray-700);
+    cursor: pointer; display: inline-block;
+  }
+  .pal-empty-thread .ex:hover { border-color: var(--luna-teal-300); }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Command palette · <span style="color:var(--luna-text);">Take B</span>
+      </div>
+      <h1 class="luna-heading-600">⌘K opens a thread. The agent answers back.</h1>
+      <p class="subtitle">Multi-turn from the keyboard. Weston asks, ECM clarifies, he refines, ECM acts and reports back. The palette behaves like a small command line for SOX work.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Control owner</span>
+      <span class="luna-badge">Noun · Task</span>
+      <span class="luna-badge is-purple">Take B</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="palette-a.html">A · Smart search</a>
+    <span class="sep">·</span>
+    <a href="palette-b.html" class="is-current">B · Agentic dialog</a>
+    <span class="sep">·</span>
+    <a href="palette-c.html">C · Prepped drafts ★</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="open"><span class="num">1</span> Open palette</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="first"><span class="num">2</span> First turn</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="propose"><span class="num">3</span> Action card</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="done"><span class="num">4</span> Done</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- State 1: Empty -->
+    <div class="flow-state" data-state="open">
+      <div class="palette-bg">
+        <div class="palette-window is-tall" role="dialog">
+          <div class="pal-header-bar">
+            <div class="title">Conversation with Optro ECM</div>
+            <span class="luna-badge is-purple">⌘K · Agentic mode</span>
+            <span class="meta">new thread</span>
+          </div>
+          <div class="pal-empty-thread">
+            <div class="big-ic"><img src="optro-mark.svg" alt="Optro" style="width:40px;height:auto;display:block;margin:0 auto;opacity:0.5;" /></div>
+            <div class="title">Ask ECM anything about SOX evidence.</div>
+            <div class="sub">It pulls real data, proposes actions, and you ratify.</div>
+            <div class="examples">
+              <span class="ex" data-go="first">"ar q3 prod db"</span>
+              <span class="ex" data-go="first">"what's overdue this week?"</span>
+              <span class="ex" data-go="first">"why is HEL-3471 still open?"</span>
+            </div>
+          </div>
+          <div class="pal-bottom-row">
+            <input type="text" placeholder="Ask ECM anything…" />
+            <button class="send-btn" data-go="first">Send</button>
+            <span class="kbd">↵</span>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 1.</strong> Fresh palette. Click an example prompt or "Send" to advance.</p>
+    </div>
+
+    <!-- State 2: First turn -->
+    <div class="flow-state" data-state="first">
+      <div class="palette-bg">
+        <div class="palette-window is-tall" role="dialog">
+          <div class="pal-header-bar">
+            <div class="title">Conversation with Optro ECM</div>
+            <span class="luna-badge is-purple">⌘K · Agentic mode</span>
+            <span class="meta">1 turn</span>
+          </div>
+
+          <div class="pal-thread">
+            <div class="turn user">
+              <div class="av">W</div>
+              <div class="body">
+                <div class="head"><span class="name">Weston</span></div>
+                <p>ar q3 prod db</p>
+              </div>
+            </div>
+
+            <div class="turn bot">
+              <div class="av"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head">
+                  <span class="name">Optro ECM</span>
+                  <span class="tag">AGENT</span>
+                  <span class="role">replying</span>
+                </div>
+                <p>
+                  You mean the <strong>quarterly user access review</strong> on <code>prod-db-01</code> — that's
+                  <span class="ai-citation">control 4.2.1</span>, due Monday. Last quarter you filed
+                  the ServiceNow AR export plus a DBA attestation email. <strong>Should I draft the same shape for Q3?</strong>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pal-bottom-row">
+            <input type="text" placeholder="yes but check first if contractor-svc-09 is still on the list…" />
+            <button class="send-btn" data-go="propose">Send</button>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 2.</strong> First turn. ECM understands intent and asks one clarifying question. Click "Send" to refine.</p>
+    </div>
+
+    <!-- State 3: Action card -->
+    <div class="flow-state" data-state="propose">
+      <div class="palette-bg">
+        <div class="palette-window is-tall" role="dialog">
+          <div class="pal-header-bar">
+            <div class="title">Conversation with Optro ECM</div>
+            <span class="luna-badge is-purple">⌘K · Agentic mode</span>
+            <span class="meta">3 turns · 1 action queued</span>
+          </div>
+
+          <div class="pal-thread">
+            <div class="turn user">
+              <div class="av">W</div>
+              <div class="body"><div class="head"><span class="name">Weston</span></div><p>ar q3 prod db</p></div>
+            </div>
+
+            <div class="turn bot">
+              <div class="av"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head"><span class="name">Optro ECM</span><span class="tag">AGENT</span></div>
+                <p>You mean the quarterly user access review on <code>prod-db-01</code> — that's <span class="ai-citation">control 4.2.1</span>, due Monday. <strong>Should I draft the same shape as Q2?</strong></p>
+              </div>
+            </div>
+
+            <div class="turn user">
+              <div class="av">W</div>
+              <div class="body">
+                <div class="head"><span class="name">Weston</span></div>
+                <p>yes but check first if contractor-svc-09 is still on the list. dana flagged it last quarter</p>
+              </div>
+            </div>
+
+            <div class="turn bot">
+              <div class="av"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head">
+                  <span class="name">Optro ECM</span>
+                  <span class="tag">AGENT</span>
+                  <span class="role">checked the data</span>
+                </div>
+                <p>
+                  Pulled the AR query just now. <code>contractor-svc-09</code> is <strong>still listed with dba-admin</strong>.
+                  Last login: <span class="ai-citation">2026-04-12</span>. That's 166 days idle. JIRA HEL-3471 (the deprovision ticket from Q2)
+                  is <strong>still open</strong>, assigned to platform-eng.
+                </p>
+
+                <div class="agent-action-card">
+                  <div class="act-title"><span class="ai-chip">Proposed actions</span></div>
+                  <div class="act-row"><span class="k">1.</span><span class="v">File AR-Q3FY26-prod-db with finding note</span></div>
+                  <div class="act-row"><span class="k">2.</span><span class="v">Cross-link to HEL-3471 + ping platform-eng</span></div>
+                  <div class="act-row"><span class="k">3.</span><span class="v">Add reviewer note: "carryover Q2 finding, deprovision pending"</span></div>
+                  <div class="actions">
+                    <button class="primary" data-go="done">✓ Do all three</button>
+                    <button data-go="done">Just file</button>
+                    <button>Let me edit</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pal-bottom-row">
+            <input type="text" placeholder="Or keep typing to refine…" />
+            <span class="kbd">⌘+↵ multiline</span>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 3.</strong> ECM proposes structural actions only — filing the artifact, cross-linking tickets, flagging items for the reviewer. The substantive finding language stays Dana's to author during review, not ECM's. The conversation log is discoverable in external audit, so what ECM says stays narrow.</p>
+    </div>
+
+    <!-- State 4: Done -->
+    <div class="flow-state" data-state="done">
+      <div class="palette-bg">
+        <div class="palette-window is-tall" role="dialog">
+          <div class="pal-header-bar">
+            <div class="title">Conversation with Optro ECM</div>
+            <span class="luna-badge is-purple">⌘K · Agentic mode</span>
+            <span class="meta">5 turns · 3 actions complete</span>
+          </div>
+
+          <div class="pal-thread">
+            <div class="turn user" style="opacity:0.65;">
+              <div class="av">W</div>
+              <div class="body"><div class="head"><span class="name">Weston</span></div><p>ar q3 prod db</p></div>
+            </div>
+
+            <div class="turn bot" style="opacity:0.65;">
+              <div class="av"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body"><div class="head"><span class="name">Optro ECM</span><span class="tag">AGENT</span></div><p>You mean the quarterly user access review… <strong>Should I draft the same shape as Q2?</strong></p></div>
+            </div>
+
+            <div class="turn user" style="opacity:0.65;">
+              <div class="av">W</div>
+              <div class="body"><div class="head"><span class="name">Weston</span></div><p>yes but check first if contractor-svc-09 is still on the list…</p></div>
+            </div>
+
+            <div class="turn bot" style="opacity:0.65;">
+              <div class="av"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body"><div class="head"><span class="name">Optro ECM</span><span class="tag">AGENT</span></div><p>contractor-svc-09 still listed with dba-admin… [proposed 3 actions]</p></div>
+            </div>
+
+            <div class="turn user">
+              <div class="av">W</div>
+              <div class="body"><div class="head"><span class="name">Weston</span></div><p>do all three</p></div>
+            </div>
+
+            <div class="turn bot">
+              <div class="av"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head">
+                  <span class="name">Optro ECM</span>
+                  <span class="tag">AGENT</span>
+                  <span class="role">done</span>
+                </div>
+                <p>
+                  All three done.
+                </p>
+                <div class="agent-action-card" style="background: var(--luna-green-50); border-color: var(--luna-green-100); border-left-color: var(--luna-green-500);">
+                  <div class="act-title" style="color: var(--luna-green-700);"><span style="background:var(--luna-green-500);color:var(--luna-white);padding:1px 6px;border-radius:10px;font-size:9px;letter-spacing:0.06em;">✓ COMPLETED</span> Three actions executed</div>
+                  <div class="act-row"><span class="k">1.</span><span class="v"><span class="luna-badge is-green" style="padding:1px 6px;margin-right:4px;">Filed</span> <code style="font-size:11px;background:var(--luna-white);padding:1px 5px;border-radius:3px;">AR-Q3FY26-prod-db.pdf</code> to control 4.2.1, finding note attached</span></div>
+                  <div class="act-row"><span class="k">2.</span><span class="v"><span class="luna-badge is-green" style="padding:1px 6px;margin-right:4px;">Pinged</span> <code style="font-size:11px;background:var(--luna-white);padding:1px 5px;border-radius:3px;">@platform-eng</code> in <code style="font-size:11px;background:var(--luna-white);padding:1px 5px;border-radius:3px;">#dba-team</code>, HEL-3471 cross-linked</span></div>
+                  <div class="act-row"><span class="k">3.</span><span class="v"><span class="luna-badge is-green" style="padding:1px 6px;margin-right:4px;">Routed</span> to Dana Cho · review SLA: 2 business days</span></div>
+                </div>
+                <p style="margin-top:8px;">Chain receipt: <span class="ai-citation">block #4,180,221</span> · <a href="chain-a.html" style="color:var(--luna-teal-500);">view ↗</a>. <strong>Anything else?</strong></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pal-bottom-row">
+            <input type="text" placeholder="Or type 'what else needs me today?' to keep going…" />
+            <button class="send-btn" data-go="reset">↻ New thread</button>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 4.</strong> ECM executed all three actions and reported back with structured confirmation. Click "New thread" to start over.</p>
+    </div>
+
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

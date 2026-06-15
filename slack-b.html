@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Slack · Take B — Channel-per-control · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .slack-window.is-channel { grid-template-columns: 240px 1fr 260px; }
+  .slack-rightbar {
+    border-left: 1px solid var(--luna-gray-200);
+    background: var(--luna-gray-50);
+    padding: 14px 14px;
+    overflow-y: auto;
+  }
+  .slack-rightbar h4 {
+    margin: 0 0 6px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--luna-gray-500);
+  }
+  .slack-rightbar .pinned-item {
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  .slack-rightbar .pinned-item .name { font-weight: 600; color: var(--luna-gray-900); margin-bottom: 2px; font-size: 12px; }
+  .slack-rightbar .pinned-item .meta { color: var(--luna-gray-500); font-size: 11px; }
+  .slack-rightbar .meta-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; color: var(--luna-gray-700); border-bottom: 1px solid var(--luna-gray-200); }
+  .slack-rightbar .meta-row strong { color: var(--luna-gray-900); }
+  .slack-rightbar .members { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .slack-rightbar .member-avatar { width: 24px; height: 24px; border-radius: 4px; background: var(--luna-teal-100); display: grid; place-items: center; font-size: 11px; font-weight: 700; color: var(--luna-teal-700); }
+  .slack-rightbar .member-avatar.is-bot { background: linear-gradient(135deg, var(--luna-purple-100), var(--luna-blue-100)); color: var(--luna-purple-700); }
+  .slack-msg.thread {
+    margin-left: 46px; padding-top: 4px;
+    border-left: 2px solid var(--luna-gray-200);
+    padding-left: 10px;
+  }
+  .slack-msg .digest-card {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-300);
+    border-radius: 4px;
+    max-width: 560px;
+  }
+  .slack-msg .digest-card h5 { margin: 0 0 6px; font-size: 13px; font-weight: 700; color: var(--luna-gray-900); display: flex; align-items: center; gap: 6px; }
+  .slack-msg .digest-card .grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px 0;
+  }
+  .slack-msg .digest-card .grid .cell {
+    padding: 8px;
+    background: var(--luna-gray-50);
+    border-radius: 4px;
+    text-align: center;
+  }
+  .slack-msg .digest-card .grid .cell .n { font-size: 18px; font-weight: 700; color: var(--luna-gray-900); }
+  .slack-msg .digest-card .grid .cell .l { font-size: 10px; color: var(--luna-gray-600); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+  .slack-msg .digest-card .grid .cell.is-warn .n { color: var(--luna-orange-500); }
+  .slack-msg .digest-card .grid .cell.is-good .n { color: var(--luna-green-500); }
+  .slack-msg .digest-card ul { margin: 6px 0 0 18px; padding: 0; }
+  .slack-msg .digest-card ul li { font-size: 12px; color: var(--luna-gray-700); padding: 2px 0; }
+  .slack-msg .reactions { display: flex; gap: 4px; margin-top: 6px; }
+  .slack-msg .reactions .rxn {
+    padding: 1px 7px; font-size: 11px;
+    background: var(--luna-blue-50);
+    border: 1px solid var(--luna-blue-100);
+    color: var(--luna-blue-700);
+    border-radius: 12px;
+    font-weight: 600;
+  }
+  .slack-msg .thread-marker {
+    margin-top: 4px;
+    font-size: 12px; color: var(--luna-teal-500); font-weight: 600;
+    display: inline-flex; align-items: center; gap: 4px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.12s;
+  }
+  .slack-msg .thread-marker:hover { background: var(--luna-teal-50); }
+
+  .signoff-card {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--luna-green-50);
+    border: 1px solid var(--luna-green-100);
+    border-left: 3px solid var(--luna-green-500);
+    border-radius: 4px;
+    max-width: 560px;
+  }
+  .signoff-card .head { font-size: 13px; font-weight: 700; color: var(--luna-green-700); display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .signoff-card .body { font-size: 13px; color: var(--luna-gray-800); line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Slack &amp; Teams · <span style="color:var(--luna-text);">Take B</span>
+      </div>
+      <h1 class="luna-heading-600">The control lives in Slack. As a channel.</h1>
+      <p class="subtitle">Each SOX control gets its own channel. Owners, reviewers, and the bot all in one place. AI posts the weekly digest. Threads keep the history.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · All three</span>
+      <span class="luna-badge is-purple">Noun · Control</span>
+      <span class="luna-badge is-purple">Take B</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="slack-a.html">A · Bot DM ★</a>
+    <span class="sep">·</span>
+    <a href="slack-b.html" class="is-current">B · Channel-per-control</a>
+    <span class="sep">·</span>
+    <a href="slack-c.html">C · Conversational intake</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="channel"><span class="num">1</span> Weekly digest</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="thread"><span class="num">2</span> Thread expanded</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="signoff"><span class="num">3</span> Dana signs off</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Reusable sidebar markup helper -->
+
+    <!-- State 1: Channel digest -->
+    <div class="flow-state" data-state="channel">
+      <div class="slack-window is-channel" role="region">
+        <aside class="slack-sidebar">
+          <div class="workspace"><span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>Helios Robotics</div>
+          <div class="section">SOX channels</div>
+          <div class="channel is-active"># ctrl-4-2-1</div>
+          <div class="channel"># ctrl-4-2-2</div>
+          <div class="channel"># ctrl-4-2-3</div>
+          <div class="channel"># ctrl-5-1-1</div>
+          <div class="channel"># ctrl-5-1-2</div>
+          <div class="channel" style="color:#9b9b9b;">… 42 more</div>
+          <div class="section">Direct messages</div>
+          <div class="channel">Optro</div>
+          <div class="channel">@ Dana Cho</div>
+          <div class="channel">@ Sarah Park</div>
+        </aside>
+
+        <main class="slack-main">
+          <header class="slack-header">
+            <span style="font-family:ui-monospace,monospace;color:var(--luna-gray-500);">#</span>
+            ctrl-4-2-1
+            <span style="font-size:11px;color:var(--luna-gray-500);font-weight:500;margin-left:8px;">Quarterly user access review · prod-db-01</span>
+            <span style="margin-left:auto;font-size:12px;color:var(--luna-gray-500);">📌 4 pinned</span>
+          </header>
+
+          <div class="slack-messages">
+            <div class="slack-msg">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head">
+                  <span class="name">Optro ECM</span>
+                  <span class="bot-tag">APP</span>
+                  <span class="ts">Monday · 9:00 AM</span>
+                </div>
+                <p>Good morning, team. <strong>Weekly digest for control 4.2.1.</strong></p>
+                <div class="digest-card">
+                  <h5><span class="ai-chip">Optro ECM</span> Week of 2026-09-22</h5>
+                  <div class="grid">
+                    <div class="cell is-good"><div class="n">22</div><div class="l">accounts in scope</div></div>
+                    <div class="cell"><div class="n">3</div><div class="l">days to AR due</div></div>
+                    <div class="cell is-warn"><div class="n">1</div><div class="l">finding carryover</div></div>
+                  </div>
+                  <ul>
+                    <li>Q3 AR draft is ready — Weston, want me to file? <span class="luna-badge is-yellow" style="padding:0 6px;">Pending</span></li>
+                    <li>contractor-svc-09 still on list (Q2 carryover; HEL-3471 open since June 4).</li>
+                    <li>Dana has 0 reviews in queue for this control this week.</li>
+                  </ul>
+                </div>
+                <div class="reactions">
+                  <span class="rxn">👀 3</span>
+                  <span class="rxn">✅ 1</span>
+                </div>
+                <div class="thread-marker" data-go="thread">↳ 6 replies · last from Weston 22m ago — click to open thread</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slack-input">Message #ctrl-4-2-1…</div>
+        </main>
+
+        <aside class="slack-rightbar">
+          <h4>About this channel</h4>
+          <div class="pinned-item">
+            <div class="name">Control 4.2.1</div>
+            <div class="meta">Quarterly user access review · prod-db-01 · Audit cycle FY2026</div>
+          </div>
+          <h4 style="margin-top:14px;">Meta</h4>
+          <div class="meta-row"><span>Owner</span><strong>Weston Prohaska</strong></div>
+          <div class="meta-row"><span>Reviewer</span><strong>Dana Cho</strong></div>
+          <div class="meta-row"><span>Cadence</span><strong>Quarterly</strong></div>
+          <div class="meta-row"><span>Status</span><strong style="color:var(--luna-orange-700);">In progress</strong></div>
+          <div class="meta-row" style="border:none;"><span>Last sign-off</span><strong>Q2 FY26 · Jun 17</strong></div>
+          <h4 style="margin-top:14px;">Members (5)</h4>
+          <div class="members">
+            <div class="member-avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+            <div class="member-avatar">W</div>
+            <div class="member-avatar">D</div>
+            <div class="member-avatar">S</div>
+            <div class="member-avatar" style="background:var(--luna-gray-200);color:var(--luna-gray-600);">+1</div>
+          </div>
+          <h4 style="margin-top:14px;">📌 Pinned</h4>
+          <div class="pinned-item">
+            <div class="name">Q2 FY26 evidence (signed off)</div>
+            <div class="meta">AR-Q2FY26-prod-db.pdf · adequate w/ finding</div>
+          </div>
+          <div class="pinned-item">
+            <div class="name">HEL-3471 — Contractor deprovision</div>
+            <div class="meta">Open since 2026-06-04 · platform-eng</div>
+          </div>
+        </aside>
+      </div>
+      <p class="surface-caption"><strong>State 1.</strong> The channel for control 4.2.1, with ECM's Monday-morning digest. Click the thread marker to open the conversation.</p>
+    </div>
+
+    <!-- State 2: Thread expanded -->
+    <div class="flow-state" data-state="thread">
+      <div class="slack-window is-channel" role="region">
+        <aside class="slack-sidebar">
+          <div class="workspace"><span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>Helios Robotics</div>
+          <div class="section">SOX channels</div>
+          <div class="channel is-active"># ctrl-4-2-1</div>
+          <div class="channel"># ctrl-4-2-2</div>
+          <div class="channel"># ctrl-4-2-3</div>
+          <div class="channel" style="color:#9b9b9b;">… 44 more</div>
+          <div class="section">Direct messages</div>
+          <div class="channel">Optro</div>
+          <div class="channel">@ Dana Cho</div>
+          <div class="channel">@ Sarah Park</div>
+        </aside>
+
+        <main class="slack-main">
+          <header class="slack-header">
+            <span style="font-family:ui-monospace,monospace;color:var(--luna-gray-500);">#</span>
+            ctrl-4-2-1
+            <span style="font-size:11px;color:var(--luna-gray-500);font-weight:500;margin-left:8px;">→ Thread (6 replies)</span>
+            <button data-go="channel" style="margin-left:auto;font-size:12px;color:var(--luna-gray-500);background:none;border:none;cursor:pointer;">✕ Close thread</button>
+          </header>
+
+          <div class="slack-messages">
+            <div class="slack-msg" style="opacity:0.6;">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head"><span class="name">Optro ECM</span><span class="bot-tag">APP</span><span class="ts">Mon 9:00 AM</span></div>
+                <p style="font-size:13px;">Weekly digest for control 4.2.1 — Q3 AR draft ready, contractor-svc-09 carryover finding…</p>
+              </div>
+            </div>
+
+            <div class="slack-msg thread">
+              <div style="display:flex;gap:10px;margin-top:8px;">
+                <div class="avatar">W</div>
+                <div class="body">
+                  <div class="head">
+                    <span class="name">Weston Prohaska</span>
+                    <span class="ts">22 minutes ago</span>
+                  </div>
+                  <p>I'll file Q3 today. ECM, can you check if contractor-svc-09 deprovisioned over the weekend?</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="slack-msg thread">
+              <div style="display:flex;gap:10px;margin-top:8px;">
+                <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+                <div class="body">
+                  <div class="head">
+                    <span class="name">Optro ECM</span>
+                    <span class="bot-tag">APP</span>
+                    <span class="ts">22 minutes ago</span>
+                  </div>
+                  <p>
+                    Checked: <code style="font-size:12px;background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;">contractor-svc-09</code> still has <strong>dba-admin</strong>.
+                    Last login was <span class="ai-citation">2026-04-12</span>. Platform-eng has not posted to HEL-3471 in 9 days.
+                    I'll @-mention them in <code style="font-size:12px;background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;">#dba-team</code>.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="slack-msg thread">
+              <div style="display:flex;gap:10px;margin-top:8px;">
+                <div class="avatar">D</div>
+                <div class="body">
+                  <div class="head">
+                    <span class="name">Dana Cho</span>
+                    <span class="ts">12 minutes ago</span>
+                  </div>
+                  <p>👍 Same finding as last quarter. Weston, file with the carryover note and I'll review Wednesday morning. ECM — surface the HEL-3471 link in the receipt.</p>
+                  <div class="reactions"><span class="rxn">✅ 1</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="slack-msg thread">
+              <div style="display:flex;gap:10px;margin-top:8px;">
+                <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+                <div class="body">
+                  <div class="head">
+                    <span class="name">Optro ECM</span>
+                    <span class="bot-tag">APP</span>
+                    <span class="ts">11 minutes ago</span>
+                  </div>
+                  <p>
+                    Got it. Pinning the HEL-3471 link to this channel. Will auto-cross-link to the Q3 receipt when Weston files.
+                    <span class="luna-badge is-green" style="padding:1px 6px;">Pinned</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="slack-msg thread">
+              <div style="display:flex;gap:10px;margin-top:8px;">
+                <div class="avatar">W</div>
+                <div class="body">
+                  <div class="head"><span class="name">Weston Prohaska</span><span class="ts">3 minutes ago</span></div>
+                  <p>Filed. Should be on Dana's queue now.</p>
+                  <div class="reactions"><span class="rxn">🚀 2</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="slack-msg thread">
+              <div style="display:flex;gap:10px;margin-top:8px;">
+                <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+                <div class="body">
+                  <div class="head"><span class="name">Optro ECM</span><span class="bot-tag">APP</span><span class="ts">just now</span></div>
+                  <p>Confirmed. <strong>Q3 evidence filed</strong> with HEL-3471 cross-link. Dana — you're up. <button data-go="signoff" style="margin-left:8px;padding:3px 10px;font-size:11px;font-weight:600;background:var(--luna-teal-500);color:var(--luna-white);border:none;border-radius:4px;cursor:pointer;">Dana: sign off →</button></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slack-input">Reply in thread…</div>
+        </main>
+
+        <aside class="slack-rightbar">
+          <h4>About this thread</h4>
+          <div class="pinned-item">
+            <div class="name">Q3 AR weekly digest</div>
+            <div class="meta">Started Mon 9:00 AM · 6 replies · 3 participants</div>
+          </div>
+          <h4 style="margin-top:14px;">Cited in this thread</h4>
+          <div class="pinned-item">
+            <div class="name">AR-Q3FY26-prod-db.pdf</div>
+            <div class="meta">filed 3m ago · pending Dana</div>
+          </div>
+          <div class="pinned-item">
+            <div class="name">HEL-3471</div>
+            <div class="meta">Open · contractor-svc-09 deprovision</div>
+          </div>
+        </aside>
+      </div>
+      <p class="surface-caption"><strong>State 2.</strong> Thread expanded. Weston, ECM, and Dana converge here — same physical location for owner, reviewer, agent. Click Dana's sign-off button.</p>
+    </div>
+
+    <!-- State 3: Dana signs off -->
+    <div class="flow-state" data-state="signoff">
+      <div class="slack-window is-channel" role="region">
+        <aside class="slack-sidebar">
+          <div class="workspace"><span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>Helios Robotics</div>
+          <div class="section">SOX channels</div>
+          <div class="channel is-active"># ctrl-4-2-1</div>
+          <div class="channel"># ctrl-4-2-2</div>
+          <div class="channel"># ctrl-4-2-3</div>
+          <div class="channel" style="color:#9b9b9b;">… 44 more</div>
+          <div class="section">Direct messages</div>
+          <div class="channel">Optro</div>
+          <div class="channel">@ Dana Cho</div>
+          <div class="channel">@ Sarah Park</div>
+        </aside>
+
+        <main class="slack-main">
+          <header class="slack-header">
+            <span style="font-family:ui-monospace,monospace;color:var(--luna-gray-500);">#</span>
+            ctrl-4-2-1
+            <span style="font-size:11px;color:var(--luna-green-700);font-weight:600;margin-left:8px;">✓ Q3 signed off</span>
+            <span style="margin-left:auto;font-size:12px;color:var(--luna-gray-500);">📌 5 pinned</span>
+          </header>
+
+          <div class="slack-messages">
+            <div class="slack-msg" style="opacity:0.5;">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body"><div class="head"><span class="name">Optro ECM</span><span class="bot-tag">APP</span><span class="ts">Mon 9:00 AM</span></div><p style="font-size:13px;">[Weekly digest · 6 reply thread · resolved]</p></div>
+            </div>
+
+            <div class="slack-msg">
+              <div class="avatar">D</div>
+              <div class="body">
+                <div class="head"><span class="name">Dana Cho</span><span class="ts">Wed 9:42 AM</span></div>
+                <p>Signed off. Adequate with finding — carryover noted, HEL-3471 still tracking.</p>
+                <div class="signoff-card">
+                  <div class="head">
+                    <span style="background:var(--luna-green-500);color:var(--luna-white);padding:1px 6px;border-radius:10px;font-size:9px;letter-spacing:0.06em;">✓ SIGNED</span>
+                    Q3 FY26 · Control 4.2.1
+                  </div>
+                  <div class="body">
+                    <strong>Verdict: adequate with finding.</strong> Reviewer: Dana Cho · Internal Audit ·
+                    <span class="ai-citation">2026-09-26 09:42 PT</span>.
+                    Carryover note attached: contractor-svc-09 deprovision tracked under HEL-3471.
+                  </div>
+                </div>
+                <div class="reactions"><span class="rxn">🎉 2</span><span class="rxn">✅ 3</span></div>
+              </div>
+            </div>
+
+            <div class="slack-msg">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head"><span class="name">Optro ECM</span><span class="bot-tag">APP</span><span class="ts">just now</span></div>
+                <p>
+                  Q3 evidence sealed for control 4.2.1.
+                  Committed to chain at <span class="ai-citation">block #4,182,118</span>.
+                  Sarah, this brings your Q3 sealed count to <strong>219 of 218 evidence packets</strong> (one bonus from the carryover audit trail).
+                  <span class="luna-badge is-green" style="padding:1px 6px;margin-left:6px;">Sealed</span>
+                </p>
+                <div style="display:flex;gap:6px;margin-top:6px;">
+                  <button data-go="reset" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-teal-500);background:var(--luna-teal-500);color:var(--luna-white);cursor:pointer;">↻ See another week</button>
+                  <a href="chain-a.html" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);text-decoration:none;">View chain receipt ↗</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slack-input">Message #ctrl-4-2-1…</div>
+        </main>
+
+        <aside class="slack-rightbar">
+          <h4>Q3 FY26 status</h4>
+          <div class="pinned-item" style="border-left: 3px solid var(--luna-green-500);">
+            <div class="name" style="color:var(--luna-green-700);">✓ Signed off</div>
+            <div class="meta">Adequate with finding · Wed 9:42 AM · Dana</div>
+          </div>
+          <h4 style="margin-top:14px;">Meta</h4>
+          <div class="meta-row"><span>Owner</span><strong>Weston Prohaska</strong></div>
+          <div class="meta-row"><span>Reviewer</span><strong>Dana Cho ✓</strong></div>
+          <div class="meta-row"><span>Status</span><strong style="color:var(--luna-green-700);">Sealed</strong></div>
+          <div class="meta-row" style="border:none;"><span>Chain</span><strong style="font-family:ui-monospace,monospace;font-size:11px;color:var(--luna-purple-700);">#4,182,118</strong></div>
+          <h4 style="margin-top:14px;">📌 Pinned (5)</h4>
+          <div class="pinned-item" style="border-left: 3px solid var(--luna-green-500);">
+            <div class="name">Q3 FY26 sign-off ★ NEW</div>
+            <div class="meta">AR-Q3FY26-prod-db · sealed today</div>
+          </div>
+          <div class="pinned-item">
+            <div class="name">Q2 FY26 evidence</div>
+            <div class="meta">AR-Q2FY26-prod-db · sealed Jun 17</div>
+          </div>
+          <div class="pinned-item">
+            <div class="name">HEL-3471 — contractor deprovision</div>
+            <div class="meta">Open · cross-linked to Q3</div>
+          </div>
+        </aside>
+      </div>
+      <p class="surface-caption"><strong>State 3.</strong> Dana signed off in the same channel two days later. ECM seals the evidence, the right rail reflects the new state, the pinned panel records the milestone. Click "See another week" to reset.</p>
+    </div>
+
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

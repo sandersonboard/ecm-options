@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Slack · Take C — Conversational intake · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .slack-msg p code { font-size: 12px; background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; }
+  .slack-msg .receipt-line {
+    margin-top: 6px; padding: 6px 10px;
+    background: var(--luna-gray-50);
+    border-left: 2px solid var(--luna-gray-300);
+    font-size: 11px; color: var(--luna-gray-600);
+    font-family: ui-monospace, monospace;
+    line-height: 1.5;
+    border-radius: 0 4px 4px 0;
+  }
+  .slack-msg .receipt-line.is-action {
+    background: var(--luna-green-50);
+    border-left-color: var(--luna-green-500);
+    color: var(--luna-green-700);
+  }
+  .slack-typing-bubble {
+    display: inline-flex; gap: 3px;
+    padding: 6px 10px;
+    background: var(--luna-gray-100);
+    border-radius: 12px;
+    margin-top: 2px;
+  }
+  .slack-typing-bubble span {
+    width: 6px; height: 6px;
+    background: var(--luna-gray-500);
+    border-radius: 50%;
+    animation: blink 1.2s infinite ease-in-out;
+  }
+  .slack-typing-bubble span:nth-child(2) { animation-delay: 0.15s; }
+  .slack-typing-bubble span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+  .slack-input-with-button {
+    display: flex; gap: 8px; padding: 12px 20px; align-items: center;
+    border-top: 1px solid var(--luna-gray-100);
+  }
+  .slack-input-with-button .input-bx {
+    flex: 1;
+    border: 1px solid var(--luna-gray-300);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: var(--luna-gray-900);
+    background: var(--luna-white);
+  }
+  .slack-input-with-button button {
+    padding: 6px 14px;
+    background: var(--luna-teal-500); color: var(--luna-white);
+    border: none; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .slack-input-with-button button:hover { background: var(--luna-teal-600); }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Slack &amp; Teams · <span style="color:var(--luna-text);">Take C</span>
+      </div>
+      <h1 class="luna-heading-600">Talk to ECM like a colleague.</h1>
+      <p class="subtitle">No card. No buttons. Just natural-language back-and-forth, with a structured receipt-line beneath each AI turn so the audit trail stays intact.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Control owner</span>
+      <span class="luna-badge">Noun · Task</span>
+      <span class="luna-badge is-purple">Take C</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="slack-a.html">A · Bot DM ★</a>
+    <span class="sep">·</span>
+    <a href="slack-b.html">B · Channel-per-control</a>
+    <span class="sep">·</span>
+    <a href="slack-c.html" class="is-current">C · Conversational intake</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="open"><span class="num">1</span> Open DM</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="exchange"><span class="num">2</span> First exchange</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="clarify"><span class="num">3</span> Clarifying turn</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="filed"><span class="num">4</span> Filed</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- State 1: Open DM -->
+    <div class="flow-state" data-state="open">
+      <div class="slack-window" role="region">
+        <aside class="slack-sidebar">
+          <div class="workspace"><span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>Helios Robotics</div>
+          <div class="section">Direct messages</div>
+          <div class="channel is-active">Optro</div>
+          <div class="channel">@ Dana Cho</div>
+          <div class="channel">@ Sarah Park</div>
+          <div class="section">Channels</div>
+          <div class="channel"># sox-q3-close</div>
+          <div class="channel"># dba-team</div>
+          <div class="channel"># it-security</div>
+        </aside>
+
+        <main class="slack-main">
+          <header class="slack-header">
+            <span style="width:24px;height:24px;border-radius:4px;background:linear-gradient(135deg,#e5ddfa,#dbeaff);display:grid;place-items:center;"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></span>
+            Optro
+            <span style="font-size:11px;color:var(--luna-gray-500);font-weight:500;margin-left:4px;">App · GRC assistant</span>
+          </header>
+
+          <div class="slack-messages" style="justify-content:center;align-items:center;">
+            <div style="text-align:center;color:var(--luna-gray-500);padding:80px 20px;">
+              <div style="margin-bottom:14px;opacity:0.4;"><img src="optro-mark.svg" alt="Optro" style="width:40px;height:auto;display:block;margin:0 auto;" /></div>
+              <div style="font-size:15px;font-weight:600;color:var(--luna-gray-700);">No messages yet.</div>
+              <div style="font-size:13px;margin-top:4px;">Tell ECM what you did. It'll figure out the rest.</div>
+              <div style="margin-top:18px;display:inline-flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:380px;">
+                <span data-go="exchange" class="luna-badge" style="cursor:pointer;background:var(--luna-gray-100);padding:6px 12px;font-size:12px;text-transform:none;letter-spacing:0;font-weight:500;">"filed the q3 ar for prod db"</span>
+                <span class="luna-badge" style="background:var(--luna-gray-100);padding:6px 12px;font-size:12px;text-transform:none;letter-spacing:0;font-weight:500;">"what's overdue?"</span>
+                <span class="luna-badge" style="background:var(--luna-gray-100);padding:6px 12px;font-size:12px;text-transform:none;letter-spacing:0;font-weight:500;">"who reviews 4.2.1?"</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="slack-input-with-button">
+            <div class="input-bx" style="color:var(--luna-gray-500);">Message Optro…</div>
+            <button data-go="exchange">Send</button>
+          </div>
+        </main>
+      </div>
+      <p class="surface-caption"><strong>State 1.</strong> Empty DM. Tap a suggested prompt or "Send" to begin.</p>
+    </div>
+
+    <!-- State 2: First exchange -->
+    <div class="flow-state" data-state="exchange">
+      <div class="slack-window" role="region">
+        <aside class="slack-sidebar">
+          <div class="workspace"><span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>Helios Robotics</div>
+          <div class="section">Direct messages</div>
+          <div class="channel is-active">Optro</div>
+          <div class="channel">@ Dana Cho</div>
+          <div class="channel">@ Sarah Park</div>
+          <div class="section">Channels</div>
+          <div class="channel"># sox-q3-close</div>
+          <div class="channel"># dba-team</div>
+          <div class="channel"># it-security</div>
+        </aside>
+
+        <main class="slack-main">
+          <header class="slack-header">
+            <span style="width:24px;height:24px;border-radius:4px;background:linear-gradient(135deg,#e5ddfa,#dbeaff);display:grid;place-items:center;"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></span>
+            Optro
+          </header>
+
+          <div class="slack-messages">
+            <div class="slack-msg">
+              <div class="avatar">W</div>
+              <div class="body">
+                <div class="head"><span class="name">Weston Prohaska</span><span class="ts">Friday · 3:11 PM</span></div>
+                <p>hey, just filed the q3 AR for prod db. attaching the screenshot.</p>
+                <div style="margin-top:6px;width:200px;height:110px;background:linear-gradient(135deg,transparent 49%,var(--luna-gray-200) 50%,transparent 51%),linear-gradient(45deg,transparent 49%,var(--luna-gray-200) 50%,transparent 51%);background-color:var(--luna-gray-100);background-size:14px 14px;border:1px solid var(--luna-gray-200);border-radius:4px;display:grid;place-items:center;font-size:11px;color:var(--luna-gray-500);">AR-Q3FY26-prod-db.png · 1.2 MB</div>
+              </div>
+            </div>
+
+            <div class="slack-msg">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">just now</span></div>
+                <p>
+                  Got it — that looks like the ServiceNow AR export for <code>prod-db-01</code>. Same shape as Q2.
+                  <strong>Filing as Q3 evidence for control 4.2.1.</strong> One quick check: should I attach the DBA email too, like last quarter?
+                </p>
+                <div class="receipt-line">
+                  parsed: artifact=screenshot · cluster=prod-db-01 · cycle=Q3 FY26 · control=4.2.1 · classifier=93%
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slack-input-with-button">
+            <div class="input-bx">yes attach the dba email. and is contractor-svc-09 still there?</div>
+            <button data-go="clarify">Send</button>
+          </div>
+        </main>
+      </div>
+      <p class="surface-caption"><strong>State 2.</strong> Weston sent a screenshot in plain English; ECM parsed it and asked one clarifying question. The receipt line below makes the structure machine-readable. Click "Send" to reply.</p>
+    </div>
+
+    <!-- State 3: Clarifying turn -->
+    <div class="flow-state" data-state="clarify">
+      <div class="slack-window" role="region">
+        <aside class="slack-sidebar">
+          <div class="workspace"><span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>Helios Robotics</div>
+          <div class="section">Direct messages</div>
+          <div class="channel is-active">Optro</div>
+          <div class="channel">@ Dana Cho</div>
+          <div class="channel">@ Sarah Park</div>
+          <div class="section">Channels</div>
+          <div class="channel"># sox-q3-close</div>
+          <div class="channel"># dba-team</div>
+          <div class="channel"># it-security</div>
+        </aside>
+
+        <main class="slack-main">
+          <header class="slack-header">
+            <span style="width:24px;height:24px;border-radius:4px;background:linear-gradient(135deg,#e5ddfa,#dbeaff);display:grid;place-items:center;"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></span>
+            Optro
+          </header>
+
+          <div class="slack-messages">
+            <div class="slack-msg" style="opacity:0.6;">
+              <div class="avatar">W</div>
+              <div class="body"><div class="head"><span class="name">Weston Prohaska</span><span class="ts">3:11 PM</span></div><p style="font-size:13px;">filed the q3 AR [screenshot]</p></div>
+            </div>
+            <div class="slack-msg" style="opacity:0.6;">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">3:11 PM</span></div><p style="font-size:13px;">Filing as Q3 evidence for 4.2.1… attach DBA email too?</p></div>
+            </div>
+
+            <div class="slack-msg">
+              <div class="avatar">W</div>
+              <div class="body"><div class="head"><span class="name">Weston Prohaska</span><span class="ts">3:12 PM</span></div><p>yes attach the dba email. and is contractor-svc-09 still there? dana flagged it last quarter.</p></div>
+            </div>
+
+            <div class="slack-msg">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">just now</span></div>
+                <p>
+                  Pulled the current AR — yes, <code>contractor-svc-09</code> is still listed with <strong>dba-admin</strong>, last login April 12.
+                  The Q2 deprovision ticket (<strong>HEL-3471</strong>) is still open. Want me to file the Q3 evidence anyway, attach a carryover note, and ping platform-eng?
+                </p>
+                <div class="receipt-line">
+                  resolved: contractor-svc-09 (still active) · HEL-3471 (still open) · proposed=file+note+ping
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slack-input-with-button">
+            <div class="input-bx">yes do all that. thanks ecm.</div>
+            <button data-go="filed">Send</button>
+          </div>
+        </main>
+      </div>
+      <p class="surface-caption"><strong>State 3.</strong> ECM checked live data on its own. Now it's narrating a 3-step proposal back, asking Weston to ratify in one sentence. Click "Send" to authorize.</p>
+    </div>
+
+    <!-- State 4: Filed -->
+    <div class="flow-state" data-state="filed">
+      <div class="slack-window" role="region">
+        <aside class="slack-sidebar">
+          <div class="workspace"><span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>Helios Robotics</div>
+          <div class="section">Direct messages</div>
+          <div class="channel is-active">Optro</div>
+          <div class="channel">@ Dana Cho</div>
+          <div class="channel">@ Sarah Park</div>
+          <div class="section">Channels</div>
+          <div class="channel"># sox-q3-close</div>
+          <div class="channel"># dba-team</div>
+          <div class="channel"># it-security</div>
+        </aside>
+
+        <main class="slack-main">
+          <header class="slack-header">
+            <span style="width:24px;height:24px;border-radius:4px;background:linear-gradient(135deg,#e5ddfa,#dbeaff);display:grid;place-items:center;"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></span>
+            Optro
+          </header>
+
+          <div class="slack-messages">
+            <div class="slack-msg" style="opacity:0.5;">
+              <div class="avatar">W</div>
+              <div class="body"><div class="head"><span class="name">Weston Prohaska</span><span class="ts">3:11 PM</span></div><p style="font-size:13px;">filed the q3 AR…</p></div>
+            </div>
+            <div class="slack-msg" style="opacity:0.5;">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">3:11 PM</span></div><p style="font-size:13px;">Filing as Q3 evidence…</p></div>
+            </div>
+            <div class="slack-msg" style="opacity:0.5;">
+              <div class="avatar">W</div>
+              <div class="body"><div class="head"><span class="name">Weston Prohaska</span><span class="ts">3:12 PM</span></div><p style="font-size:13px;">yes attach the dba email…</p></div>
+            </div>
+            <div class="slack-msg" style="opacity:0.5;">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">3:12 PM</span></div><p style="font-size:13px;">contractor still listed… ping platform-eng?</p></div>
+            </div>
+
+            <div class="slack-msg">
+              <div class="avatar">W</div>
+              <div class="body"><div class="head"><span class="name">Weston Prohaska</span><span class="ts">3:12 PM</span></div><p>yes do all that. thanks ecm.</p></div>
+            </div>
+
+            <div class="slack-msg">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">3:13 PM</span></div>
+                <p>
+                  Done. Filed Q3 evidence (AR screenshot + DBA email) for control 4.2.1 with carryover note.
+                  Routed to <strong>Dana Cho</strong> for review. Tagged <code>@platform-eng</code> in <code>#dba-team</code> with the HEL-3471 link.
+                  <strong>Dana usually clears these by Tuesday afternoon.</strong> I'll wrist-tap you if anything bounces back.
+                </p>
+                <div class="receipt-line is-action">
+                  filed: evidence-pkg-AR-Q3FY26-prod-db (2 artifacts) · routed=Dana · pinged=#dba-team · sla=2bd · chain=⛓ block #4,180,221
+                </div>
+              </div>
+            </div>
+
+            <div class="slack-msg">
+              <div class="avatar">W</div>
+              <div class="body"><div class="head"><span class="name">Weston Prohaska</span><span class="ts">3:13 PM</span></div><p>perfect 🙌</p></div>
+            </div>
+          </div>
+
+          <div class="slack-input-with-button">
+            <div class="input-bx" style="color:var(--luna-gray-500);">Message Optro…</div>
+            <button data-go="reset">↻ New thread</button>
+          </div>
+        </main>
+      </div>
+      <p class="surface-caption"><strong>State 4.</strong> The conversation is the input modality, not the attestation. ECM parses Weston's natural language into a structured action and shows it back for explicit confirmation before anything files — the receipt line under each ECM turn is the structured form Weston approves. The audit trail isn't the chat; it's the structured action plus Weston's tap on the confirmation. <a href="chain-a.html" style="color:var(--luna-teal-500);">See the receipt ↗</a></p>
+    </div>
+
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

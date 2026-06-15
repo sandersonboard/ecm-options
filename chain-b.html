@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Blockchain · Take B — Verification widget · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .paper { max-width: 900px; margin: 0 auto; background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); box-shadow: var(--luna-shadow-200); padding: 56px 64px; font-family: Georgia, "Times New Roman", serif; color: #1a1a1a; line-height: 1.55; font-size: 14px; }
+  .paper-head { display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 2px solid #1a1a1a; padding-bottom: 16px; margin-bottom: 24px; }
+  .paper-head .firm { font-family: var(--luna-fontFamily); font-weight: 700; font-size: 18px; letter-spacing: -0.01em; }
+  .paper-head .firm .green-dot { display: inline-block; width: 14px; height: 14px; background: #86bc25; border-radius: 50%; vertical-align: middle; margin-right: 8px; }
+  .paper-head .meta { font-family: var(--luna-fontFamily); font-size: 11px; color: var(--luna-gray-600); text-align: right; line-height: 1.5; }
+  .paper h1 { font-family: Georgia, serif; font-size: 24px; margin: 0 0 6px; color: #1a1a1a; font-weight: 700; }
+  .paper .subtitle-paper { font-family: var(--luna-fontFamily); font-size: 12px; color: var(--luna-gray-600); margin-bottom: 24px; letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; }
+  .paper section { margin-bottom: 20px; }
+  .paper section h2 { font-family: Georgia, serif; font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; color: #1a1a1a; border-bottom: 1px solid #1a1a1a; padding-bottom: 4px; margin: 0 0 10px; font-weight: 700; }
+  .paper p { margin: 0 0 10px; }
+  .paper .control-ref { font-family: ui-monospace, monospace; font-size: 11px; background: #f5f3ee; padding: 1px 6px; border-radius: 2px; }
+  .paper-table { font-family: var(--luna-fontFamily); font-size: 12px; width: 100%; border-collapse: collapse; margin: 8px 0 4px; }
+  .paper-table th, .paper-table td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--luna-gray-200); }
+  .paper-table th { background: #f5f3ee; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--luna-gray-700); }
+  .paper-foot { margin-top: 30px; padding-top: 12px; border-top: 1px solid var(--luna-gray-200); font-family: var(--luna-fontFamily); font-size: 10px; color: var(--luna-gray-500); display: flex; justify-content: space-between; }
+
+  .opt-verify { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; background: var(--luna-gray-50); border: 1px solid var(--luna-gray-200); border-radius: 6px; font-family: var(--luna-fontFamily); font-size: 12px; color: var(--luna-gray-800); vertical-align: middle; text-decoration: none; cursor: pointer; transition: border-color 0.12s, box-shadow 0.12s; }
+  .opt-verify:hover { border-color: var(--luna-teal-300); box-shadow: 0 0 0 2px rgba(38,108,146,0.08); }
+  .opt-verify .ic { width: 22px; height: 22px; background: var(--luna-green-50); color: var(--luna-green-700); border-radius: 4px; display: grid; place-items: center; font-size: 13px; flex-shrink: 0; }
+  .opt-verify .label { font-weight: 600; }
+  .opt-verify .name { color: var(--luna-gray-600); font-family: ui-monospace, monospace; font-size: 11px; }
+
+  .opt-panel { margin: 14px 0 4px; padding: 14px 16px; background: var(--luna-gray-50); border: 1px solid var(--luna-gray-200); border-radius: 8px; font-family: var(--luna-fontFamily); font-size: 13px; color: var(--luna-gray-800); }
+  .opt-panel .panel-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .opt-panel .panel-head .badge { padding: 3px 9px; font-size: 11px; font-weight: 700; background: var(--luna-green-50); color: var(--luna-green-700); border: 1px solid var(--luna-green-100); border-radius: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .opt-panel .panel-head .title { font-weight: 700; color: var(--luna-gray-900); font-size: 13px; }
+  .opt-panel .narration { margin: 6px 0 10px; line-height: 1.55; color: var(--luna-gray-700); }
+  .opt-panel .narration strong { color: var(--luna-gray-900); }
+  .opt-panel .panel-meta { display: grid; grid-template-columns: 120px 1fr; gap: 6px 12px; font-size: 12px; padding: 8px 0; border-top: 1px solid var(--luna-gray-200); }
+  .opt-panel .panel-meta .k { color: var(--luna-gray-600); text-transform: uppercase; font-size: 10px; letter-spacing: 0.04em; font-weight: 600; padding-top: 2px; }
+  .opt-panel .panel-meta .v { color: var(--luna-gray-900); }
+  .opt-panel .panel-meta .v.hash { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-purple-700); }
+  .opt-panel .show-chain { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: var(--luna-white); border: 1px solid var(--luna-gray-300); border-radius: 6px; font-size: 11px; font-weight: 600; color: var(--luna-gray-700); margin-top: 4px; text-decoration: none; }
+  .opt-panel .show-chain:hover { border-color: var(--luna-teal-500); color: var(--luna-teal-500); }
+  .opt-panel .footer-strip { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; font-size: 11px; color: var(--luna-gray-500); border-top: 1px solid var(--luna-gray-200); margin-top: 6px; }
+
+  .auditor-tip {
+    position: relative; display: inline-block; margin-left: 4px;
+    background: var(--luna-yellow-100); padding: 4px 8px;
+    font-family: var(--luna-fontFamily); font-size: 11px;
+    border-radius: 4px; color: var(--luna-gray-800);
+    font-style: italic; vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Blockchain · <span style="color:var(--luna-text);">Take B</span>
+      </div>
+      <h1 class="luna-heading-600">Embedded in the auditor's working paper.</h1>
+      <p class="subtitle">A small "✓ Verified by Optro" badge sits inline in the Deloitte working paper. One click expands plain-English verification. Zero crypto vocabulary in the auditor's daily tools.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · External auditor</span>
+      <span class="luna-badge is-purple">Noun · Evidence</span>
+      <span class="luna-badge is-purple">Take B</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="chain-a.html">A · Receipt + narration ★</a>
+    <span class="sep">·</span>
+    <a href="chain-b.html" class="is-current">B · Verification widget</a>
+    <span class="sep">·</span>
+    <a href="chain-c.html">C · Audit committee dashboard</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="badge"><span class="num">1</span> Inline badge</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="expanded"><span class="num">2</span> Expanded panel</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="deeper"><span class="num">3</span> Drill to full chain</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- State 1: Inline badge -->
+    <div class="flow-state" data-state="badge">
+      <div class="paper">
+        <div class="paper-head">
+          <div>
+            <div class="firm"><span class="green-dot"></span>Deloitte &amp; Touche LLP</div>
+            <div style="font-family:var(--luna-fontFamily);font-size:10px;color:var(--luna-gray-500);margin-top:2px;letter-spacing:0.04em;text-transform:uppercase;">Working paper · confidential</div>
+          </div>
+          <div class="meta">
+            Client: Helios Robotics, Inc.<br/>
+            Engagement: FY2026 SOX 404 attestation<br/>
+            Engagement partner: J. Vargas<br/>
+            WP ref: <strong>SOX-AR-4.2.1-Q3</strong>
+          </div>
+        </div>
+
+        <div class="subtitle-paper">Walkthrough · ITGC · Logical Access · Control 4.2.1</div>
+        <h1>Production database access review — quarterly</h1>
+
+        <section>
+          <h2>1. Control description</h2>
+          <p>Management performs a quarterly review of all user and service accounts holding read or administrative privileges on the production database cluster <span class="control-ref">prod-db-01.helios</span>. Evidence: ServiceNow query export, DBA attestation, exception log.</p>
+        </section>
+
+        <section>
+          <h2>2. Test of design and operating effectiveness</h2>
+          <p>We obtained the Q3 FY2026 access review packet (cycle 2026-09-25). We inspected the ServiceNow export, the DBA attestation email, and the reviewer's sign-off note. Control operated as designed.</p>
+          <table class="paper-table">
+            <thead><tr><th>Sample</th><th>Account</th><th>Privilege</th><th>Attestation</th><th>Re-perf</th></tr></thead>
+            <tbody>
+              <tr><td>S-01</td><td>m.chen@helios.com</td><td>dba-admin</td><td>✓ Weston, 09-25</td><td>Match</td></tr>
+              <tr><td>S-02</td><td>contractor-svc-09</td><td>dba-admin (carryover)</td><td>HEL-3471 open</td><td>Match</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2>3. Evidence provenance</h2>
+          <p>
+            The evidence packet is sourced from the Optro ECM system of record. We verified the packet has not been altered since management's sign-off through the embedded verification widget:
+          </p>
+          <p style="margin: 10px 0;">
+            Verification:
+            <a class="opt-verify" data-go="expanded">
+              <span class="ic">✓</span>
+              <span class="label">Verified by Optro</span>
+              <span class="name">AR-Q3FY26-prod-db</span>
+              <span style="color: var(--luna-gray-400);">·</span>
+              <span style="font-size:11px;color:var(--luna-gray-600);">last refresh 18 days ago</span>
+            </a>
+            <span class="auditor-tip">← click to expand</span>
+          </p>
+        </section>
+
+        <div class="paper-foot">
+          <span>Prepared by: M. Vasquez · Reviewed by: J. Vargas</span>
+          <span>Page 3 of 11 · WP-SOX-AR-4.2.1-Q3</span>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 1.</strong> The widget is small enough to live in a paragraph of an auditor's working paper. No crypto vocabulary on the surface — just a checkmark and a name. Click it.</p>
+    </div>
+
+    <!-- State 2: Expanded -->
+    <div class="flow-state" data-state="expanded">
+      <div class="paper">
+        <div class="paper-head">
+          <div><div class="firm"><span class="green-dot"></span>Deloitte &amp; Touche LLP</div></div>
+          <div class="meta">WP ref: <strong>SOX-AR-4.2.1-Q3</strong></div>
+        </div>
+        <div class="subtitle-paper">Walkthrough · ITGC · Logical Access · Control 4.2.1</div>
+
+        <section>
+          <h2>3. Evidence provenance — verification expanded</h2>
+          <p>
+            Verification:
+            <a class="opt-verify" data-go="badge">
+              <span class="ic">✓</span>
+              <span class="label">Verified by Optro</span>
+              <span class="name">AR-Q3FY26-prod-db</span>
+            </a>
+          </p>
+          <div class="opt-panel">
+            <div class="panel-head">
+              <span class="badge">✓ Verified · no tampering</span>
+              <span class="title">AR-Q3FY26-prod-db · sealed</span>
+              <span style="margin-left:auto;"><button data-go="badge" style="background:none;border:none;cursor:pointer;color:var(--luna-gray-500);font-size:14px;">✕</button></span>
+            </div>
+            <div class="narration">
+              <span class="ai-chip">Optro ECM</span>
+              This evidence artifact has <strong>4 attestations</strong> over a 19-day window — uploaded by Weston Prohaska, classified by ECM, signed off by Dana Cho with finding, and locked by Sarah Park for external audit.
+              <strong>No edits since reviewer sign-off.</strong> The hash committed at sign-off matches the current hash; this artifact is safe to test.
+            </div>
+            <div class="panel-meta">
+              <div class="k">Source</div><div class="v">Optro ECM · Helios Robotics</div>
+              <div class="k">Control</div><div class="v">4.2.1 · prod-db-01 AR · Q3 FY2026</div>
+              <div class="k">Signed-off by</div><div class="v">Dana Cho (Internal Audit) · 2026-09-26</div>
+              <div class="k">Latest hash</div><div class="v hash">0x91a3·c4ed·7b22·4f08·d9e1·2f5a·6c81·b03d</div>
+              <div class="k">Verifier check</div><div class="v" style="color:var(--luna-green-700);font-weight:600;">PASS · last verified just now</div>
+            </div>
+            <a class="show-chain" data-go="deeper">View full chain ↗</a>
+            <button data-go="badge" class="show-chain" style="background:none;margin-left:6px;">Collapse</button>
+            <div class="footer-strip">
+              <span>Embed protocol · widget v2.4 · Helios tenant</span>
+              <span>Verifier independent · not Deloitte-hosted</span>
+            </div>
+          </div>
+        </section>
+      </div>
+      <p class="surface-caption"><strong>State 2.</strong> Expanded panel. Plain-English narrative + structured metadata. The auditor reads two sentences and the work is done. Click "View full chain" for the deeper view.</p>
+    </div>
+
+    <!-- State 3: Drilled to chain -->
+    <div class="flow-state" data-state="deeper">
+      <div class="paper" style="text-align: center; padding: 80px 64px;">
+        <div style="font-size:24px;margin-bottom:16px;">↗</div>
+        <h1 style="font-size:20px;margin-bottom:8px;">Opening full chain receipt</h1>
+        <p style="font-family:var(--luna-fontFamily);font-size:13px;color:var(--luna-gray-600);max-width:520px;margin:0 auto 24px;line-height:1.6;">
+          Clicking "View full chain" deep-links the auditor to the Take A receipt view — same artifact, same chain, but rendered with the full attestation history Sarah Park typically hands to the audit committee.
+        </p>
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <a href="chain-a.html" class="luna-btn" style="text-decoration:none;">Open Take A · Receipt + narration →</a>
+          <button class="luna-btn is-secondary" data-go="expanded">← Back to widget</button>
+          <button class="luna-btn is-ghost" data-go="reset">Reset flow</button>
+        </div>
+        <div style="margin-top:32px;font-family:var(--luna-fontFamily);font-size:11px;color:var(--luna-gray-500);">
+          The widget's job ends here. From this point, the deep-dive lives in Take A.
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 3.</strong> Click-through to the full chain. The widget intentionally hands off; it's not trying to be a chain viewer itself.</p>
+    </div>
+
+  </div>
+
+  <p class="surface-caption" style="margin-top:32px;">
+    The widget reduces the blockchain story to a single inline badge in the auditor's working paper. The auditor never learns new vocabulary, the working paper stays a working paper, and verification runs underneath.
+  </p>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

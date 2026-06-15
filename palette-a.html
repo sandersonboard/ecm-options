@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Palette · Take A — Smart search · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .pal-search-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--luna-gray-100);
+  }
+  .pal-search-row .icon { width: 18px; height: 18px; color: var(--luna-gray-400); flex-shrink: 0; }
+  .pal-search-row input {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-size: 18px; font-weight: 400;
+    color: var(--luna-gray-900);
+    font-family: var(--luna-fontFamily);
+    caret-color: var(--luna-teal-500);
+  }
+  .pal-search-row .rank-hint {
+    font-size: 11px; color: var(--luna-gray-500);
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 8px;
+    background: var(--luna-gray-50);
+    border-radius: var(--luna-radius-full);
+  }
+  .pal-search-row .rank-hint .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--luna-purple-500); }
+  .pal-section-lbl {
+    padding: 12px 22px 4px;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--luna-gray-500);
+  }
+  .pal-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 22px;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .pal-row:hover { background: var(--luna-gray-50); }
+  .pal-row.is-selected {
+    background: var(--luna-teal-50);
+    border-left-color: var(--luna-teal-500);
+  }
+  .pal-row .ico {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+  .pal-row .ico.is-control { background: var(--luna-teal-100); color: var(--luna-teal-700); }
+  .pal-row .ico.is-evidence { background: var(--luna-purple-100); color: var(--luna-purple-700); }
+  .pal-row .ico.is-person { background: var(--luna-gray-100); color: var(--luna-gray-700); }
+  .pal-row .ico.is-task { background: var(--luna-blue-100); color: var(--luna-blue-700); }
+  .pal-row .body { flex: 1; min-width: 0; }
+  .pal-row .t1 { font-size: 14px; font-weight: 500; color: var(--luna-gray-900); }
+  .pal-row .t1 mark { background: var(--luna-yellow-100); color: var(--luna-gray-900); padding: 0 2px; border-radius: 2px; }
+  .pal-row .t2 { font-size: 12px; color: var(--luna-gray-600); display: flex; gap: 8px; align-items: center; }
+  .pal-row .t2 .sep { color: var(--luna-gray-300); }
+  .pal-row .arrow { color: var(--luna-gray-400); font-family: ui-monospace, monospace; }
+  .pal-row.is-selected .arrow { color: var(--luna-teal-500); }
+  .pal-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 22px;
+    border-top: 1px solid var(--luna-gray-100);
+    background: var(--luna-gray-50);
+    font-size: 11px; color: var(--luna-gray-500);
+  }
+  .kbd { font-family: ui-monospace, monospace; padding: 1px 5px; background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 3px; }
+
+  .pal-empty {
+    padding: 40px 22px;
+    text-align: center;
+    color: var(--luna-gray-500);
+    font-size: 13px;
+  }
+  .pal-empty .big-ic { font-size: 28px; opacity: 0.4; margin-bottom: 10px; }
+  .pal-empty .tip { font-size: 11px; margin-top: 8px; }
+
+  /* Control detail view */
+  .ctrl-detail { padding: 18px 22px; }
+  .ctrl-detail .ctrl-head { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .ctrl-detail .ctrl-head .back-btn {
+    background: none; border: none; color: var(--luna-gray-500);
+    cursor: pointer; font-size: 13px; padding: 4px 8px; border-radius: 4px;
+  }
+  .ctrl-detail .ctrl-head .back-btn:hover { background: var(--luna-gray-100); color: var(--luna-gray-800); }
+  .ctrl-detail h3 { margin: 0; font-size: 17px; font-weight: 700; color: var(--luna-gray-900); flex: 1; }
+  .ctrl-detail .ctrl-grid { display: grid; grid-template-columns: 100px 1fr; gap: 4px 12px; font-size: 13px; margin: 4px 0 12px; }
+  .ctrl-detail .ctrl-grid .k { color: var(--luna-gray-600); text-transform: uppercase; font-size: 10px; letter-spacing: 0.04em; font-weight: 700; padding-top: 4px; }
+  .ctrl-detail .ctrl-grid .v { color: var(--luna-gray-900); }
+  .ctrl-detail h4 {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--luna-gray-500);
+    margin: 16px 0 6px;
+  }
+  .ctrl-detail .quick-actions {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    padding: 10px 12px;
+    background: var(--luna-gray-50);
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+  .ctrl-detail .quick-actions .qa {
+    padding: 5px 10px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--luna-gray-700);
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .ctrl-detail .quick-actions .qa:hover { border-color: var(--luna-teal-300); }
+  .ctrl-detail .quick-actions .qa.is-primary {
+    background: var(--luna-teal-500); color: var(--luna-white); border-color: var(--luna-teal-500);
+  }
+  .ctrl-detail .evidence-mini {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 4px;
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+  .ctrl-detail .evidence-mini .ic { width: 22px; height: 22px; background: var(--luna-purple-100); color: var(--luna-purple-700); border-radius: 4px; display: grid; place-items: center; flex-shrink: 0; }
+  .ctrl-detail .evidence-mini .name { flex: 1; font-weight: 500; }
+  .ctrl-detail .evidence-mini .meta { color: var(--luna-gray-500); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Command palette · <span style="color:var(--luna-text);">Take A</span>
+      </div>
+      <h1 class="luna-heading-600">Search, ranked by intent. Nothing more.</h1>
+      <p class="subtitle">Weston hits ⌘K from anywhere and types. AI quietly understands what he meant and ranks the results. No agent, no chat, no draft — just a faster way to navigate.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Control owner</span>
+      <span class="luna-badge">Noun · Task</span>
+      <span class="luna-badge is-purple">Take A</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="palette-a.html" class="is-current">A · Smart search</a>
+    <span class="sep">·</span>
+    <a href="palette-b.html">B · Agentic dialog</a>
+    <span class="sep">·</span>
+    <a href="palette-c.html">C · Prepped drafts ★</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="empty"><span class="num">1</span> Empty palette</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="ranked"><span class="num">2</span> Ranked results</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="detail"><span class="num">3</span> Control opened</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- State 1: empty -->
+    <div class="flow-state" data-state="empty">
+      <div class="palette-bg">
+        <div class="palette-window" role="dialog">
+          <div class="pal-search-row">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>
+            </svg>
+            <input type="text" value="" placeholder="Search controls, evidence, people…" readonly />
+            <span class="rank-hint"><span class="dot"></span> AI-ranked</span>
+            <span class="kbd">esc</span>
+          </div>
+
+          <div class="pal-empty">
+            <div class="big-ic">⌘K</div>
+            <div>Type to search 47 controls, 218 artifacts, your team.</div>
+            <div class="tip"><span class="kbd">↑↓</span> recents · <span class="kbd">⌘N</span> new evidence</div>
+          </div>
+
+          <div class="pal-section-lbl">Recent</div>
+          <div class="pal-row" data-go="ranked">
+            <div class="ico is-control">🛡</div>
+            <div class="body">
+              <div class="t1">Control 4.2.1 — Quarterly user access review · prod-db-01</div>
+              <div class="t2"><span>last visited 2 days ago</span></div>
+            </div>
+            <span class="arrow">→</span>
+          </div>
+
+          <div class="pal-foot">
+            <div style="display:flex;gap:12px;">
+              <span><span class="kbd">↑↓</span> navigate</span>
+              <span><span class="kbd">↵</span> open</span>
+              <span><span class="kbd">esc</span> close</span>
+            </div>
+            <span>Start typing… <span data-go="ranked" style="color:var(--luna-teal-500);cursor:pointer;text-decoration:underline;font-weight:500;">(demo · jump to results)</span></span>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 1.</strong> Empty palette. Click the recent row or "jump to results" to advance.</p>
+    </div>
+
+    <!-- State 2: ranked results -->
+    <div class="flow-state" data-state="ranked">
+      <div class="palette-bg">
+        <div class="palette-window" role="dialog">
+          <div class="pal-search-row">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>
+            </svg>
+            <input type="text" value="ar q3 prod db" readonly />
+            <span class="rank-hint"><span class="dot"></span> AI-ranked</span>
+            <span class="kbd">esc</span>
+          </div>
+
+          <div class="pal-section-lbl">Controls</div>
+          <div class="pal-row is-selected" data-go="detail">
+            <div class="ico is-control">🛡</div>
+            <div class="body">
+              <div class="t1">Control 4.2.1 — Quarterly <mark>user access review</mark> · prod-db-01</div>
+              <div class="t2"><span>Owner: Weston Prohaska</span><span class="sep">·</span><span>Due in 3 days</span><span class="sep">·</span><span class="luna-badge is-yellow" style="padding:1px 6px;">In progress</span></div>
+            </div>
+            <span class="arrow">↵</span>
+          </div>
+
+          <div class="pal-row">
+            <div class="ico is-control">🛡</div>
+            <div class="body">
+              <div class="t1">Control 4.2.2 — Annual <mark>access</mark> certification · prod-db-01</div>
+              <div class="t2"><span>Owner: Weston Prohaska</span><span class="sep">·</span><span>Not due this cycle</span></div>
+            </div>
+            <span class="arrow">→</span>
+          </div>
+
+          <div class="pal-section-lbl">Evidence</div>
+          <div class="pal-row">
+            <div class="ico is-evidence">📄</div>
+            <div class="body">
+              <div class="t1">AR-<mark>Q3</mark>FY26-<mark>prod-db</mark>.pdf · <span style="color:var(--luna-gray-500);">draft</span></div>
+              <div class="t2"><span>Created today, 11:02 AM</span><span class="sep">·</span><span>Tied to 4.2.1</span></div>
+            </div>
+            <span class="arrow">→</span>
+          </div>
+
+          <div class="pal-row">
+            <div class="ico is-evidence">📄</div>
+            <div class="body">
+              <div class="t1">AR-Q2FY26-<mark>prod-db</mark>.pdf</div>
+              <div class="t2"><span>Filed 91 days ago</span><span class="sep">·</span><span class="luna-badge is-green" style="padding:1px 6px;">Adequate</span></div>
+            </div>
+            <span class="arrow">→</span>
+          </div>
+
+          <div class="pal-row">
+            <div class="ico is-evidence">📄</div>
+            <div class="body">
+              <div class="t1">DBA-attestation-Q2FY26.eml</div>
+              <div class="t2"><span>Filed 91 days ago</span><span class="sep">·</span><span>Cross-ref to AR Q2</span></div>
+            </div>
+            <span class="arrow">→</span>
+          </div>
+
+          <div class="pal-section-lbl">Tasks</div>
+          <div class="pal-row">
+            <div class="ico is-task">📋</div>
+            <div class="body">
+              <div class="t1">Quarterly <mark>AR</mark> · <mark>prod-db</mark>-01 · <mark>Q3</mark> FY26</div>
+              <div class="t2"><span>Assigned to you</span><span class="sep">·</span><span>3 days remaining</span></div>
+            </div>
+            <span class="arrow">→</span>
+          </div>
+
+          <div class="pal-row">
+            <div class="ico is-task">📋</div>
+            <div class="body">
+              <div class="t1">Deprovision contractor-svc-09 from <mark>prod-db</mark></div>
+              <div class="t2"><span>HEL-3471</span><span class="sep">·</span><span>Open since Q2</span><span class="sep">·</span><span class="luna-badge is-red" style="padding:1px 6px;">Carryover</span></div>
+            </div>
+            <span class="arrow">→</span>
+          </div>
+
+          <div class="pal-section-lbl">People</div>
+          <div class="pal-row">
+            <div class="ico is-person">D</div>
+            <div class="body">
+              <div class="t1">Dana Cho — Internal Audit reviewer for 4.2.1</div>
+              <div class="t2"><span>dana.cho@helios.com</span><span class="sep">·</span><span>Reviewer on 14 controls</span></div>
+            </div>
+            <span class="arrow">→</span>
+          </div>
+
+          <div class="pal-foot">
+            <div style="display:flex;gap:12px;">
+              <span><span class="kbd">↑↓</span> navigate</span>
+              <span><span class="kbd">↵</span> open</span>
+              <span><span class="kbd">esc</span> close</span>
+            </div>
+            <span>9 results · AI-ranked by intent</span>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 2.</strong> AI ranks results by intent — control on top, related evidence next, then tasks and people. Press <span class="kbd">↵</span> or click the top row to navigate.</p>
+    </div>
+
+    <!-- State 3: control detail -->
+    <div class="flow-state" data-state="detail">
+      <div class="palette-bg">
+        <div class="palette-window" role="dialog">
+          <div class="ctrl-detail">
+            <div class="ctrl-head">
+              <button class="back-btn" data-go="ranked">← Back to results</button>
+              <h3>Control 4.2.1</h3>
+              <span class="luna-badge is-yellow" style="padding:2px 8px;">In progress</span>
+            </div>
+
+            <div class="ctrl-grid">
+              <div class="k">Title</div><div class="v">Quarterly user access review · prod-db-01.helios</div>
+              <div class="k">Owner</div><div class="v">Weston Prohaska (you)</div>
+              <div class="k">Reviewer</div><div class="v">Dana Cho · Internal Audit</div>
+              <div class="k">Cycle</div><div class="v">Q3 FY2026 · due in 3 days</div>
+              <div class="k">Cadence</div><div class="v">Quarterly</div>
+              <div class="k">Last sign-off</div><div class="v">Q2 FY26 · 2026-06-17 · adequate with finding</div>
+            </div>
+
+            <h4>Quick actions</h4>
+            <div class="quick-actions">
+              <button class="qa is-primary">File Q3 evidence</button>
+              <button class="qa">Open Q2 sign-off</button>
+              <button class="qa">View HEL-3471 (carryover)</button>
+              <button class="qa">Ping Dana</button>
+            </div>
+
+            <h4>Recent evidence</h4>
+            <div class="evidence-mini">
+              <div class="ic">📄</div>
+              <div class="name">AR-Q3FY26-prod-db.pdf · draft</div>
+              <div class="meta">created 11:02 AM</div>
+            </div>
+            <div class="evidence-mini">
+              <div class="ic">📄</div>
+              <div class="name">AR-Q2FY26-prod-db.pdf</div>
+              <div class="meta">filed 91d ago · adequate</div>
+            </div>
+            <div class="evidence-mini">
+              <div class="ic">✉</div>
+              <div class="name">DBA-attestation-Q2FY26.eml</div>
+              <div class="meta">cross-ref to AR Q2</div>
+            </div>
+          </div>
+
+          <div class="pal-foot">
+            <div style="display:flex;gap:12px;">
+              <span><span class="kbd">esc</span> back to results</span>
+              <span><span class="kbd">⌘↵</span> file evidence</span>
+            </div>
+            <span><button data-go="reset" style="background:none;border:none;color:var(--luna-teal-500);font-weight:500;cursor:pointer;font-family:inherit;font-size:11px;">Reset flow</button></span>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 3.</strong> Navigated. Control 4.2.1 opens to a focused detail view with quick actions. No agent, no chat — just navigation. The deliberate restraint is the point.</p>
+    </div>
+
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

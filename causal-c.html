@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Causal AI · Take C — Risk propagation map · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .cap-stage { max-width: 1100px; margin: 0 auto; }
+  .cap-panel { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); overflow: hidden; box-shadow: var(--luna-shadow-100); margin-bottom: 16px; }
+  .cap-panel .head { padding: 14px 18px; border-bottom: 1px solid var(--luna-gray-200); display: flex; align-items: center; gap: 10px; }
+  .cap-panel .head h3 { font-size: 14px; font-weight: 700; color: var(--luna-gray-900); margin: 0; flex: 1; }
+  .cap-panel .head .meta { font-size: 11px; color: var(--luna-gray-500); }
+
+  /* Risk graph */
+  .risk-canvas {
+    padding: 24px 22px;
+    background:
+      radial-gradient(circle at 15% 50%, var(--luna-teal-50), transparent 30%),
+      radial-gradient(circle at 85% 50%, var(--luna-red-50), transparent 30%);
+    min-height: 420px;
+  }
+  .risk-row { display: grid; grid-template-columns: 1fr 32px 1fr 32px 1fr; gap: 8px; align-items: center; margin-bottom: 14px; }
+  .risk-arrow { text-align: center; color: var(--luna-gray-400); font-family: ui-monospace, monospace; font-size: 16px; }
+  .risk-node {
+    padding: 10px 12px;
+    background: var(--luna-white);
+    border: 1.5px solid var(--luna-gray-300);
+    border-radius: 7px;
+    box-shadow: var(--luna-shadow-100);
+    text-align: left;
+    position: relative;
+  }
+  .risk-node .label { font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 4px; }
+  .risk-node .name { font-size: 12.5px; font-weight: 600; color: var(--luna-gray-900); margin-bottom: 2px; line-height: 1.35; }
+  .risk-node .meta { font-size: 11px; color: var(--luna-gray-600); line-height: 1.35; }
+  .risk-node.is-control { border-color: var(--luna-teal-300); }
+  .risk-node.is-control .label { color: var(--luna-teal-700); }
+  .risk-node.is-control .id { font-family: ui-monospace, monospace; font-size: 10px; color: var(--luna-teal-700); background: var(--luna-teal-50); padding: 1px 5px; border-radius: 3px; }
+  .risk-node.is-risk { border-color: var(--luna-yellow-500); }
+  .risk-node.is-risk .label { color: var(--luna-yellow-700); }
+  .risk-node.is-assertion { border-color: var(--luna-red-400); }
+  .risk-node.is-assertion .label { color: var(--luna-red-700); }
+
+  .risk-node.is-failing { background: linear-gradient(135deg, var(--luna-red-50), var(--luna-white)); border-color: var(--luna-red-500); box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18), var(--luna-shadow-200); }
+  .risk-node.is-failing .label { color: var(--luna-red-700); }
+  .risk-node.is-at-risk { background: var(--luna-orange-50); border-color: var(--luna-orange-500); }
+  .risk-node.is-at-risk .label { color: var(--luna-orange-700); }
+
+  /* Material misstatement summary */
+  .mm-strip { padding: 18px 22px; background: var(--luna-red-50); border-top: 1px solid var(--luna-red-100); border-bottom: 1px solid var(--luna-red-100); }
+  .mm-strip h4 { margin: 0 0 6px; font-size: 13px; font-weight: 700; color: var(--luna-red-700); }
+  .mm-strip p { font-size: 13px; color: var(--luna-gray-800); line-height: 1.6; margin: 0; }
+  .mm-strip p strong { color: var(--luna-gray-900); }
+
+  /* Status legend */
+  .legend { display: flex; gap: 14px; padding: 12px 22px; background: var(--luna-gray-50); font-size: 12px; color: var(--luna-gray-700); border-bottom: 1px solid var(--luna-gray-200); }
+  .legend .item { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .swatch { width: 14px; height: 14px; border-radius: 4px; }
+
+  /* Detail panel */
+  .detail-panel { padding: 18px 22px; }
+  .detail-panel h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin: 0 0 10px; }
+  .impact-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .impact-card { padding: 12px 14px; background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 6px; }
+  .impact-card .l { font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--luna-gray-500); }
+  .impact-card .v { font-size: 18px; font-weight: 700; color: var(--luna-gray-900); margin-top: 4px; line-height: 1.1; }
+  .impact-card .delta { font-size: 11px; color: var(--luna-gray-500); margin-top: 3px; line-height: 1.45; }
+  .impact-card.is-warn .v { color: var(--luna-orange-700); }
+  .impact-card.is-bad .v { color: var(--luna-red-700); }
+
+  /* Mitigation list */
+  .mitigations { padding: 14px 22px 22px; }
+  .mitigations h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin: 0 0 10px; }
+  .mitigation-row { display: grid; grid-template-columns: 30px 1fr 130px; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--luna-gray-100); align-items: flex-start; }
+  .mitigation-row:last-child { border-bottom: 0; }
+  .mitigation-row .ic { font-size: 16px; padding-top: 2px; }
+  .mitigation-row h5 { margin: 0 0 2px; font-size: 13px; font-weight: 600; color: var(--luna-gray-900); }
+  .mitigation-row .body { font-size: 12px; color: var(--luna-gray-700); line-height: 1.5; }
+  .mitigation-row .body code { background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; }
+  .mitigation-row .owner { font-size: 11px; color: var(--luna-gray-600); text-align: right; padding-top: 4px; }
+  .mitigation-row .owner .pill { display: inline-block; padding: 2px 8px; background: var(--luna-gray-100); color: var(--luna-gray-800); border-radius: 999px; font-weight: 600; font-size: 11px; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Causal AI · <span style="color:var(--luna-text);">Take C</span>
+      </div>
+      <h1 class="luna-heading-600">When a control fails, the graph shows what's at risk.</h1>
+      <p class="subtitle">Controls mitigate risks; risks affect assertions; assertions roll up to material misstatement. The risk graph makes that chain visible. When something fails in red, the propagation map shows the audit committee exactly which downstream assertions are now at risk.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Audit committee</span>
+      <span class="luna-badge">Noun · Risk</span>
+      <span class="luna-badge is-purple">Take C</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="causal-a.html">A · Root-cause analysis ★</a>
+    <span class="sep">·</span>
+    <a href="causal-b.html">B · Counterfactual evidence</a>
+    <span class="sep">·</span>
+    <a href="causal-c.html" class="is-current">C · Risk propagation map</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="map"><span class="num">1</span> The control graph</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="propagate"><span class="num">2</span> A failure propagates</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="mitigate"><span class="num">3</span> Mitigation paths</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content cap-stage">
+
+    <!-- State 1: Map -->
+    <div class="flow-state" data-state="map">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>SOX risk propagation map · Helios Robotics</h3>
+          <span class="meta">Q3 FY26 · 47 controls · 12 risks · 8 assertions · 4 financial-statement areas</span>
+        </div>
+        <div class="legend">
+          <div class="item"><div class="swatch" style="background:var(--luna-teal-100);border:1.5px solid var(--luna-teal-300);"></div> Control</div>
+          <div class="item"><div class="swatch" style="background:var(--luna-yellow-50);border:1.5px solid var(--luna-yellow-500);"></div> Risk</div>
+          <div class="item"><div class="swatch" style="background:var(--luna-red-50);border:1.5px solid var(--luna-red-400);"></div> Assertion</div>
+          <div class="item" style="margin-left:auto;"><div class="swatch" style="background:var(--luna-green-500);"></div> Operating</div>
+        </div>
+        <div class="risk-canvas">
+          <div class="risk-row">
+            <div class="risk-node is-control"><div class="label">Control</div><div class="name">IT.AC.1.C01 — Quarterly AR</div><div class="meta"><span class="id">4.2.1</span> · operating ✓</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-risk"><div class="label">Risk it mitigates</div><div class="name">Unauthorized data access</div><div class="meta">Inherent: high · residual: low</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-assertion"><div class="label">Assertion</div><div class="name">Rights &amp; obligations</div><div class="meta">Revenue · all FS areas with access controls</div></div>
+          </div>
+          <div class="risk-row">
+            <div class="risk-node is-control"><div class="label">Control</div><div class="name">IT.CM.5.1.2 — Change approval</div><div class="meta"><span class="id">5.1.2</span> · operating ✓</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-risk"><div class="label">Risk it mitigates</div><div class="name">Unauthorized system changes</div><div class="meta">Inherent: high · residual: low</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-assertion"><div class="label">Assertion</div><div class="name">Existence &amp; occurrence</div><div class="meta">Revenue · Cost of sales</div></div>
+          </div>
+          <div class="risk-row">
+            <div class="risk-node is-control"><div class="label">Control</div><div class="name">US.FR.1.C03 — Monthly BS recon</div><div class="meta"><span class="id">1.1.3</span> · operating ✓</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-risk"><div class="label">Risk it mitigates</div><div class="name">Account misstatement</div><div class="meta">Inherent: high · residual: low</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-assertion"><div class="label">Assertion</div><div class="name">Valuation &amp; accuracy</div><div class="meta">All balance sheet accounts</div></div>
+          </div>
+          <div class="risk-row">
+            <div class="risk-node is-control"><div class="label">Control</div><div class="name">AS.PP.3.C03 — 3-way match</div><div class="meta"><span class="id">3.2.1</span> · operating ✓</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-risk"><div class="label">Risk it mitigates</div><div class="name">Improper disbursement</div><div class="meta">Inherent: high · residual: low</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-assertion"><div class="label">Assertion</div><div class="name">Completeness · accuracy</div><div class="meta">Payables · Cash</div></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 1.</strong> The graph today: every SOX control connects to one or more risks it mitigates, and every risk connects to one or more financial-statement assertions it protects. Today: everything green, every chain operating. Click "Next" to see what happens when a control fails.
+      </p>
+    </div>
+
+    <!-- State 2: Propagate -->
+    <div class="flow-state" data-state="propagate">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Propagation · IT.CM.5.1.2 failing</h3>
+          <span class="meta">2026-09-26 · finding routed to remediation</span>
+        </div>
+        <div class="legend">
+          <div class="item"><div class="swatch" style="background:var(--luna-red-100);border:1.5px solid var(--luna-red-500);"></div> Failing</div>
+          <div class="item"><div class="swatch" style="background:var(--luna-orange-50);border:1.5px solid var(--luna-orange-500);"></div> At risk · weakened</div>
+          <div class="item"><div class="swatch" style="background:var(--luna-teal-100);border:1.5px solid var(--luna-teal-300);"></div> Unaffected</div>
+        </div>
+        <div class="risk-canvas">
+          <div class="risk-row">
+            <div class="risk-node is-control"><div class="label">Control</div><div class="name">IT.AC.1.C01 — Quarterly AR</div><div class="meta"><span class="id">4.2.1</span> · operating · detected upstream gap</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-risk"><div class="label">Risk it mitigates</div><div class="name">Unauthorized data access</div><div class="meta">Residual: still low (this control caught it)</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-assertion"><div class="label">Assertion</div><div class="name">Rights &amp; obligations</div><div class="meta">Coverage intact</div></div>
+          </div>
+          <div class="risk-row">
+            <div class="risk-node is-control is-failing"><div class="label">Failing</div><div class="name">IT.CM.5.1.2 — Change approval</div><div class="meta"><span style="font-family:ui-monospace,monospace;font-size:10px;color:var(--luna-red-700);background:var(--luna-red-50);padding:1px 5px;border-radius:3px;font-weight:600;">5.1.2</span> · emergency-access path bypass</div></div>
+            <div class="risk-arrow" style="color:var(--luna-red-500);">⤍</div>
+            <div class="risk-node is-at-risk"><div class="label">Weakened</div><div class="name">Unauthorized system changes</div><div class="meta">Residual rising — emergency path bypass</div></div>
+            <div class="risk-arrow" style="color:var(--luna-orange-500);">⤍</div>
+            <div class="risk-node is-at-risk"><div class="label">Affected assertion</div><div class="name">Existence &amp; occurrence</div><div class="meta">Revenue · Cost of sales (under emergency-access)</div></div>
+          </div>
+          <div class="risk-row">
+            <div class="risk-node is-control"><div class="label">Control</div><div class="name">US.FR.1.C03 — Monthly BS recon</div><div class="meta"><span class="id">1.1.3</span> · operating ✓</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-risk"><div class="label">Risk it mitigates</div><div class="name">Account misstatement</div><div class="meta">Residual: low</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-assertion"><div class="label">Assertion</div><div class="name">Valuation &amp; accuracy</div><div class="meta">Coverage intact</div></div>
+          </div>
+          <div class="risk-row">
+            <div class="risk-node is-control"><div class="label">Control</div><div class="name">AS.PP.3.C03 — 3-way match</div><div class="meta"><span class="id">3.2.1</span> · operating ✓</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-risk"><div class="label">Risk it mitigates</div><div class="name">Improper disbursement</div><div class="meta">Residual: low</div></div>
+            <div class="risk-arrow">→</div>
+            <div class="risk-node is-assertion"><div class="label">Assertion</div><div class="name">Completeness · accuracy</div><div class="meta">Coverage intact</div></div>
+          </div>
+        </div>
+
+        <div class="mm-strip">
+          <h4>⚠ Material misstatement risk: Revenue &amp; Cost of sales · existence &amp; occurrence</h4>
+          <p>
+            When change-approval (5.1.2) operates with a known bypass, the assertion <strong>existence &amp; occurrence</strong> for revenue and cost-of-sales is weakened.
+            Because the gap is narrow (emergency-access path only, two confirmed incidents) and IT.AC.1.C01 caught the related access change, the magnitude is <strong>localized, not pervasive</strong> — but it is greater than zero. The audit committee should know this exists.
+          </p>
+        </div>
+
+        <div class="detail-panel">
+          <h4>Quantified impact</h4>
+          <div class="impact-grid">
+            <div class="impact-card is-warn"><div class="l">Controls affected</div><div class="v">1 of 47</div><div class="delta">Direct failure only · graph isolates impact</div></div>
+            <div class="impact-card is-warn"><div class="l">Assertions weakened</div><div class="v">1 of 8</div><div class="delta">Existence &amp; occurrence · Rev + CoS</div></div>
+            <div class="impact-card is-bad"><div class="l">Material misstatement</div><div class="v">Possible</div><div class="delta">Localized to emergency-access path</div></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 2.</strong> One control fails; the graph shows the entire downstream blast radius. The other 46 controls are unaffected — the failure is localized. The audit committee sees existence &amp; occurrence weakened for revenue and cost of sales, with a clear chain of reasoning. This is what causal AI buys you over pattern-matching: the propagation isn't inferred, it's enumerated from the graph the company already owns.
+      </p>
+    </div>
+
+    <!-- State 3: Mitigations -->
+    <div class="flow-state" data-state="mitigate">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Mitigation paths · 5.1.2 emergency-access bypass</h3>
+          <span class="meta">3 paths · ranked by speed-to-residual-risk-reduction</span>
+        </div>
+        <div class="mitigations">
+          <h4>Recommended remediation sequence</h4>
+          <div class="mitigation-row">
+            <div class="ic">🔧</div>
+            <div>
+              <h5>Update IT.CM.5.1.2 design — require post-event approval for emergency-access changes</h5>
+              <div class="body">Modify the change-management policy to require an ITGC-CR ticket within 24 hours of any emergency-access role change. Open PR against the policy-as-code repo. <strong>Removes the bypass entirely.</strong></div>
+            </div>
+            <div class="owner"><span class="pill">Carlos · CR owner</span><br/>due 2026-10-22</div>
+          </div>
+          <div class="mitigation-row">
+            <div class="ic">⏱</div>
+            <div>
+              <h5>Increase IT.AC.1.C01 detection cadence — weekly for Q4 only</h5>
+              <div class="body">Run an off-cycle AR weekly through Q4 close. Catches any emergency-access escalation within days instead of months. <strong>Compensating control while the design fix is in flight.</strong></div>
+              <div class="body" style="margin-top:4px;"><strong>Cost:</strong> Weston's time, ~2 hours per off-cycle run; Dana's review at quarter-close unchanged.</div>
+            </div>
+            <div class="owner"><span class="pill">Weston · IT</span><br/>start 2026-09-30</div>
+          </div>
+          <div class="mitigation-row">
+            <div class="ic">📋</div>
+            <div>
+              <h5>Forensic review of 2026 emergency-access events to date</h5>
+              <div class="body">Backfill review of all emergency-access role changes since Q1 to confirm only the 2 confirmed bypass incidents exist. Defines the magnitude of the assertion weakening for the audit committee.</div>
+            </div>
+            <div class="owner"><span class="pill">Dana · IA</span><br/>complete by 2026-10-15</div>
+          </div>
+        </div>
+
+        <div style="padding: 14px 22px; background: var(--luna-purple-50); border: 1px solid var(--luna-purple-100); border-left: 3px solid var(--luna-purple-500); border-radius: 6px; margin: 0 22px 22px; font-size: 13px; color: var(--luna-gray-800); line-height: 1.6;">
+          <strong style="color: var(--luna-purple-700);">For the audit committee.</strong>
+          The risk propagation map turns the conversation from <em>"a control had a finding"</em> into <em>"here's exactly which financial-statement assertions are affected, by how much, and what we're doing about it on what timeline."</em>
+          The graph doesn't just diagnose — it bounds the impact, sequences the response, and gives the committee something to attest to with confidence.
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 3.</strong> Three remediations, three owners, three timelines — all in service of restoring the chain. The design fix solves the cause; the compensating control covers the gap until then; the forensic review establishes the magnitude. The audit committee gets a propagation map they can use, not a list of red controls they have to interpret.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

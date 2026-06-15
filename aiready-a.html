@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI-ready data · Take A — Write-time connectors · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .cap-stage { max-width: 1100px; margin: 0 auto; }
+  .cap-panel { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); overflow: hidden; box-shadow: var(--luna-shadow-100); margin-bottom: 16px; }
+  .cap-panel .head { padding: 14px 18px; border-bottom: 1px solid var(--luna-gray-200); display: flex; align-items: center; gap: 10px; }
+  .cap-panel .head h3 { font-size: 14px; font-weight: 700; color: var(--luna-gray-900); margin: 0; flex: 1; }
+  .cap-panel .head .meta { font-size: 11px; color: var(--luna-gray-500); }
+
+  .connector-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; padding: 16px 18px; }
+  .connector-card { padding: 14px; border: 1px solid var(--luna-gray-200); border-radius: 6px; }
+  .connector-card .row1 { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .connector-card .logo { width: 32px; height: 32px; border-radius: 6px; display: grid; place-items: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+  .connector-card .name { font-weight: 600; color: var(--luna-gray-900); }
+  .connector-card .status { margin-left: auto; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+  .connector-card .status.is-live { background: var(--luna-green-50); color: var(--luna-green-700); }
+  .connector-card .status.is-config { background: var(--luna-yellow-50); color: var(--luna-yellow-700); }
+  .connector-card .status.is-paused { background: var(--luna-gray-100); color: var(--luna-gray-700); }
+  .connector-card .desc { font-size: 12px; color: var(--luna-gray-600); margin: 4px 0 8px; line-height: 1.45; }
+  .connector-card .rules { font-size: 11px; color: var(--luna-gray-700); }
+  .connector-card .rules code { background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 10.5px; }
+
+  .event-stream { padding: 0; }
+  .event-row { display: grid; grid-template-columns: 110px 32px 1fr 200px; gap: 12px; padding: 10px 18px; border-bottom: 1px solid var(--luna-gray-100); font-size: 12.5px; align-items: center; }
+  .event-row.is-new { background: var(--luna-purple-50); animation: pulse-row 1.4s ease-out; }
+  @keyframes pulse-row { from { background: var(--luna-purple-100); } to { background: var(--luna-purple-50); } }
+  .event-row:last-child { border-bottom: 0; }
+  .event-row .when { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-gray-500); }
+  .event-row .src { width: 28px; height: 28px; border-radius: 5px; display: grid; place-items: center; font-size: 11px; font-weight: 700; }
+  .event-row .desc { color: var(--luna-gray-800); }
+  .event-row .desc code { background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11.5px; }
+  .event-row .tags { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; }
+  .event-row .ctrl-tag { padding: 1px 7px; font-size: 10px; font-weight: 700; background: var(--luna-teal-50); color: var(--luna-teal-700); border-radius: 3px; font-family: ui-monospace, monospace; }
+  .event-row .ctrl-tag.is-multi { background: var(--luna-purple-50); color: var(--luna-purple-700); }
+  .event-row .conf { font-size: 10px; color: var(--luna-gray-500); margin-left: 4px; }
+
+  .coverage-grid { padding: 16px 18px; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+  .ctrl-cell { padding: 10px 12px; border: 1px solid var(--luna-gray-200); border-radius: 5px; }
+  .ctrl-cell.is-auto { border-left: 3px solid var(--luna-green-500); background: var(--luna-green-50); }
+  .ctrl-cell.is-manual { border-left: 3px solid var(--luna-gray-300); }
+  .ctrl-cell.is-partial { border-left: 3px solid var(--luna-yellow-500); }
+  .ctrl-cell .id { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-gray-700); }
+  .ctrl-cell .label { font-size: 12px; font-weight: 500; color: var(--luna-gray-900); margin: 3px 0; line-height: 1.35; }
+  .ctrl-cell .meta { font-size: 10.5px; color: var(--luna-gray-500); }
+  .ctrl-cell .meta strong { color: var(--luna-gray-700); }
+
+  .coverage-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-bottom: 1px solid var(--luna-gray-200); }
+  .cov-stat { padding: 16px 18px; border-right: 1px solid var(--luna-gray-200); }
+  .cov-stat:last-child { border-right: 0; }
+  .cov-stat .l { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); }
+  .cov-stat .v { font-size: 24px; font-weight: 700; color: var(--luna-gray-900); margin-top: 2px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .cov-stat .v.is-good { color: var(--luna-green-700); }
+  .cov-stat .delta { font-size: 11px; color: var(--luna-gray-500); margin-top: 3px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · AI-ready data · <span style="color:var(--luna-text);">Take A ★</span>
+      </div>
+      <h1 class="luna-heading-600">Connectors that classify at write-time.</h1>
+      <p class="subtitle">When a change ticket closes in ServiceNow, an opportunity moves in Salesforce, or a journal entry posts in SAP, the event lands in Optro already tagged with the controls it touches. Evidence collection becomes instrumentation, not retrieval.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · PMO + Eng</span>
+      <span class="luna-badge">Noun · Source-of-record</span>
+      <span class="luna-badge is-purple">Take A ★</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="aiready-a.html" class="is-current">A · Write-time connectors ★</a>
+    <span class="sep">·</span>
+    <a href="aiready-b.html">B · Schema-aware templates</a>
+    <span class="sep">·</span>
+    <a href="aiready-c.html">C · Provenance graph</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="dashboard"><span class="num">1</span> Connector dashboard</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="stream"><span class="num">2</span> Live classification</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="coverage"><span class="num">3</span> Control coverage</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content cap-stage">
+
+    <!-- State 1: Dashboard -->
+    <div class="flow-state" data-state="dashboard">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Connected systems</h3>
+          <span class="meta">7 active · 2 in config · pulling 14,231 events / day</span>
+          <button class="luna-btn is-secondary" style="margin-left:auto;font-size:12px;padding:5px 10px;">+ Add connector</button>
+        </div>
+        <div class="connector-grid">
+          <div class="connector-card">
+            <div class="row1">
+              <div class="logo" style="background:#48a9c5;color:#fff;">SN</div>
+              <div class="name">ServiceNow</div>
+              <span class="status is-live">● Live</span>
+            </div>
+            <div class="desc">Change tickets, incidents, access requests.</div>
+            <div class="rules">Maps to <code>5.1.x</code> (change mgmt), <code>4.2.x</code> (access)</div>
+          </div>
+          <div class="connector-card">
+            <div class="row1">
+              <div class="logo" style="background:#0052cc;color:#fff;">JI</div>
+              <div class="name">Jira</div>
+              <span class="status is-live">● Live</span>
+            </div>
+            <div class="desc">Engineering tickets, deployment workflow.</div>
+            <div class="rules">Maps to <code>5.1.2</code>, <code>5.2.x</code></div>
+          </div>
+          <div class="connector-card">
+            <div class="row1">
+              <div class="logo" style="background:#00a1e0;color:#fff;">SF</div>
+              <div class="name">Salesforce</div>
+              <span class="status is-live">● Live</span>
+            </div>
+            <div class="desc">Revenue events, opportunity lifecycle.</div>
+            <div class="rules">Maps to <code>1.x</code> (revenue recognition)</div>
+          </div>
+          <div class="connector-card">
+            <div class="row1">
+              <div class="logo" style="background:#0070ad;color:#fff;">SAP</div>
+              <div class="name">SAP S/4HANA</div>
+              <span class="status is-live">● Live</span>
+            </div>
+            <div class="desc">Journal entries, vendor payments, period-close.</div>
+            <div class="rules">Maps to <code>2.x</code> (close), <code>3.x</code> (P2P)</div>
+          </div>
+          <div class="connector-card">
+            <div class="row1">
+              <div class="logo" style="background:#16a085;color:#fff;">WD</div>
+              <div class="name">Workday</div>
+              <span class="status is-live">● Live</span>
+            </div>
+            <div class="desc">HR lifecycle, termination triggers.</div>
+            <div class="rules">Maps to <code>4.1.x</code> (provisioning)</div>
+          </div>
+          <div class="connector-card">
+            <div class="row1">
+              <div class="logo" style="background:#ff6600;color:#fff;">OK</div>
+              <div class="name">Okta</div>
+              <span class="status is-live">● Live</span>
+            </div>
+            <div class="desc">Authentication events, MFA, group changes.</div>
+            <div class="rules">Maps to <code>4.2.x</code>, <code>4.3.x</code></div>
+          </div>
+          <div class="connector-card">
+            <div class="row1">
+              <div class="logo" style="background:#5865f2;color:#fff;">GH</div>
+              <div class="name">GitHub Enterprise</div>
+              <span class="status is-live">● Live</span>
+            </div>
+            <div class="desc">PR merges, branch protection, code-review approvals.</div>
+            <div class="rules">Maps to <code>5.1.1</code></div>
+          </div>
+          <div class="connector-card">
+            <div class="row1">
+              <div class="logo" style="background:#dc382d;color:#fff;">DB</div>
+              <div class="name">Databricks</div>
+              <span class="status is-config">● Configuring</span>
+            </div>
+            <div class="desc">Pipeline runs, data freshness, model deployments.</div>
+            <div class="rules">Configuring rules for <code>3.3.x</code></div>
+          </div>
+          <div class="connector-card">
+            <div class="row1">
+              <div class="logo" style="background:#000;color:#fff;">⟱</div>
+              <div class="name">Snowflake</div>
+              <span class="status is-config">● Configuring</span>
+            </div>
+            <div class="desc">Query lineage, access grants, ETL run logs.</div>
+            <div class="rules">Configuring rules for <code>4.2.x</code></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 1.</strong> The integration layer pulls real-time events from every system that matters to SOX. Each connector ships with a starter classification ruleset (ServiceNow → change controls, Workday → HR-driven access events) which the platform team refines for this customer's control catalog. Click "Next" to see events arriving.
+      </p>
+    </div>
+
+    <!-- State 2: Live stream -->
+    <div class="flow-state" data-state="stream">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Live classified event stream</h3>
+          <span class="meta">last 60s · 47 events · 100% classified</span>
+          <span class="luna-badge is-green" style="margin-left:auto;padding:2px 9px;">● streaming</span>
+        </div>
+        <div class="event-stream">
+          <div class="event-row is-new">
+            <div class="when">3:48:22</div>
+            <div class="src" style="background:#48a9c5;color:#fff;">SN</div>
+            <div class="desc">Change ticket <code>CHG-94022</code> closed · "Patch CVE-2026-3018 across prod-app nodes" · approver <code>j.park</code></div>
+            <div class="tags">
+              <span class="ctrl-tag">5.1.2</span>
+              <span class="ctrl-tag">5.2.1</span>
+              <span class="conf">96%</span>
+            </div>
+          </div>
+          <div class="event-row">
+            <div class="when">3:48:14</div>
+            <div class="src" style="background:#ff6600;color:#fff;">OK</div>
+            <div class="desc">Group change · <code>r.taylor</code> added to <code>dba-admin</code> · approver <code>n.lee</code></div>
+            <div class="tags">
+              <span class="ctrl-tag is-multi">4.2.1</span>
+              <span class="ctrl-tag is-multi">4.2.2</span>
+              <span class="ctrl-tag">5.1.2</span>
+              <span class="conf">98%</span>
+            </div>
+          </div>
+          <div class="event-row">
+            <div class="when">3:47:51</div>
+            <div class="src" style="background:#16a085;color:#fff;">WD</div>
+            <div class="desc">Termination event · <code>e.morales</code> · effective today · trigger access-revocation</div>
+            <div class="tags">
+              <span class="ctrl-tag">4.1.3</span>
+              <span class="conf">99%</span>
+            </div>
+          </div>
+          <div class="event-row">
+            <div class="when">3:47:42</div>
+            <div class="src" style="background:#0052cc;color:#fff;">JI</div>
+            <div class="desc">PR merged · <code>PLAT-3471</code> · "Add deprovision automation for contractor service accounts"</div>
+            <div class="tags">
+              <span class="ctrl-tag">5.1.1</span>
+              <span class="conf">94%</span>
+            </div>
+          </div>
+          <div class="event-row">
+            <div class="when">3:47:30</div>
+            <div class="src" style="background:#0070ad;color:#fff;">SAP</div>
+            <div class="desc">Journal entry posted · <code>JE-Sep-4218</code> · revenue recognition (Q3 deferred → recognized) · approver <code>s.park</code></div>
+            <div class="tags">
+              <span class="ctrl-tag">1.2.3</span>
+              <span class="ctrl-tag">1.2.4</span>
+              <span class="conf">92%</span>
+            </div>
+          </div>
+          <div class="event-row">
+            <div class="when">3:47:08</div>
+            <div class="src" style="background:#00a1e0;color:#fff;">SF</div>
+            <div class="desc">Opportunity stage change · <code>OPP-21044</code> · Closed Won · $2.3M ARR</div>
+            <div class="tags">
+              <span class="ctrl-tag">1.1.2</span>
+              <span class="conf">99%</span>
+            </div>
+          </div>
+          <div class="event-row">
+            <div class="when">3:46:55</div>
+            <div class="src" style="background:#5865f2;color:#fff;">GH</div>
+            <div class="desc">PR merged to <code>main</code> with 2 reviewer approvals · <code>core-auth#1842</code></div>
+            <div class="tags">
+              <span class="ctrl-tag">5.1.1</span>
+              <span class="conf">100%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: 14px 18px; background: var(--luna-purple-50); border: 1px solid var(--luna-purple-100); border-radius: 6px; font-size: 13px; color: var(--luna-gray-800); line-height: 1.55;">
+        <strong style="color: var(--luna-purple-700);">What's happening underneath.</strong>
+        Every event lands in the warehouse, the classifier tags it against the control catalog, and the tagged event is filed against any control whose evidence requirements it satisfies — <em>before</em> the quarter closes, not after. The owner doesn't go find evidence; the evidence finds the control.
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 2.</strong> Events stream in continuously. The <code>r.taylor</code> escalation that became a finding in Signal's evidence flow? It would have been tagged against control 4.2.1 the second it happened — and ECM would have flagged the missing approval ticket the same moment, not two quarters later in review.
+      </p>
+    </div>
+
+    <!-- State 3: Coverage -->
+    <div class="flow-state" data-state="coverage">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Control coverage</h3>
+          <span class="meta">Q3 FY26 · 47 controls in scope</span>
+        </div>
+        <div class="coverage-stats">
+          <div class="cov-stat">
+            <div class="l">Connector-backed</div>
+            <div class="v is-good">31</div>
+            <div class="delta">66% of program · auto-collected</div>
+          </div>
+          <div class="cov-stat">
+            <div class="l">Partial coverage</div>
+            <div class="v">9</div>
+            <div class="delta">Connector + owner attestation</div>
+          </div>
+          <div class="cov-stat">
+            <div class="l">Manual only</div>
+            <div class="v">7</div>
+            <div class="delta">No system to instrument (yet)</div>
+          </div>
+        </div>
+        <div class="coverage-grid">
+          <div class="ctrl-cell is-auto"><div class="id">4.2.1</div><div class="label">Prod-db quarterly AR</div><div class="meta"><strong>Auto</strong> · Okta + ServiceNow</div></div>
+          <div class="ctrl-cell is-auto"><div class="id">4.2.2</div><div class="label">Annual access cert</div><div class="meta"><strong>Auto</strong> · Okta + Workday</div></div>
+          <div class="ctrl-cell is-auto"><div class="id">5.1.1</div><div class="label">Code review approvals</div><div class="meta"><strong>Auto</strong> · GitHub</div></div>
+          <div class="ctrl-cell is-auto"><div class="id">5.1.2</div><div class="label">Change approval</div><div class="meta"><strong>Auto</strong> · ServiceNow + Jira</div></div>
+          <div class="ctrl-cell is-auto"><div class="id">1.1.2</div><div class="label">Revenue recognition</div><div class="meta"><strong>Auto</strong> · Salesforce + SAP</div></div>
+          <div class="ctrl-cell is-auto"><div class="id">2.1.1</div><div class="label">EOM close checklist</div><div class="meta"><strong>Auto</strong> · SAP</div></div>
+          <div class="ctrl-cell is-partial"><div class="id">3.3.1</div><div class="label">Backup integrity</div><div class="meta"><strong>Partial</strong> · auto + attestation</div></div>
+          <div class="ctrl-cell is-partial"><div class="id">2.1.2</div><div class="label">SOC 2 refresh</div><div class="meta"><strong>Partial</strong> · vendor PDFs</div></div>
+          <div class="ctrl-cell is-manual"><div class="id">6.1.1</div><div class="label">Board approval (annual)</div><div class="meta"><strong>Manual</strong> · no system</div></div>
+          <div class="ctrl-cell is-manual"><div class="id">6.2.1</div><div class="label">Whistleblower review</div><div class="meta"><strong>Manual</strong> · hotline reports</div></div>
+          <div class="ctrl-cell is-auto" style="opacity:0.7;"><div class="id">…</div><div class="label">+ 25 more (auto)</div><div class="meta">Open detail</div></div>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 3.</strong> Coverage isn't 100% and that's honest — entity-level controls like board approval still happen in conference rooms, not systems. But two-thirds of the program is connector-backed, which means two-thirds of evidence collection is happening continuously, without owner action, in the background. The strategic argument: this is the asset that compounds — every new connector raises the floor.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

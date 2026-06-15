@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mobile · Take A — Push + camera · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .device-stage { display: flex; gap: 60px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+  .stage-side {
+    flex: 1; min-width: 280px; max-width: 380px;
+    padding: 14px 0;
+  }
+  .stage-side h3 {
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--luna-teal-500);
+    margin: 0 0 6px;
+  }
+  .stage-side p { font-size: 14px; color: var(--luna-gray-700); line-height: 1.55; margin: 0 0 12px; }
+  .stage-side .step-detail {
+    padding: 12px 14px;
+    background: var(--luna-gray-50);
+    border-left: 3px solid var(--luna-teal-500);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 14px;
+  }
+  .stage-side .step-detail .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 4px; }
+  .stage-side .step-detail p { font-size: 13px; color: var(--luna-gray-800); margin: 0; line-height: 1.5; }
+
+  .ms-content { padding: 16px; height: calc(100% - 36px); display: flex; flex-direction: column; }
+  .ms-push {
+    margin-top: 60px;
+    padding: 14px;
+    background: rgba(20,20,28,0.85);
+    color: #fff;
+    border-radius: 14px;
+    backdrop-filter: blur(14px);
+  }
+  .ms-push .head { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 6px; opacity: 0.85; }
+  .ms-push .head .app { width: 18px; height: 18px; border-radius: 4px; background: linear-gradient(135deg,#6931e3,#266c92); display: grid; place-items: center; font-size: 10px; }
+  .ms-push .title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .ms-push .body { font-size: 13px; line-height: 1.4; opacity: 0.9; }
+  .ms-push .body .cite { color: #84b8d1; }
+  .ms-push .actions { display: flex; gap: 4px; margin-top: 12px; }
+  .ms-push .actions button { flex: 1; padding: 8px; background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; }
+  .ms-push .actions button.primary { background: #266c92; }
+  .phone-wallpaper {
+    height: 100%;
+    background: linear-gradient(180deg, #0c3f5c 0%, #112b5c 50%, #1a0a3d 100%);
+    padding: 16px;
+  }
+  .phone-wallpaper .time-big { font-size: 64px; font-weight: 200; color: #fff; text-align: center; margin-top: 40px; line-height: 1; }
+  .phone-wallpaper .date-big { font-size: 16px; color: rgba(255,255,255,0.7); text-align: center; margin-top: 4px; }
+
+  .ms-capture .header { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; }
+  .ms-capture .header h2 { font-size: 17px; font-weight: 700; margin: 0; flex: 1; }
+  .ms-cam {
+    flex: 1;
+    background: #000;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    padding: 16px;
+    background-image:
+      linear-gradient(135deg, transparent 49%, rgba(255,255,255,0.04) 50%, transparent 51%),
+      linear-gradient(45deg, transparent 49%, rgba(255,255,255,0.04) 50%, transparent 51%);
+    background-size: 20px 20px;
+  }
+  .ms-cam .doc-frame {
+    position: absolute;
+    inset: 30% 18% 20% 18%;
+    border: 2px solid #84b8d1;
+    border-radius: 4px;
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.2);
+  }
+  .ms-cam .doc-frame::before {
+    content: ""; position: absolute; left: -2px; top: -2px; width: 16px; height: 16px;
+    border-left: 3px solid #84b8d1; border-top: 3px solid #84b8d1;
+  }
+  .ms-cam .doc-frame::after {
+    content: ""; position: absolute; right: -2px; bottom: -2px; width: 16px; height: 16px;
+    border-right: 3px solid #84b8d1; border-bottom: 3px solid #84b8d1;
+  }
+  .ms-cam .ai-overlay {
+    position: absolute;
+    top: 14px; left: 14px; right: 14px;
+    background: rgba(105, 49, 227, 0.92);
+    color: #fff;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .ms-cam .ai-overlay .dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; margin-top: 5px; flex-shrink: 0; animation: pulse 1.4s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+  .ms-cam .cap-btn {
+    position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+    width: 64px; height: 64px;
+    background: #fff;
+    border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .ms-cam .cap-btn:hover { transform: translateX(-50%) scale(1.08); }
+  .ms-cam .cap-btn:active { transform: translateX(-50%) scale(0.95); }
+
+  .ms-confirm h2 { font-size: 17px; font-weight: 700; margin: 0 0 12px; }
+  .ms-confirm .receipt-card {
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 8px;
+  }
+  .ms-confirm .receipt-card .thumb {
+    width: 100%; height: 130px;
+    background:
+      linear-gradient(135deg, transparent 49%, var(--luna-gray-200) 50%, transparent 51%),
+      linear-gradient(45deg, transparent 49%, var(--luna-gray-200) 50%, transparent 51%);
+    background-color: var(--luna-gray-100);
+    border-radius: 6px;
+    margin-bottom: 12px;
+    background-size: 16px 16px;
+    display: grid; place-items: center;
+    color: var(--luna-gray-500);
+    font-size: 11px;
+  }
+  .ms-confirm .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .ms-confirm .conf-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--luna-gray-700); margin: 12px 0; }
+  .ms-confirm .conf-row .ai-confidence-bar { flex: 1; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Mobile · <span style="color:var(--luna-text);">Take A ★</span>
+      </div>
+      <h1 class="luna-heading-600">Push → camera → done in 12 seconds.</h1>
+      <p class="subtitle">Weston's in transit. His phone buzzes with the AR ask. He taps the camera shortcut, snaps the screen on his laptop, and AI tags + files the screenshot in the time it takes to reach the gate.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Control owner</span>
+      <span class="luna-badge">Noun · Task</span>
+      <span class="luna-badge is-purple">Take A ★</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="mobile-a.html" class="is-current">A · Push + camera ★</a>
+    <span class="sep">·</span>
+    <a href="mobile-b.html">B · Pocket triage</a>
+    <span class="sep">·</span>
+    <a href="mobile-c.html">C · Voice-first capture</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="push"><span class="num">1</span> Push notification</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="capture"><span class="num">2</span> Capture frame</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="filed"><span class="num">3</span> Filed</div>
+    <span class="flow-arrow">⤴</span>
+    <div class="flow-step" data-step="offline" style="border-color: var(--luna-orange-200, #fed7aa); background: var(--luna-orange-50); color: var(--luna-orange-700);"><span class="num" style="background: var(--luna-orange-500); color: #fff;">!</span> Offline path</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- State 1: Push -->
+    <div class="flow-state" data-state="push">
+      <div class="device-stage">
+        <div class="stage-side">
+          <h3>Step 1 of 3 · The push</h3>
+          <p>Weston's phone buzzes between meetings. Lock screen surfaces the ask plus a context-aware shortcut: <strong>snap the evidence right from this notification</strong>.</p>
+          <div class="step-detail">
+            <div class="lbl">AI moment</div>
+            <p>The push knows the cycle (Q3 FY26), the cluster (prod-db-01), and the type of evidence Weston usually files. Tapping <strong>Snap evidence</strong> launches the camera with a tuned overlay — no app load.</p>
+          </div>
+          <div class="step-detail" style="border-left-color: var(--luna-purple-500); background: var(--luna-purple-50);">
+            <div class="lbl" style="color: var(--luna-purple-700);">Try it</div>
+            <p>Tap <strong>📷 Snap evidence</strong> on the phone to advance.</p>
+          </div>
+        </div>
+
+        <div class="device is-phone">
+          <div class="device-screen">
+            <div class="device-statusbar"><span class="time">3:12</span><span class="icons"><span>5G</span><span>•</span><span>🔋 82%</span></span></div>
+            <div class="phone-wallpaper">
+              <div class="time-big">3:12</div>
+              <div class="date-big">Friday · September 25</div>
+              <div class="ms-push">
+                <div class="head"><span class="app"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;filter:brightness(0) invert(1);" /></span>Optro · now</div>
+                <div class="title">Q3 access review due Monday</div>
+                <div class="body">Control <span class="cite">4.2.1</span> · prod-db-01. Snap a screenshot of the AR export and I'll file it.</div>
+                <div class="actions">
+                  <button data-go="capture">Open</button>
+                  <button class="primary" data-go="capture">📷 Snap evidence</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 2: Capture -->
+    <div class="flow-state" data-state="capture">
+      <div class="device-stage">
+        <div class="stage-side">
+          <h3>Step 2 of 3 · The capture</h3>
+          <p>Camera launches with an AI overlay pre-tuned for "AR export screenshot." Weston points at his laptop, sees the cyan frame lock to the document, taps the shutter.</p>
+          <div class="step-detail">
+            <div class="lbl">AI moment</div>
+            <p>Live classifier is running while Weston frames. It already recognizes the AR export format — that's why the overlay text is so confident. If he pointed at the wrong screen, the overlay would say "doesn't look like AR — keep looking or override."</p>
+          </div>
+          <div class="step-detail" style="border-left-color: var(--luna-purple-500); background: var(--luna-purple-50);">
+            <div class="lbl" style="color: var(--luna-purple-700);">Try it</div>
+            <p>Tap the white shutter button to capture.</p>
+          </div>
+        </div>
+
+        <div class="device is-phone">
+          <div class="device-screen">
+            <div class="device-statusbar"><span class="time">3:13</span><span class="icons"><span>5G</span><span>•</span><span>🔋 82%</span></span></div>
+            <div class="ms-content" style="padding:0;height:calc(100% - 36px);">
+              <div class="ms-cam">
+                <div class="ai-overlay">
+                  <div class="dot"></div>
+                  <div><strong>Optro ECM</strong> is watching… looks like the <strong>quarterly AR export</strong>. Frame the doc and I'll tag the control.</div>
+                </div>
+                <div class="doc-frame"></div>
+                <div class="cap-btn" data-go="filed"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 3: Filed -->
+    <div class="flow-state" data-state="filed">
+      <div class="device-stage">
+        <div class="stage-side">
+          <h3>Step 3 of 3 · Filed</h3>
+          <p>In about 12 seconds total from push to filed. The phone never loaded a control list, never opened the AuditBoard app, never required Weston to think about what control this evidence satisfies.</p>
+          <div class="step-detail">
+            <div class="lbl">AI moment</div>
+            <p>Auto-classification (93%), auto-tagging (control, cycle, freshness), auto-routing (to Dana). The card is the receipt; the badge is the audit trail; the chain is committed in the background.</p>
+          </div>
+          <div class="step-detail" style="border-left-color: var(--luna-teal-500);">
+            <div class="lbl">What happens next</div>
+            <p>Dana gets a notification. If she has questions, Weston gets a wrist-tap. If she signs off, the evidence packet seals and the chain commits — without Weston touching the phone again.</p>
+          </div>
+        </div>
+
+        <div class="device is-phone">
+          <div class="device-screen">
+            <div class="device-statusbar"><span class="time">3:13</span><span class="icons"><span>5G</span><span>•</span><span>🔋 82%</span></span></div>
+            <div class="ms-content">
+              <div class="ms-confirm">
+                <h2>Filed.</h2>
+                <span class="luna-badge is-green" style="margin-bottom:4px;">Routed to reviewer</span>
+                <div class="receipt-card">
+                  <div class="thumb">AR-Q3FY26-prod-db.png · 1.2 MB</div>
+                  <div class="tag-row">
+                    <span class="ai-citation">control 4.2.1</span>
+                    <span class="ai-citation">Q3 FY26</span>
+                    <span class="ai-citation">freshness: today</span>
+                  </div>
+                  <div class="conf-row">
+                    <span>Classifier:</span>
+                    <div class="ai-confidence-bar"><span style="width:93%;"></span></div>
+                    <strong>93%</strong>
+                  </div>
+                  <div style="font-size:12px;color:var(--luna-gray-600);line-height:1.5;">
+                    Canonical AR <strong>pulled from ServiceNow</strong>; screenshot kept as UI receipt. Auto-matched to <strong>control 4.2.1</strong>. Sent to <strong>Dana Cho</strong> for review.
+                    You'll get a wrist tap if she has questions.
+                  </div>
+                </div>
+                <button class="luna-btn is-secondary" style="width:100%;justify-content:center;margin-top:14px;" data-go="reset">↻ Run another capture</button>
+                <button class="luna-btn is-ghost" style="width:100%;justify-content:center;margin-top:6px;"><a href="chain-a.html" style="color:inherit;text-decoration:none;">View chain receipt ↗</a></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 4 (error path): Offline -->
+    <div class="flow-state" data-state="offline">
+      <div class="device-stage">
+        <div class="stage-side">
+          <h3 style="color: var(--luna-orange-700);">When the phone can't reach the backend</h3>
+          <p>Maria's in transit and her connection drops. The push notification already arrived (cached), and she can still capture — but ECM can't pull the canonical artifact from ServiceNow until connectivity returns.</p>
+          <div class="step-detail" style="border-left-color: var(--luna-orange-500); background: var(--luna-orange-50);">
+            <div class="lbl" style="color: var(--luna-orange-700);">How ECM handles it</div>
+            <p>The photo gets stored locally with a tamper-evident timestamp. When connectivity returns, ECM pulls the matching ServiceNow CSV and reconciles the two — same audit trail, just delayed by minutes instead of failing entirely. Nothing files until the canonical artifact arrives.</p>
+          </div>
+          <div class="step-detail">
+            <div class="lbl">What Weston sees</div>
+            <p>Clear status, no spinner roulette. The phone says exactly what's pending and when it'll resolve.</p>
+          </div>
+          <div style="margin-top: 14px;">
+            <button class="luna-btn is-ghost" data-go="push" style="font-size:12px;padding:6px 12px;">← Back to happy path</button>
+          </div>
+        </div>
+
+        <div class="device is-phone">
+          <div class="device-screen">
+            <div class="device-statusbar"><span class="time">3:13</span><span class="icons"><span style="color:var(--luna-orange-700);">⚠ no signal</span><span>•</span><span>🔋 81%</span></span></div>
+            <div class="ms-content" style="padding:14px;">
+              <div style="padding:12px 14px;background:var(--luna-orange-50);border:1px solid var(--luna-orange-100);border-left:3px solid var(--luna-orange-500);border-radius:8px;margin-bottom:14px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--luna-orange-700);margin-bottom:4px;">⚠ Queued for sync</div>
+                <div style="font-size:13px;color:var(--luna-gray-900);font-weight:600;margin-bottom:4px;">Capture stored locally — waiting for ServiceNow</div>
+                <div style="font-size:12px;color:var(--luna-gray-700);line-height:1.5;">Your screenshot is saved. When you're back online, ECM will pull the canonical AR from ServiceNow, match it to this capture, and complete the filing. Nothing is filed until then.</div>
+              </div>
+
+              <div style="background:var(--luna-white);border:1px solid var(--luna-gray-200);border-radius:10px;padding:14px;">
+                <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--luna-gray-500);margin-bottom:8px;">Pending action · 1 of 1</div>
+                <div style="width:100%;height:110px;background:linear-gradient(135deg,transparent 49%,var(--luna-gray-200) 50%,transparent 51%),linear-gradient(45deg,transparent 49%,var(--luna-gray-200) 50%,transparent 51%);background-color:var(--luna-gray-100);background-size:16px 16px;border-radius:6px;margin-bottom:10px;display:grid;place-items:center;color:var(--luna-gray-500);font-size:11px;">AR-Q3FY26-prod-db.png · 1.2 MB · local only</div>
+                <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;">
+                  <span class="ai-citation" style="font-size:11px;">control 4.2.1 (inferred)</span>
+                  <span class="ai-citation" style="font-size:11px;">Q3 FY26</span>
+                  <span style="font-size:11px;padding:1px 6px;border-radius:3px;background:var(--luna-orange-50);color:var(--luna-orange-700);">⏳ awaiting ServiceNow pull</span>
+                </div>
+                <div style="font-size:12px;color:var(--luna-gray-600);line-height:1.45;margin-bottom:10px;">Auto-sync as soon as you're back online. You can keep working — this will resolve in the background.</div>
+                <button class="luna-btn is-secondary" style="width:100%;justify-content:center;font-size:12px;padding:7px;">Cancel &amp; capture again later</button>
+              </div>
+
+              <div style="margin-top:14px;font-size:11px;color:var(--luna-gray-500);text-align:center;line-height:1.5;">
+                Tamper-evident local hash recorded · auto-sync attempt every 60s
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="surface-caption">
+    The camera identifies the context — what cluster, what cycle, what document type. ECM then pulls the canonical AR export from ServiceNow as the filed artifact; the photo is a UI receipt, not the audit-grade evidence. This matters because external auditors rate the underlying system-of-record export higher than any photo-of-screen. The screenshot stays attached for context, but the chain of custody points at the CSV that came directly out of ServiceNow. <a href="#offline" data-go="offline" style="color:var(--luna-orange-700);">What happens offline →</a>
+  </p>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI-ready data · Take B — Schema-aware templates · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .cap-stage { max-width: 1100px; margin: 0 auto; }
+  .cap-panel { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); overflow: hidden; box-shadow: var(--luna-shadow-100); margin-bottom: 16px; }
+  .cap-panel .head { padding: 14px 18px; border-bottom: 1px solid var(--luna-gray-200); display: flex; align-items: center; gap: 10px; }
+  .cap-panel .head h3 { font-size: 14px; font-weight: 700; color: var(--luna-gray-900); margin: 0; flex: 1; }
+  .cap-panel .head .meta { font-size: 11px; color: var(--luna-gray-500); }
+
+  /* Schema view (left) + submission view (right) */
+  .schema-layout { display: grid; grid-template-columns: 380px 1fr; gap: 16px; }
+  @media (max-width: 920px) { .schema-layout { grid-template-columns: 1fr; } }
+
+  .schema-block { padding: 16px 18px; }
+  .schema-block h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin: 0 0 8px; }
+  .schema-block .ctrl-summary { padding: 10px 12px; background: var(--luna-gray-50); border-radius: 6px; font-size: 12.5px; color: var(--luna-gray-800); line-height: 1.55; margin-bottom: 14px; }
+  .schema-block .ctrl-summary strong { color: var(--luna-gray-900); }
+  .schema-block .ctrl-summary .ctrl-id { display: inline-block; font-family: ui-monospace, monospace; font-size: 11px; background: var(--luna-teal-50); color: var(--luna-teal-700); padding: 2px 7px; border-radius: 4px; font-weight: 600; margin-bottom: 6px; }
+
+  .schema-field { display: grid; grid-template-columns: 1fr; gap: 0; border-bottom: 1px solid var(--luna-gray-100); padding: 8px 0; }
+  .schema-field:last-child { border-bottom: 0; }
+  .schema-field .row1 { display: flex; align-items: center; gap: 8px; }
+  .schema-field .name { font-family: ui-monospace, monospace; font-size: 11.5px; color: var(--luna-gray-900); font-weight: 600; }
+  .schema-field .type { font-size: 10px; color: var(--luna-purple-700); background: var(--luna-purple-50); padding: 1px 6px; border-radius: 3px; font-family: ui-monospace, monospace; font-weight: 600; }
+  .schema-field .req { font-size: 10px; color: var(--luna-red-700); background: var(--luna-red-50); padding: 1px 6px; border-radius: 3px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-left: auto; }
+  .schema-field .req.is-opt { color: var(--luna-gray-700); background: var(--luna-gray-100); }
+  .schema-field .desc { font-size: 11px; color: var(--luna-gray-600); margin-top: 3px; line-height: 1.4; padding-left: 0; }
+  .schema-field .desc code { background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 10.5px; }
+
+  /* Submission form (right side) */
+  .sub-form { padding: 16px 18px; }
+  .sub-form h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin: 0 0 8px; }
+  .sub-row { display: grid; grid-template-columns: 160px 1fr 32px; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--luna-gray-100); align-items: flex-start; }
+  .sub-row:last-child { border-bottom: 0; }
+  .sub-row .label { font-family: ui-monospace, monospace; font-size: 11.5px; color: var(--luna-gray-700); padding-top: 6px; }
+  .sub-row .value { font-size: 13px; color: var(--luna-gray-900); }
+  .sub-row .value input, .sub-row .value textarea {
+    width: 100%; padding: 6px 10px; border: 1px solid var(--luna-gray-300); border-radius: 5px; font-family: inherit; font-size: 13px; color: var(--luna-gray-900);
+  }
+  .sub-row .value.is-file { padding: 8px 10px; background: var(--luna-teal-50); border: 1px solid var(--luna-teal-100); border-radius: 5px; color: var(--luna-teal-700); font-family: ui-monospace, monospace; font-size: 12px; }
+  .sub-row .value.is-missing { padding: 8px 10px; background: var(--luna-red-50); border: 1px dashed var(--luna-red-300, #fca5a5); border-radius: 5px; color: var(--luna-red-700); font-size: 12px; }
+  .sub-row .value.is-missing .hint { font-size: 11px; color: var(--luna-red-700); margin-top: 4px; opacity: 0.85; }
+  .sub-row .status { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .sub-row .status.is-ok { background: var(--luna-green-500); color: #fff; }
+  .sub-row .status.is-miss { background: var(--luna-red-500); color: #fff; }
+  .sub-row .status.is-warn { background: var(--luna-orange-500); color: #fff; }
+
+  .progress-strip { padding: 10px 18px; background: var(--luna-gray-50); border-bottom: 1px solid var(--luna-gray-200); display: flex; align-items: center; gap: 12px; font-size: 12px; }
+  .progress-strip .bar { flex: 1; height: 6px; background: var(--luna-gray-200); border-radius: 3px; overflow: hidden; }
+  .progress-strip .bar > div { height: 100%; background: linear-gradient(90deg, var(--luna-purple-500), var(--luna-teal-500)); border-radius: 3px; transition: width 0.3s; }
+  .progress-strip .label { font-weight: 600; color: var(--luna-gray-800); font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · AI-ready data · <span style="color:var(--luna-text);">Take B</span>
+      </div>
+      <h1 class="luna-heading-600">The control's evidence requirement is a typed schema.</h1>
+      <p class="subtitle">Every control declares what evidence it needs as a schema — required fields, types, valid ranges. Submissions get parsed against it live, so structural gaps show up at the moment of upload instead of three weeks later in review.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Control owner</span>
+      <span class="luna-badge">Noun · Schema</span>
+      <span class="luna-badge is-purple">Take B</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="aiready-a.html">A · Write-time connectors ★</a>
+    <span class="sep">·</span>
+    <a href="aiready-b.html" class="is-current">B · Schema-aware templates</a>
+    <span class="sep">·</span>
+    <a href="aiready-c.html">C · Provenance graph</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="schema"><span class="num">1</span> The schema</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="filling"><span class="num">2</span> Live gap surfacing</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="complete"><span class="num">3</span> Complete &amp; ready</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content cap-stage">
+
+    <!-- State 1: Schema -->
+    <div class="flow-state" data-state="schema">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Evidence schema · IT.AC.1.C01</h3>
+          <span class="meta">v2.3 · last updated 2026-09-10 by Sarah Park</span>
+        </div>
+        <div class="schema-block">
+          <h4>Control summary</h4>
+          <div class="ctrl-summary">
+            <span class="ctrl-id">IT.AC.1.C01</span><br/>
+            <strong>Quarterly user access review</strong> on the production database cluster. The control operates when a designated reviewer has, in the last quarter, examined the active account roster, attested to its accuracy, and surfaced exceptions for remediation.
+          </div>
+
+          <h4>Required evidence shape</h4>
+          <div class="schema-field">
+            <div class="row1">
+              <span class="name">access_roster</span>
+              <span class="type">file/csv|pdf</span>
+              <span class="req">required</span>
+            </div>
+            <div class="desc">An export of all accounts active on <code>prod-db-01</code> during the cycle. Must contain columns: <code>user</code>, <code>role</code>, <code>last_login</code>, <code>manager_attested</code>.</div>
+          </div>
+          <div class="schema-field">
+            <div class="row1">
+              <span class="name">cycle_period</span>
+              <span class="type">date_range</span>
+              <span class="req">required</span>
+            </div>
+            <div class="desc">Coverage period — must end within 5 business days of cycle close (2026-09-30).</div>
+          </div>
+          <div class="schema-field">
+            <div class="row1">
+              <span class="name">dba_attestation</span>
+              <span class="type">file/eml|pdf</span>
+              <span class="req">required</span>
+            </div>
+            <div class="desc">Signed attestation from active DBA personnel. Signer must be employed at the time of signature.</div>
+          </div>
+          <div class="schema-field">
+            <div class="row1">
+              <span class="name">reviewer_signoff</span>
+              <span class="type">signature</span>
+              <span class="req">required</span>
+            </div>
+            <div class="desc">Internal Audit reviewer's verdict + Pencil annotations (collected at review time, not submission).</div>
+          </div>
+          <div class="schema-field">
+            <div class="row1">
+              <span class="name">approval_ticket_refs</span>
+              <span class="type">cross-link[]</span>
+              <span class="req">required</span>
+            </div>
+            <div class="desc">For every role escalation in <code>access_roster</code>, a matching approval ticket ID from <code>ServiceNow CR queue</code>. Empty if no escalations.</div>
+          </div>
+          <div class="schema-field">
+            <div class="row1">
+              <span class="name">carryover_findings</span>
+              <span class="type">finding_ref[]</span>
+              <span class="req is-opt">Optional</span>
+            </div>
+            <div class="desc">References to prior-quarter findings still open in HEL queue. Pre-populated from last sign-off.</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 1.</strong> The schema is the contract between the control and the agent. Schema lives next to the control definition, owned by the PMO, versioned in the policy-as-code repo. When the schema changes, every owner whose evidence depends on it gets a structured diff — not a memo. Click "Next" to see Weston submit against this schema.
+      </p>
+    </div>
+
+    <!-- State 2: Filling (gaps surface live) -->
+    <div class="flow-state" data-state="filling">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Submission · IT.AC.1.C01 · Q3 FY26 cycle</h3>
+          <span class="meta">Weston Prohaska · in progress</span>
+        </div>
+        <div class="progress-strip">
+          <span>3 of 5 required fields complete</span>
+          <div class="bar"><div style="width: 60%;"></div></div>
+          <span class="label">60%</span>
+        </div>
+        <div class="sub-form">
+          <div class="sub-row">
+            <div class="label">access_roster</div>
+            <div class="value is-file">📄 AR-Q3FY26-prod-db.csv · 22 rows · uploaded 14:22 UTC</div>
+            <div class="status is-ok">✓</div>
+          </div>
+          <div class="sub-row">
+            <div class="label">cycle_period</div>
+            <div class="value">2026-07-01 → 2026-09-25 <span style="font-size:11px;color:var(--luna-gray-500);">(5 BD before close: ✓)</span></div>
+            <div class="status is-ok">✓</div>
+          </div>
+          <div class="sub-row">
+            <div class="label">dba_attestation</div>
+            <div class="value is-file">📄 DBA-attestation-Q3FY26.eml · signer <code style="font-size:11px;background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;">m.rivera</code></div>
+            <div class="status is-warn">⚠</div>
+          </div>
+          <div class="sub-row">
+            <div class="label">reviewer_signoff</div>
+            <div class="value is-missing">
+              <strong>Pending — collected at review time</strong>
+              <div class="hint">Dana Cho will add this when she signs off.</div>
+            </div>
+            <div class="status is-warn">…</div>
+          </div>
+          <div class="sub-row">
+            <div class="label">approval_ticket_refs</div>
+            <div class="value is-missing">
+              <strong>Missing — 1 escalation detected in roster, 0 ticket refs provided</strong>
+              <div class="hint">Row <code style="font-size:11px;background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;">r.taylor</code> shows role change <code style="font-size:11px;background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;">dba-read</code> → <code style="font-size:11px;background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;">dba-admin</code>. Schema requires a matching approval ticket ID from the ServiceNow CR queue.</div>
+            </div>
+            <div class="status is-miss">✗</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: 14px 18px; background: var(--luna-orange-50); border: 1px solid var(--luna-orange-100); border-left: 3px solid var(--luna-orange-500); border-radius: 6px; font-size: 13px; color: var(--luna-gray-800); line-height: 1.55;">
+        <strong style="color: var(--luna-orange-700);">Heads-up on the DBA attestation:</strong> m.rivera was terminated on 2026-09-12 (per Workday connector). Schema rule says signer must be employed at time of signature. ECM flagged it, but the file is still parseable — the warning surfaces here so Weston can swap in a current attester before submitting.
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 2.</strong> The schema doesn't just check that fields exist — it checks structural sufficiency. The missing approval ticket and the departed attester both surface at submission time, not after Dana opens the package three weeks later. Diagnosis collapses from "weeks" to "while Weston is still at his desk."
+      </p>
+    </div>
+
+    <!-- State 3: Complete -->
+    <div class="flow-state" data-state="complete">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Submission complete · IT.AC.1.C01 · Q3 FY26 cycle</h3>
+          <span class="luna-badge is-green" style="padding:3px 9px;">✓ Schema-valid</span>
+        </div>
+        <div class="progress-strip" style="background: var(--luna-green-50);">
+          <span style="color: var(--luna-green-700); font-weight: 600;">All required fields satisfied</span>
+          <div class="bar"><div style="width: 100%; background: var(--luna-green-500);"></div></div>
+          <span class="label" style="color: var(--luna-green-700);">100%</span>
+        </div>
+        <div class="sub-form">
+          <div class="sub-row">
+            <div class="label">access_roster</div>
+            <div class="value is-file">📄 AR-Q3FY26-prod-db.csv · 22 rows · valid</div>
+            <div class="status is-ok">✓</div>
+          </div>
+          <div class="sub-row">
+            <div class="label">cycle_period</div>
+            <div class="value">2026-07-01 → 2026-09-25 · within window</div>
+            <div class="status is-ok">✓</div>
+          </div>
+          <div class="sub-row">
+            <div class="label">dba_attestation</div>
+            <div class="value is-file">📄 DBA-attestation-Q3FY26-rev.eml · signer <code style="font-size:11px;background:var(--luna-white);padding:1px 5px;border-radius:3px;">j.kowalski</code> (active)</div>
+            <div class="status is-ok">✓</div>
+          </div>
+          <div class="sub-row">
+            <div class="label">reviewer_signoff</div>
+            <div class="value is-file" style="background: var(--luna-gray-50); color: var(--luna-gray-700);">⏳ Pending — Dana's review queue</div>
+            <div class="status is-warn">…</div>
+          </div>
+          <div class="sub-row">
+            <div class="label">approval_ticket_refs</div>
+            <div class="value is-file">🔗 HEL-3471 (r.taylor escalation, carryover) · matches ServiceNow CR queue</div>
+            <div class="status is-ok">✓</div>
+          </div>
+          <div class="sub-row">
+            <div class="label">carryover_findings</div>
+            <div class="value is-file">📌 contractor-svc-09 deprovision pending (from Q2 sign-off)</div>
+            <div class="status is-ok">✓</div>
+          </div>
+        </div>
+        <div style="padding: 14px 18px; background: var(--luna-gray-50); border-top: 1px solid var(--luna-gray-200); display: flex; gap: 8px; justify-content: flex-end;">
+          <button class="luna-btn is-ghost" data-go="filling">← Edit</button>
+          <button class="luna-btn">File &amp; route to Dana</button>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 3.</strong> Weston resolved both gaps before submitting: swapped in a current attester, attached the HEL-3471 approval-ticket reference. The submission is schema-valid; Dana's review queue is the next step but it's now reviewing a package that already passes structural checks — she can spend her time on substantive judgment instead of diagnosing what's missing.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

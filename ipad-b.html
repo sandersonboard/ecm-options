@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>iPad · Take B — Side-by-side compare · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .compare-app { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr 76px; height: 100%; background: var(--luna-gray-100); font-size: 12px; }
+  .compare-toolbar { grid-column: 1 / -1; background: var(--luna-white); border-bottom: 1px solid var(--luna-gray-200); padding: 10px 14px; display: flex; align-items: center; gap: 12px; }
+  .compare-toolbar .title { font-weight: 700; font-size: 13px; color: var(--luna-gray-900); }
+  .compare-toolbar .meta { font-size: 11px; color: var(--luna-gray-500); margin-left: 6px; }
+  .compare-toolbar .tool { padding: 4px 9px; font-size: 11px; font-weight: 600; border-radius: 4px; background: var(--luna-gray-100); color: var(--luna-gray-700); cursor: pointer; }
+  .compare-toolbar .tool.is-active { background: var(--luna-teal-500); color: var(--luna-white); }
+  .compare-toolbar .delta-stats { display: flex; gap: 6px; margin-left: auto; align-items: center; }
+  .compare-toolbar .delta-pill { padding: 2px 9px; border-radius: 12px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+  .compare-toolbar .delta-pill.is-warn { background: var(--luna-orange-50); color: var(--luna-orange-700); border: 1px solid var(--luna-orange-100); }
+  .compare-toolbar .delta-pill.is-good { background: var(--luna-green-50); color: var(--luna-green-700); border: 1px solid var(--luna-green-100); }
+  .compare-toolbar .delta-pill.is-info { background: var(--luna-blue-50); color: var(--luna-blue-700); border: 1px solid var(--luna-blue-100); }
+  .compare-toolbar .delta-pill.is-done { background: var(--luna-gray-100); color: var(--luna-gray-600); border: 1px solid var(--luna-gray-200); text-decoration: line-through; }
+
+  .compare-pane { background: var(--luna-white); border-right: 1px solid var(--luna-gray-200); overflow-y: auto; position: relative; }
+  .compare-pane:last-of-type { border-right: none; }
+  .pane-head { position: sticky; top: 0; background: var(--luna-white); border-bottom: 1px solid var(--luna-gray-200); padding: 10px 14px; display: flex; align-items: center; gap: 8px; z-index: 2; }
+  .pane-head .label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); }
+  .pane-head .doc-name { font-size: 13px; font-weight: 600; color: var(--luna-gray-900); }
+  .pane-head .marker { margin-left: auto; padding: 2px 7px; font-size: 10px; border-radius: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .pane-head .marker.is-this { background: var(--luna-teal-100); color: var(--luna-teal-700); }
+  .pane-head .marker.is-prior { background: var(--luna-gray-100); color: var(--luna-gray-600); }
+  .pane-body { padding: 12px 14px; }
+  .pane-body h3 { font-size: 14px; font-weight: 700; margin: 0 0 4px; color: var(--luna-gray-900); }
+  .pane-body .pane-meta { font-size: 10px; color: var(--luna-gray-500); margin-bottom: 10px; }
+  .pane-body table { width: 100%; border-collapse: collapse; font-size: 10.5px; margin-bottom: 12px; }
+  .pane-body th, .pane-body td { padding: 5px 7px; text-align: left; border-bottom: 1px solid var(--luna-gray-100); }
+  .pane-body th { background: var(--luna-gray-50); font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--luna-gray-600); }
+  .pane-body tr.delta-warn { background: var(--luna-orange-50); }
+  .pane-body tr.delta-warn td:first-child { border-left: 3px solid var(--luna-orange-500); }
+  .pane-body tr.delta-new { background: var(--luna-blue-50); }
+  .pane-body tr.delta-new td:first-child { border-left: 3px solid var(--luna-blue-500); }
+  .pane-body tr.delta-removed { background: var(--luna-gray-50); opacity: 0.6; text-decoration: line-through; }
+  .pane-body tr.delta-removed td:first-child { border-left: 3px solid var(--luna-gray-400); }
+  .pane-body tr.is-ratified { background: var(--luna-green-50) !important; }
+  .pane-body tr.is-ratified td:first-child { border-left: 3px solid var(--luna-green-500) !important; }
+  .pane-body .ratified-cluster {
+    padding: 8px 10px;
+    background: var(--luna-green-50);
+    border: 1px solid var(--luna-green-100);
+    border-left: 3px solid var(--luna-green-500);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--luna-green-700);
+    margin: 4px 0;
+  }
+  .pane-attest { padding: 8px 10px; background: var(--luna-gray-50); border: 1px dashed var(--luna-gray-300); border-radius: 4px; font-size: 11px; color: var(--luna-gray-700); }
+  .compare-footer { grid-column: 1 / -1; background: var(--luna-white); border-top: 1px solid var(--luna-gray-200); padding: 0 14px; display: flex; align-items: center; gap: 16px; overflow-x: auto; }
+  .delta-card { flex-shrink: 0; padding: 10px 14px; border-left: 3px solid var(--luna-orange-500); background: var(--luna-orange-50); min-width: 280px; transition: opacity 0.2s; }
+  .delta-card.is-good { border-left-color: var(--luna-green-500); background: var(--luna-green-50); }
+  .delta-card.is-new { border-left-color: var(--luna-blue-500); background: var(--luna-blue-50); }
+  .delta-card.is-removed { border-left-color: var(--luna-gray-400); background: var(--luna-gray-50); }
+  .delta-card.is-resolved { opacity: 0.4; }
+  .delta-card .head { font-size: 11px; font-weight: 700; color: var(--luna-orange-700); display: flex; align-items: center; gap: 6px; }
+  .delta-card.is-good .head { color: var(--luna-green-700); }
+  .delta-card.is-new .head { color: var(--luna-blue-700); }
+  .delta-card.is-removed .head { color: var(--luna-gray-700); }
+  .delta-card .body { font-size: 11.5px; color: var(--luna-gray-800); line-height: 1.4; margin-top: 2px; }
+  .delta-card .actions { display: flex; gap: 6px; margin-top: 6px; }
+  .delta-card .pencil-btn { padding: 3px 8px; font-size: 10px; font-weight: 700; border-radius: 4px; background: var(--luna-white); border: 1px solid var(--luna-gray-300); color: var(--luna-gray-700); letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; }
+  .delta-card .pencil-btn.is-primary { background: var(--luna-teal-500); color: var(--luna-white); border-color: var(--luna-teal-500); }
+  .delta-card.is-resolved .pencil-btn { display: none; }
+  .delta-card.is-resolved::after { content: " ✓"; color: var(--luna-green-700); font-weight: 700; }
+
+  .signoff-pane {
+    grid-column: 1 / -1;
+    padding: 32px 40px;
+    background: var(--luna-green-50);
+    border: 2px solid var(--luna-green-100);
+    border-radius: 8px;
+    margin: 12px;
+    display: flex; align-items: center; gap: 24px;
+  }
+  .signoff-pane .ic {
+    width: 64px; height: 64px;
+    background: var(--luna-green-500); color: var(--luna-white);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+  .signoff-pane h2 { font-size: 22px; font-weight: 700; margin: 0; color: var(--luna-green-700); }
+  .signoff-pane .meta { font-size: 13px; color: var(--luna-gray-700); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · iPad · <span style="color:var(--luna-text);">Take B ★</span>
+      </div>
+      <h1 class="luna-heading-600">This quarter, vs. last. Ratify the deltas.</h1>
+      <p class="subtitle">Dana opens the artifact and AI splits the canvas — Q3 left, Q2 right, rows aligned, deltas highlighted. Pencil ratifies or disputes each delta. Identical rows bulk-ratify.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Reviewer</span>
+      <span class="luna-badge is-purple">Noun · Evidence</span>
+      <span class="luna-badge is-purple">Take B ★</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="ipad-a.html">A · Pencil + findings</a>
+    <span class="sep">·</span>
+    <a href="ipad-b.html" class="is-current">B · Side-by-side compare ★</a>
+    <span class="sep">·</span>
+    <a href="ipad-c.html">C · Narrated walk-through</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="compare"><span class="num">1</span> Open compare</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="ratified"><span class="num">2</span> Ratify deltas</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="signed"><span class="num">3</span> Signed</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- State 1: Compare with deltas -->
+    <div class="flow-state" data-state="compare">
+      <div class="device is-tablet">
+        <div class="device-screen">
+          <div class="compare-app">
+            <div class="compare-toolbar">
+              <span class="title">Control 4.2.1 — Q3 vs. Q2 access review</span>
+              <span class="meta">prod-db-01.helios · auto-aligned by ECM</span>
+              <span class="tool">↻ Re-align</span>
+              <span class="tool is-active">Show deltas</span>
+              <span class="tool">Show identical</span>
+              <span class="tool">✎ Pencil</span>
+              <span class="delta-stats">
+                <span class="delta-pill is-warn">⚠ 2 drifts</span>
+                <span class="delta-pill is-info">+ 1 added</span>
+                <span class="delta-pill is-good">✓ 19 unchanged</span>
+              </span>
+            </div>
+
+            <div class="compare-pane">
+              <div class="pane-head"><span class="label">Quarter</span><span class="doc-name">AR-Q3FY26-prod-db.pdf</span><span class="marker is-this">This quarter</span></div>
+              <div class="pane-body">
+                <h3>Q3 FY2026 — Production database AR</h3>
+                <div class="pane-meta">Exported 2026-09-25 · 22 active accounts · Weston Prohaska</div>
+                <table>
+                  <thead><tr><th>User</th><th>Role</th><th>Last login</th><th>Attested</th></tr></thead>
+                  <tbody>
+                    <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>09-25</td><td>✓</td></tr>
+                    <tr><td>j.park@helios.com</td><td>dba-read</td><td>09-22</td><td>✓</td></tr>
+                    <tr class="delta-warn"><td>contractor-svc-09</td><td>dba-admin</td><td><strong>04-12</strong></td><td>—</td></tr>
+                    <tr><td>k.singh@helios.com</td><td>dba-read</td><td>09-19</td><td>✓</td></tr>
+                    <tr class="delta-warn"><td>r.taylor@helios.com</td><td><strong>dba-admin</strong></td><td>09-11</td><td>✓</td></tr>
+                    <tr class="delta-new"><td>n.lee@helios.com</td><td>dba-read</td><td>09-23</td><td>✓</td></tr>
+                    <tr><td>app-svc-prod</td><td>app-svc</td><td>09-25</td><td>✓ (auto)</td></tr>
+                    <tr><td>backups-svc</td><td>backups</td><td>09-25</td><td>✓ (auto)</td></tr>
+                    <tr><td>etl-svc</td><td>etl</td><td>09-25</td><td>✓ (auto)</td></tr>
+                  </tbody>
+                </table>
+                <div class="pane-attest"><strong>DBA attestation</strong> — Weston Prohaska. "All accounts reviewed."</div>
+              </div>
+            </div>
+
+            <div class="compare-pane">
+              <div class="pane-head"><span class="label">Quarter</span><span class="doc-name">AR-Q2FY26-prod-db.pdf</span><span class="marker is-prior">Prior</span><span style="font-size:11px;color:var(--luna-green-700);font-weight:600;">✓ signed off · Jun 17</span></div>
+              <div class="pane-body">
+                <h3>Q2 FY2026 — Production database AR</h3>
+                <div class="pane-meta">Exported 2026-06-25 · 21 active accounts · Weston Prohaska</div>
+                <table>
+                  <thead><tr><th>User</th><th>Role</th><th>Last login</th><th>Attested</th></tr></thead>
+                  <tbody>
+                    <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>06-25</td><td>✓</td></tr>
+                    <tr><td>j.park@helios.com</td><td>dba-read</td><td>06-22</td><td>✓</td></tr>
+                    <tr class="delta-warn"><td>contractor-svc-09</td><td>dba-admin</td><td>04-12</td><td>—</td></tr>
+                    <tr><td>k.singh@helios.com</td><td>dba-read</td><td>06-19</td><td>✓</td></tr>
+                    <tr class="delta-warn"><td>r.taylor@helios.com</td><td><strong>dba-read</strong></td><td>06-11</td><td>✓</td></tr>
+                    <tr class="delta-removed"><td>placeholder-row</td><td>—</td><td>—</td><td>—</td></tr>
+                    <tr><td>app-svc-prod</td><td>app-svc</td><td>06-25</td><td>✓ (auto)</td></tr>
+                    <tr><td>backups-svc</td><td>backups</td><td>06-25</td><td>✓ (auto)</td></tr>
+                    <tr><td>etl-svc</td><td>etl</td><td>06-25</td><td>✓ (auto)</td></tr>
+                  </tbody>
+                </table>
+                <div class="pane-attest"><strong>DBA attestation</strong> — Weston Prohaska. "All accounts reviewed. contractor-svc-09 noted as pending deprovision (HEL-3471)."</div>
+              </div>
+            </div>
+
+            <div class="compare-footer">
+              <div class="delta-card">
+                <div class="head"><span class="ai-chip">Drift</span> Privilege escalation</div>
+                <div class="body"><strong>r.taylor@helios.com</strong>: dba-read → <strong>dba-admin</strong> between Q2 and Q3. ECM didn't find an approval ticket.</div>
+                <div class="actions">
+                  <button class="pencil-btn is-primary" data-go="ratified">Open finding</button>
+                  <button class="pencil-btn">Dismiss</button>
+                </div>
+              </div>
+              <div class="delta-card is-removed">
+                <div class="head"><span class="ai-chip">Carryover</span> Same finding as Q2</div>
+                <div class="body"><strong>contractor-svc-09</strong> still dba-admin. Same row Dana signed off as "adequate with finding" in Q2.</div>
+                <div class="actions"><button class="pencil-btn" data-go="ratified">Inherit Q2 finding ↻</button></div>
+              </div>
+              <div class="delta-card is-new">
+                <div class="head"><span class="ai-chip">Added</span> New role assignment</div>
+                <div class="body"><strong>n.lee@helios.com</strong>: new dba-read. ECM matched to onboarding ticket OPS-2208.</div>
+                <div class="actions"><button class="pencil-btn" data-go="ratified">Ratify ✓</button></div>
+              </div>
+              <div class="delta-card is-good">
+                <div class="head"><span class="ai-chip">Identical</span> 19 service rows</div>
+                <div class="body">All service-account rows match Q2 verbatim. Bulk ratify these unless you want row-by-row?</div>
+                <div class="actions"><button class="pencil-btn is-primary" data-go="ratified">Bulk ratify (19)</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 1.</strong> The compare canvas. Tap any delta card to advance the flow — they're all wired to the same "all-ratified" state for the demo.</p>
+    </div>
+
+    <!-- State 2: Ratified -->
+    <div class="flow-state" data-state="ratified">
+      <div class="device is-tablet">
+        <div class="device-screen">
+          <div class="compare-app">
+            <div class="compare-toolbar">
+              <span class="title">Control 4.2.1 — Q3 vs. Q2 access review</span>
+              <span class="meta">prod-db-01.helios · all deltas resolved</span>
+              <span class="tool">↻ Re-align</span>
+              <span class="tool is-active">Show deltas</span>
+              <span class="tool">Show identical</span>
+              <span class="tool">✎ Pencil</span>
+              <span class="delta-stats">
+                <span class="delta-pill is-good">✓ all 4 resolved</span>
+              </span>
+            </div>
+
+            <div class="compare-pane">
+              <div class="pane-head"><span class="label">Quarter</span><span class="doc-name">AR-Q3FY26-prod-db.pdf</span><span class="marker is-this">This quarter</span></div>
+              <div class="pane-body">
+                <h3>Q3 FY2026 — Production database AR</h3>
+                <div class="pane-meta">All 22 rows reviewed · 4 of 4 deltas ratified</div>
+                <table>
+                  <thead><tr><th>User</th><th>Role</th><th>Last</th><th>Ratify</th></tr></thead>
+                  <tbody>
+                    <tr class="is-ratified"><td>contractor-svc-09</td><td>dba-admin</td><td>04-12</td><td>✓ Carryover</td></tr>
+                    <tr class="is-ratified"><td>r.taylor@helios.com</td><td>dba-admin</td><td>09-11</td><td>✓ Finding</td></tr>
+                    <tr class="is-ratified"><td>n.lee@helios.com</td><td>dba-read</td><td>09-23</td><td>✓ Added</td></tr>
+                    <tr><td colspan="4"><div class="ratified-cluster">✓ Bulk-ratified 19 identical rows: m.chen, j.park, k.singh, app-svc-prod, backups-svc, etl-svc, … (matches Q2 verbatim)</div></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="compare-pane">
+              <div class="pane-head"><span class="label">Verdict draft</span><span class="doc-name">AR-Q3FY26-prod-db</span></div>
+              <div class="pane-body">
+                <div style="padding:14px;background:linear-gradient(135deg,var(--luna-purple-50),var(--luna-blue-50));border:1px solid var(--luna-purple-100);border-left:3px solid var(--luna-purple-500);border-radius:6px;font-size:13px;line-height:1.55;">
+                  <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--luna-purple-700);margin-bottom:6px;display:flex;align-items:center;gap:6px;"><span class="ai-chip">Optro ECM</span> Verdict draft</div>
+                  <strong>Adequate with finding.</strong>
+                  <p style="margin: 8px 0 0;font-size:13px;color:var(--luna-gray-800);">
+                    19 of 22 rows verbatim from Q2 (bulk ratified).
+                    Three reviewed deltas:
+                  </p>
+                  <ul style="margin:6px 0 0 18px;padding:0;">
+                    <li><strong>contractor-svc-09</strong> — carryover; HEL-3471 still open</li>
+                    <li><strong>r.taylor escalation</strong> — privilege escalation without approval ticket; rolled back</li>
+                    <li><strong>n.lee onboarding</strong> — ratified, matches OPS-2208</li>
+                  </ul>
+                </div>
+
+                <div style="margin-top: 14px; padding: 12px; background: var(--luna-gray-50); border: 1px solid var(--luna-gray-200); border-radius: 6px;">
+                  <div style="font-size:11px;font-weight:700;color:var(--luna-gray-600);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">Sign off as</div>
+                  <button class="luna-btn" style="width:100%;justify-content:center;" data-go="signed">✎ Sign off · adequate with finding</button>
+                  <button class="luna-btn is-secondary" style="width:100%;justify-content:center;margin-top:4px;">Add custom note</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="compare-footer">
+              <div class="delta-card is-resolved">
+                <div class="head"><span class="ai-chip">Drift</span> r.taylor</div>
+                <div class="body">Ratified as finding. Privilege rolled back.</div>
+              </div>
+              <div class="delta-card is-removed is-resolved">
+                <div class="head"><span class="ai-chip">Carryover</span> contractor-svc-09</div>
+                <div class="body">Q2 finding inherited.</div>
+              </div>
+              <div class="delta-card is-new is-resolved">
+                <div class="head"><span class="ai-chip">Added</span> n.lee</div>
+                <div class="body">Ratified, onboarding matched.</div>
+              </div>
+              <div class="delta-card is-good is-resolved">
+                <div class="head"><span class="ai-chip">Identical</span> 19 rows</div>
+                <div class="body">Bulk ratified.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 2.</strong> All deltas ratified. AI's verdict draft is on the right. Click "Sign off" to commit.</p>
+    </div>
+
+    <!-- State 3: Signed -->
+    <div class="flow-state" data-state="signed">
+      <div class="device is-tablet">
+        <div class="device-screen">
+          <div class="compare-app">
+            <div class="compare-toolbar">
+              <span class="title">Control 4.2.1 — Q3 vs. Q2 access review</span>
+              <span class="meta" style="color:var(--luna-green-700);font-weight:600;">✓ Signed off · just now</span>
+              <span class="tool">↻ Re-align</span>
+              <span class="tool">Show deltas</span>
+              <span class="tool">Show identical</span>
+              <span class="tool">✎ Pencil</span>
+              <span class="delta-stats">
+                <span class="delta-pill is-good">✓ Sealed</span>
+              </span>
+            </div>
+
+            <div class="signoff-pane">
+              <div class="ic">✓</div>
+              <div style="flex:1;">
+                <h2>Adequate with finding · sealed</h2>
+                <p class="meta">Reviewer: Dana Cho · Internal Audit · 2026-09-26 09:42 PT.
+                  Total review time: <strong>5 minutes</strong> (vs. 35 min last quarter).
+                  Commit: <span class="ai-citation">block #4,182,118</span>.
+                  <strong>3 deltas resolved · 19 identical rows bulk-ratified · 1 carryover, 1 new finding, 1 added ratified.</strong>
+                </p>
+                <div style="margin-top:10px;display:flex;gap:6px;">
+                  <button class="luna-btn is-secondary" data-go="reset">↻ Reset flow</button>
+                  <a href="chain-a.html" class="luna-btn is-ghost" style="text-decoration:none;">View chain receipt ↗</a>
+                </div>
+              </div>
+            </div>
+
+            <div style="grid-column: 1 / -1; padding: 16px; background: var(--luna-white); border-top: 1px solid var(--luna-gray-200);">
+              <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--luna-gray-500);margin-bottom:8px;">What ECM did while you were reviewing</div>
+              <ul style="margin: 0 0 0 18px; padding: 0; font-size: 12px; color: var(--luna-gray-700); line-height: 1.6;">
+                <li>Wrote the verdict to Weston's notification queue (wrist-tap when he gets back)</li>
+                <li>Cross-linked r.taylor finding to a new privilege-audit task (HEL-3489 created)</li>
+                <li>Updated HEL-3471 with "still open after Q3 sign-off" note</li>
+                <li>Sent Sarah (PMO) the Q3 4.2.1-sealed event for her rollup</li>
+                <li>Committed all 22 rows + 4 deltas + verdict to chain block #4,182,118</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 3.</strong> Sealed. The compare primitive let Dana ratify deltas instead of re-reading 22 rows from scratch — 5 minutes instead of 35. ECM did the cross-linking in the background.</p>
+    </div>
+
+  </div>
+
+  <p class="surface-caption" style="margin-top:32px;">
+    Comparison becomes the primitive of review. ECM aligns rows across quarters, classifies each as same, drifted, added, or removed, and stages a verdict for every delta. Dana ratifies or disputes with the Pencil; she never re-reads what was already signed off.
+  </p>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Causal AI · Take B — Counterfactual evidence · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .cap-stage { max-width: 1100px; margin: 0 auto; }
+  .cap-panel { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); overflow: hidden; box-shadow: var(--luna-shadow-100); margin-bottom: 16px; }
+  .cap-panel .head { padding: 14px 18px; border-bottom: 1px solid var(--luna-gray-200); display: flex; align-items: center; gap: 10px; }
+  .cap-panel .head h3 { font-size: 14px; font-weight: 700; color: var(--luna-gray-900); margin: 0; flex: 1; }
+  .cap-panel .head .meta { font-size: 11px; color: var(--luna-gray-500); }
+
+  /* Owner submission view */
+  .owner-context { padding: 16px 22px; background: var(--luna-red-50); border-bottom: 1px solid var(--luna-red-100); }
+  .owner-context h4 { margin: 0 0 4px; font-size: 13px; font-weight: 700; color: var(--luna-red-700); display: flex; align-items: center; gap: 6px; }
+  .owner-context p { font-size: 12.5px; color: var(--luna-gray-800); line-height: 1.55; margin: 0; }
+  .owner-context p code { background: var(--luna-white); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; }
+
+  .draft-view { padding: 16px 22px; }
+  .draft-view h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin: 0 0 8px; }
+  .draft-card { padding: 12px 14px; background: var(--luna-gray-50); border: 1px solid var(--luna-gray-200); border-radius: 6px; font-family: ui-monospace, monospace; font-size: 12px; color: var(--luna-gray-800); }
+  .draft-card .row { padding: 4px 0; display: grid; grid-template-columns: 140px 1fr; gap: 12px; }
+  .draft-card .row .k { color: var(--luna-gray-500); }
+  .draft-card .row.is-flagged { color: var(--luna-red-700); }
+  .draft-card .row.is-flagged .k { color: var(--luna-red-700); }
+  .draft-card .row.is-flagged::after { content: " ✗ missing"; color: var(--luna-red-700); margin-left: 6px; font-weight: 600; }
+
+  /* Counterfactual cards */
+  .cf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 22px 22px; }
+  @media (max-width: 900px) { .cf-grid { grid-template-columns: 1fr; } }
+  .cf-card { padding: 14px 16px; border: 1.5px solid var(--luna-gray-200); border-radius: 8px; background: var(--luna-white); position: relative; cursor: pointer; transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s; }
+  .cf-card:hover { transform: translateY(-2px); box-shadow: var(--luna-shadow-200); border-color: var(--luna-purple-300); }
+  .cf-card.is-selected { border-color: var(--luna-purple-500); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
+  .cf-card .label { font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--luna-purple-700); margin-bottom: 4px; }
+  .cf-card h5 { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--luna-gray-900); }
+  .cf-card .body { font-size: 12px; color: var(--luna-gray-700); line-height: 1.55; }
+  .cf-card .body code { background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; }
+  .cf-card .footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--luna-gray-100); display: flex; align-items: center; gap: 6px; font-size: 11px; }
+  .cf-card .verdict { padding: 2px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 700; }
+  .cf-card .verdict.is-pass { background: var(--luna-green-50); color: var(--luna-green-700); }
+  .cf-card .effort { color: var(--luna-gray-500); }
+  .cf-card .effort .v { color: var(--luna-gray-800); font-weight: 600; }
+
+  /* Compare view */
+  .compare-strip { padding: 18px 22px; background: var(--luna-gray-50); border-top: 1px solid var(--luna-gray-200); }
+  .compare-strip h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin: 0 0 12px; }
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .compare-table th, .compare-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--luna-gray-200); background: var(--luna-white); }
+  .compare-table th { font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--luna-gray-500); background: var(--luna-gray-50); }
+  .compare-table td.is-rejected { background: var(--luna-red-50); color: var(--luna-red-700); }
+  .compare-table td.is-accepted { background: var(--luna-green-50); color: var(--luna-green-700); }
+  .compare-table td .pill { display: inline-block; padding: 1px 7px; font-size: 10px; font-weight: 700; border-radius: 999px; }
+
+  /* Submission flow */
+  .submitted-banner { padding: 18px 22px; background: linear-gradient(135deg, var(--luna-green-50), var(--luna-white)); border-bottom: 1px solid var(--luna-green-100); display: flex; align-items: center; gap: 14px; }
+  .submitted-banner .ic { width: 40px; height: 40px; border-radius: 50%; background: var(--luna-green-500); color: var(--luna-white); display: grid; place-items: center; font-size: 18px; flex-shrink: 0; }
+  .submitted-banner h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--luna-green-700); }
+  .submitted-banner .sub { font-size: 12.5px; color: var(--luna-gray-700); margin-top: 2px; }
+
+  .learning-card { padding: 16px 22px; background: var(--luna-purple-50); border: 1px solid var(--luna-purple-100); border-left: 3px solid var(--luna-purple-500); border-radius: 6px; margin: 18px; }
+  .learning-card h4 { margin: 0 0 6px; font-size: 12.5px; font-weight: 700; color: var(--luna-purple-700); }
+  .learning-card p { margin: 0; font-size: 12.5px; color: var(--luna-gray-800); line-height: 1.55; }
+  .learning-card p strong { color: var(--luna-gray-900); }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Causal AI · <span style="color:var(--luna-text);">Take B</span>
+      </div>
+      <h1 class="luna-heading-600">"What if you had filed X instead?"</h1>
+      <p class="subtitle">When ECM rejects a submission, it doesn't just say "inadequate." It simulates alternative submissions — counterfactuals that would have passed — and shows the owner what shape sufficient evidence takes. Owners learn the rules without trial-and-error chasing.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Control owner</span>
+      <span class="luna-badge">Noun · Counterfactual</span>
+      <span class="luna-badge is-purple">Take B</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="causal-a.html">A · Root-cause analysis ★</a>
+    <span class="sep">·</span>
+    <a href="causal-b.html" class="is-current">B · Counterfactual evidence</a>
+    <span class="sep">·</span>
+    <a href="causal-c.html">C · Risk propagation map</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="draft"><span class="num">1</span> The rejected draft</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="alternates"><span class="num">2</span> Counterfactual alternatives</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="submitted"><span class="num">3</span> Submitted &amp; passed</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content cap-stage">
+
+    <!-- State 1: Draft -->
+    <div class="flow-state" data-state="draft">
+      <div class="cap-panel">
+        <div class="owner-context">
+          <h4>⚠ Submission rejected · IT.AC.1.C01 · Q3 FY26</h4>
+          <p>
+            Weston submitted a draft evidence package. The structural check pass; one substantive check fails. Below: the rejected draft. On the next screen, three counterfactuals that <em>would</em> pass — generated automatically from the policy rules and the data ECM already has.
+          </p>
+        </div>
+        <div class="draft-view">
+          <h4>Submitted draft</h4>
+          <div class="draft-card">
+            <div class="row"><div class="k">control</div><div>IT.AC.1.C01</div></div>
+            <div class="row"><div class="k">cycle_period</div><div>2026-07-01 → 2026-09-25</div></div>
+            <div class="row"><div class="k">access_roster</div><div>AR-Q3FY26-prod-db.csv · 22 rows</div></div>
+            <div class="row"><div class="k">dba_attestation</div><div>DBA-attestation-Q3FY26.eml</div></div>
+            <div class="row is-flagged"><div class="k">approval_ticket_refs</div><div>(empty)</div></div>
+            <div class="row"><div class="k">carryover_findings</div><div>contractor-svc-09 (Q2)</div></div>
+          </div>
+        </div>
+        <div style="padding: 0 22px 18px;">
+          <div style="padding: 12px 14px; background: var(--luna-red-50); border-left: 3px solid var(--luna-red-500); border-radius: 5px; font-size: 12.5px; color: var(--luna-gray-800); line-height: 1.55;">
+            <strong style="color: var(--luna-red-700);">Why this fails.</strong>
+            Row <code style="background:var(--luna-white);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;font-size:11px;">r.taylor</code> shows role escalation <code style="background:var(--luna-white);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;font-size:11px;">dba-read</code> → <code style="background:var(--luna-white);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;font-size:11px;">dba-admin</code> on 2026-08-14.
+            Substantive rule <code style="background:var(--luna-white);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;font-size:11px;">approval_for_every_escalation</code> requires a matching ServiceNow CR ticket. The <code style="background:var(--luna-white);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;font-size:11px;">approval_ticket_refs</code> field is empty.
+            ECM can't accept this as submitted — but click "Next" to see what would work.
+          </div>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 1.</strong> The standard "inadequate" verdict. Most tools stop here — the owner gets told what's wrong but not what would be right. The counterfactual layer says: "here are three different packages that would all pass — pick the one closest to what actually happened."
+      </p>
+    </div>
+
+    <!-- State 2: Alternates -->
+    <div class="flow-state" data-state="alternates">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Counterfactuals · what would have passed</h3>
+          <span class="meta">3 alternatives, generated from the rule set + available data</span>
+        </div>
+        <div style="padding: 14px 22px;">
+          <h4 style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin: 0 0 8px;">If you had submitted any of these, the rule would have been satisfied:</h4>
+        </div>
+        <div class="cf-grid">
+          <div class="cf-card is-selected" data-go="submitted">
+            <div class="label">Counterfactual 1 · cleanest</div>
+            <h5>Attach HEL-3471 to approval_ticket_refs</h5>
+            <div class="body">
+              The Q2 deprovision ticket <code>HEL-3471</code> exists in the ServiceNow CR queue and references <code>r.taylor</code> (different role change, but acceptable to the rule).
+              ECM can pre-fill this on your behalf if you ratify the connection.
+              <br/><br/>
+              <strong>Closest match to reality.</strong>
+            </div>
+            <div class="footer">
+              <span class="verdict is-pass">would pass · 96%</span>
+              <span class="effort"><span class="v">1 click</span> to ratify</span>
+            </div>
+          </div>
+          <div class="cf-card" data-go="submitted">
+            <div class="label">Counterfactual 2 · trail-completing</div>
+            <h5>Open new ITGC-CR ticket retroactively</h5>
+            <div class="body">
+              No matching ticket exists. Counterfactual: Carlos (change-mgmt owner) creates a post-event ITGC-CR ticket documenting the 8-14 escalation, links it here. Closes the gap at the source.
+              <br/><br/>
+              <strong>Substantively strongest, takes a day.</strong>
+            </div>
+            <div class="footer">
+              <span class="verdict is-pass">would pass · 99%</span>
+              <span class="effort"><span class="v">~1 day</span> turnaround</span>
+            </div>
+          </div>
+          <div class="cf-card" data-go="submitted">
+            <div class="label">Counterfactual 3 · scope-narrowing</div>
+            <h5>Note as exception, scope cycle to pre-escalation period</h5>
+            <div class="body">
+              Narrow the AR coverage_period to <code>2026-07-01 → 2026-08-13</code> (one day before escalation). Re-submit with the escalation as a known exception requiring separate testing.
+              <br/><br/>
+              <strong>Defensible but smaller-scope; signals less assurance.</strong>
+            </div>
+            <div class="footer">
+              <span class="verdict is-pass">would pass · 78%</span>
+              <span class="effort"><span class="v">5 min</span> · scope cost</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="learning-card">
+          <h4>✦ Why this beats "inadequate · please fix"</h4>
+          <p>
+            The three alternatives are <strong>causally generated</strong> from the rule and the data ECM already has — not LLM-confabulated.
+            The owner sees the rule's logic by example, not by reading legalese. The reviewer can see which counterfactual the owner picked and why.
+            Over time, owners stop submitting drafts that get rejected because they learn the structure from the alternatives.
+          </p>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 2.</strong> Counterfactual 1 is the "cleanest" match to what actually happened — Weston ratifies the link between HEL-3471 and the escalation, and the submission becomes valid. Counterfactual 2 is the substantively strongest but takes Carlos's involvement. Counterfactual 3 is a defensible scope narrowing. Click any card to submit that version.
+      </p>
+    </div>
+
+    <!-- State 3: Submitted -->
+    <div class="flow-state" data-state="submitted">
+      <div class="cap-panel">
+        <div class="submitted-banner">
+          <div class="ic">✓</div>
+          <div>
+            <h3>Submitted &amp; passed sufficiency · IT.AC.1.C01 · Q3 FY26</h3>
+            <div class="sub">Counterfactual 1 applied · HEL-3471 ratified as approval reference · routed to Dana for review</div>
+          </div>
+          <span class="luna-badge is-green" style="margin-left:auto;padding:3px 9px;">● routed</span>
+        </div>
+
+        <div class="draft-view">
+          <h4>Final submission</h4>
+          <div class="draft-card">
+            <div class="row"><div class="k">control</div><div>IT.AC.1.C01</div></div>
+            <div class="row"><div class="k">cycle_period</div><div>2026-07-01 → 2026-09-25</div></div>
+            <div class="row"><div class="k">access_roster</div><div>AR-Q3FY26-prod-db.csv · 22 rows · valid</div></div>
+            <div class="row"><div class="k">dba_attestation</div><div>DBA-attestation-Q3FY26.eml · valid</div></div>
+            <div class="row" style="background: var(--luna-green-50); color: var(--luna-green-700); padding: 4px 0; margin: 4px -8px; padding-left: 8px; border-radius: 4px;"><div class="k">approval_ticket_refs</div><div>HEL-3471 (Weston ratified link to r.taylor)</div></div>
+            <div class="row"><div class="k">carryover_findings</div><div>contractor-svc-09 (Q2)</div></div>
+          </div>
+        </div>
+
+        <div class="learning-card">
+          <h4>✦ What ECM learned for next time</h4>
+          <p>
+            Weston ratified <strong>HEL-3471</strong> as the approval reference for r.taylor's escalation. The training set now contains a positive example of "this ticket type, with this content, satisfies the cross-approval rule."
+            Next quarter's similar pattern won't generate the same rejection — ECM will pre-suggest the linkage at submission time.
+          </p>
+          <p style="margin-top:6px;">
+            <strong>Dana's review queue</strong> still sees this for substantive sign-off; she may still flag the original gap as a Q3 finding (because the approval was post-hoc, not pre-authorized). The counterfactual makes the submission valid; it doesn't make the underlying weakness invisible.
+          </p>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 3.</strong> Submitted in 30 seconds instead of 3 days of back-and-forth with Dana. The counterfactual didn't erase the substantive issue — Dana will still flag the after-the-fact ticket — but it eliminated the diagnosis-and-chase loop that costs reviewers weeks. The structure of "what would have worked" is the explainability artifact.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

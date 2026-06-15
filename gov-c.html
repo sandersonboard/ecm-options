@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI governance · Take C — Policy-as-code · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .cap-stage { max-width: 1100px; margin: 0 auto; }
+  .cap-panel { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); overflow: hidden; box-shadow: var(--luna-shadow-100); margin-bottom: 16px; }
+  .cap-panel .head { padding: 14px 18px; border-bottom: 1px solid var(--luna-gray-200); display: flex; align-items: center; gap: 10px; }
+  .cap-panel .head h3 { font-size: 14px; font-weight: 700; color: var(--luna-gray-900); margin: 0; flex: 1; }
+  .cap-panel .head .meta { font-size: 11px; color: var(--luna-gray-500); }
+
+  /* Code panels */
+  .code-pane { background: #fafaf8; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; line-height: 1.65; padding: 18px 24px; color: var(--luna-gray-800); overflow-x: auto; }
+  .code-pane .ln { display: inline-block; width: 28px; color: var(--luna-gray-400); margin-right: 14px; text-align: right; user-select: none; }
+  .code-pane .com { color: var(--luna-gray-500); font-style: italic; }
+  .code-pane .kw { color: var(--luna-purple-700); font-weight: 600; }
+  .code-pane .str { color: var(--luna-green-700); }
+  .code-pane .ref { color: var(--luna-teal-700); }
+  .code-pane .num { color: var(--luna-orange-700); }
+  .code-pane .added { background: var(--luna-green-50); border-left: 3px solid var(--luna-green-500); padding-left: 8px; margin-left: -8px; display: block; }
+  .code-pane .removed { background: var(--luna-red-50); border-left: 3px solid var(--luna-red-500); padding-left: 8px; margin-left: -8px; display: block; text-decoration: line-through; opacity: 0.7; }
+
+  .code-pane .added .ln { color: var(--luna-green-700); }
+  .code-pane .removed .ln { color: var(--luna-red-700); }
+
+  /* PR layout */
+  .pr-layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; padding: 0; }
+  @media (max-width: 900px) { .pr-layout { grid-template-columns: 1fr; } }
+  .pr-sidebar { padding: 16px 18px; border-right: 1px solid var(--luna-gray-200); }
+  .pr-sidebar h4 { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin: 0 0 8px; }
+  .pr-sidebar .pr-meta-row { padding: 6px 0; border-bottom: 1px solid var(--luna-gray-100); font-size: 12px; }
+  .pr-sidebar .pr-meta-row:last-child { border-bottom: 0; }
+  .pr-sidebar .pr-meta-row .k { color: var(--luna-gray-500); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+  .pr-sidebar .pr-meta-row .v { color: var(--luna-gray-900); margin-top: 2px; }
+
+  .pr-reviewers { margin-top: 14px; }
+  .pr-reviewer-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 12px; }
+  .pr-reviewer-row .av { width: 24px; height: 24px; border-radius: 50%; background: var(--luna-teal-100); color: var(--luna-teal-700); display: grid; place-items: center; font-size: 11px; font-weight: 700; }
+  .pr-reviewer-row .name { flex: 1; color: var(--luna-gray-800); font-weight: 500; }
+  .pr-reviewer-row .status { font-size: 10.5px; font-weight: 700; }
+  .pr-reviewer-row .status.is-approved { color: var(--luna-green-700); }
+  .pr-reviewer-row .status.is-pending { color: var(--luna-gray-500); }
+
+  .pr-main { padding: 16px 18px; }
+  .pr-main h2 { font-size: 17px; font-weight: 700; margin: 0 0 6px; color: var(--luna-gray-900); }
+  .pr-main .ts { font-size: 11px; color: var(--luna-gray-500); font-family: ui-monospace, monospace; margin-bottom: 14px; }
+  .pr-main .pr-desc { font-size: 13px; color: var(--luna-gray-800); line-height: 1.6; margin-bottom: 18px; padding: 12px 14px; background: var(--luna-gray-50); border-radius: 6px; }
+  .pr-main .pr-desc code { background: var(--luna-white); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; }
+
+  .diff-header { padding: 8px 14px; background: var(--luna-gray-100); border: 1px solid var(--luna-gray-200); border-bottom: 0; border-radius: 6px 6px 0 0; font-family: ui-monospace, monospace; font-size: 11.5px; color: var(--luna-gray-700); }
+  .diff-stats { margin-left: auto; }
+  .diff-stats .add { color: var(--luna-green-700); font-weight: 600; }
+  .diff-stats .rem { color: var(--luna-red-700); font-weight: 600; }
+  .diff-body { border: 1px solid var(--luna-gray-200); border-radius: 0 0 6px 6px; }
+  .diff-body .code-pane { padding: 12px 14px; }
+
+  /* Merged state */
+  .merged-banner { padding: 18px 24px; background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50)); border-bottom: 1px solid var(--luna-purple-100); display: flex; align-items: center; gap: 14px; }
+  .merged-banner .ic { width: 40px; height: 40px; border-radius: 50%; background: var(--luna-purple-700); color: var(--luna-white); display: grid; place-items: center; font-size: 18px; flex-shrink: 0; }
+  .merged-banner h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--luna-purple-700); }
+  .merged-banner .sub { font-size: 12.5px; color: var(--luna-gray-700); margin-top: 2px; }
+
+  .deploy-timeline { padding: 18px 28px; }
+  .deploy-timeline h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin: 0 0 14px; }
+  .deploy-step { display: grid; grid-template-columns: 26px 1fr 130px; gap: 12px; padding: 8px 0; align-items: start; font-size: 12.5px; }
+  .deploy-step .ic { width: 22px; height: 22px; border-radius: 50%; background: var(--luna-green-500); color: var(--luna-white); display: grid; place-items: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .deploy-step.is-pending .ic { background: var(--luna-gray-300); color: var(--luna-gray-700); }
+  .deploy-step h5 { margin: 0 0 2px; font-size: 12.5px; font-weight: 600; color: var(--luna-gray-900); }
+  .deploy-step .body { color: var(--luna-gray-700); font-size: 12px; line-height: 1.4; }
+  .deploy-step .when { color: var(--luna-gray-500); font-size: 11px; font-family: ui-monospace, monospace; text-align: right; padding-top: 2px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · AI governance · <span style="color:var(--luna-text);">Take C ★</span>
+      </div>
+      <h1 class="luna-heading-600">ECM's rules are code. Changing them is a pull request.</h1>
+      <p class="subtitle">The agent's substantive judgment isn't an opaque model — it's an enumerable set of rules, versioned, signed, and tied to specific controls. Changing a rule looks like a code review with management sign-off. "What did the AI decide" becomes "what does the policy say."</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · PMO + Eng</span>
+      <span class="luna-badge">Noun · Policy</span>
+      <span class="luna-badge is-purple">Take C ★</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="gov-a.html">A · Model card + change log</a>
+    <span class="sep">·</span>
+    <a href="gov-b.html">B · Override registry</a>
+    <span class="sep">·</span>
+    <a href="gov-c.html" class="is-current">C · Policy-as-code ★</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="rules"><span class="num">1</span> Read the rules</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="pr"><span class="num">2</span> Pull request</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="merged"><span class="num">3</span> Merged + deployed</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content cap-stage">
+
+    <!-- State 1: Rules -->
+    <div class="flow-state" data-state="rules">
+      <div class="cap-panel">
+        <div class="head">
+          <h3><code style="background:var(--luna-gray-100);padding:2px 7px;border-radius:3px;font-family:ui-monospace,monospace;font-size:12px;">policy/it-ac-1-c01.optro</code></h3>
+          <span class="meta">v4.2 · main · signed by 3 of 3 required</span>
+          <span class="luna-badge is-green" style="padding:3px 9px;">● live in production</span>
+        </div>
+        <div class="code-pane">
+<span class="ln">1</span><span class="com"># IT.AC.1.C01 — Quarterly user access review</span>
+<span class="ln">2</span><span class="com"># Production database (prod-db-01)</span>
+<span class="ln">3</span><span class="com"># Owner: Weston Prohaska · Reviewer: Dana Cho · PMO: Sarah Park</span>
+<span class="ln">4</span>
+<span class="ln">5</span><span class="kw">control</span> <span class="str">"IT.AC.1.C01"</span> {
+<span class="ln">6</span>  <span class="kw">cadence</span>     = <span class="str">"quarterly"</span>
+<span class="ln">7</span>  <span class="kw">schema</span>      = <span class="ref">schemas.ar_quarterly_v3</span>
+<span class="ln">8</span>  <span class="kw">reviewer</span>    = <span class="ref">team.internal_audit</span>
+<span class="ln">9</span>
+<span class="ln">10</span>  <span class="com"># Structural sufficiency checks (generalize across the catalog)</span>
+<span class="ln">11</span>  <span class="kw">structural</span> {
+<span class="ln">12</span>    <span class="kw">required_fields</span>       = <span class="ref">schemas.ar_quarterly_v3.required</span>
+<span class="ln">13</span>    <span class="kw">coverage_window_days</span>  = <span class="num">5</span>  <span class="com"># end within 5 BD of cycle close</span>
+<span class="ln">14</span>    <span class="kw">attester_employment</span>   = <span class="str">"active_at_signature"</span>
+<span class="ln">15</span>  }
+<span class="ln">16</span>
+<span class="ln">17</span>  <span class="com"># Substantive sufficiency checks (specific to THIS control)</span>
+<span class="ln">18</span>  <span class="kw">substantive</span> {
+<span class="ln">19</span>    <span class="com"># Added 2026-09-18 in response to Q3 r.taylor finding</span>
+<span class="ln">20</span>    <span class="kw">rule</span> <span class="str">"approval_for_every_escalation"</span> {
+<span class="ln">21</span>      <span class="kw">when</span>   = <span class="str">"row.role_changed AND row.role_delta == 'escalation'"</span>
+<span class="ln">22</span>      <span class="kw">assert</span> = <span class="str">"exists(snow.cr_ticket WHERE refs == row.user AND type == 'ITGC-CR')"</span>
+<span class="ln">23</span>      <span class="kw">on_fail</span> = <span class="str">"inadequate"</span>
+<span class="ln">24</span>      <span class="kw">message</span> = <span class="str">"Role escalation without matching approval ticket"</span>
+<span class="ln">25</span>    }
+<span class="ln">26</span>
+<span class="ln">27</span>    <span class="kw">rule</span> <span class="str">"carryover_findings_inherited"</span> {
+<span class="ln">28</span>      <span class="kw">when</span>   = <span class="str">"prior_cycle.findings.any(status == 'open')"</span>
+<span class="ln">29</span>      <span class="kw">action</span> = <span class="str">"attach_verbatim_to_evidence"</span>
+<span class="ln">30</span>      <span class="kw">message</span> = <span class="str">"Carryover finding attached from Q-1 sign-off"</span>
+<span class="ln">31</span>    }
+<span class="ln">32</span>  }
+<span class="ln">33</span>
+<span class="ln">34</span>  <span class="com"># Verdict authoring authority — explicitly NOT delegated to ECM</span>
+<span class="ln">35</span>  <span class="kw">verdict_author</span> = <span class="ref">reviewer</span>
+<span class="ln">36</span>  <span class="kw">finding_language_author</span> = <span class="ref">reviewer</span>
+<span class="ln">37</span>}
+        </div>
+      </div>
+
+      <div style="padding: 14px 18px; background: var(--luna-purple-50); border: 1px solid var(--luna-purple-100); border-radius: 6px; font-size: 13px; color: var(--luna-gray-800); line-height: 1.55; margin-bottom: 16px;">
+        <strong style="color: var(--luna-purple-700);">What you're looking at.</strong>
+        ECM's behavior on IT.AC.1.C01 is fully specified in this file. There are no hidden rules, no opaque thresholds, no model weights doing un-documented work. When the external auditor asks "why did ECM accept this?", the answer is the file. When something changes, the file changes — and the change has signatures attached.
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 1.</strong> Twelve rules per control, give or take. Each rule's <code>when</code> + <code>assert</code> + <code>on_fail</code> shape is debuggable, testable, and reviewable. The <code>verdict_author = reviewer</code> line at the bottom is not decorative — it's enforced. ECM cannot author the verdict; the code prevents it.
+      </p>
+    </div>
+
+    <!-- State 2: PR -->
+    <div class="flow-state" data-state="pr">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>PR #218 · <code style="background:var(--luna-gray-100);padding:1px 6px;border-radius:3px;font-family:ui-monospace,monospace;font-size:12px;">policy/it-ac-1-c01.optro</code></h3>
+          <span class="meta">opened 2026-09-15 by Sarah Park · awaiting review</span>
+          <span class="luna-badge is-yellow" style="padding:3px 9px;">● open</span>
+        </div>
+        <div class="pr-layout">
+          <div class="pr-sidebar">
+            <h4>PR metadata</h4>
+            <div class="pr-meta-row"><div class="k">Author</div><div class="v">Sarah Park (PMO)</div></div>
+            <div class="pr-meta-row"><div class="k">Branch</div><div class="v" style="font-family:ui-monospace,monospace;font-size:11.5px;">fix/itac-cross-approval</div></div>
+            <div class="pr-meta-row"><div class="k">Issue</div><div class="v" style="font-family:ui-monospace,monospace;font-size:11.5px;">HEL-3471 (carryover) + new</div></div>
+            <div class="pr-meta-row"><div class="k">Controls affected</div><div class="v">IT.AC.1.C01 only</div></div>
+            <div class="pr-meta-row" style="border:none;"><div class="k">Triggered by</div><div class="v">Override pattern (Take B drift analysis)</div></div>
+
+            <h4 style="margin-top:14px;">Required reviewers</h4>
+            <div class="pr-reviewers">
+              <div class="pr-reviewer-row"><div class="av" style="background:var(--luna-purple-100);color:var(--luna-purple-700);">DC</div><div class="name">Dana Cho · IA</div><div class="status is-approved">✓ approved</div></div>
+              <div class="pr-reviewer-row"><div class="av" style="background:var(--luna-green-100);color:var(--luna-green-700);">MP</div><div class="name">M. Patel · CFO</div><div class="status is-approved">✓ approved</div></div>
+              <div class="pr-reviewer-row"><div class="av" style="background:var(--luna-orange-100, #ffedd5);color:var(--luna-orange-700);">JV</div><div class="name">J. Vargas · A.C.</div><div class="status is-approved">✓ approved</div></div>
+              <div class="pr-reviewer-row"><div class="av" style="background:var(--luna-gray-200);color:var(--luna-gray-600);">EA</div><div class="name">Deloitte (advisory)</div><div class="status is-pending">○ advisory only</div></div>
+            </div>
+          </div>
+          <div class="pr-main">
+            <h2>Add cross-approval check for role escalations on IT.AC.1.C01</h2>
+            <div class="ts">opened 2026-09-15 14:08 UTC · 3 commits · 3 of 3 required approvals</div>
+            <div class="pr-desc">
+              <strong>What this changes.</strong> Adds a new substantive sufficiency rule to control IT.AC.1.C01: every role escalation detected in the access-review snapshot must have a matching approval ticket from the ServiceNow CR queue (type <code>ITGC-CR</code>). On failure, the evidence is marked inadequate at submission time with a specific diagnostic.
+              <br/><br/>
+              <strong>Why.</strong> Q3 override registry shows 3 false-pass disagreements with the same pattern: ECM was structurally adequate, reviewer found a substantive gap (the r.taylor escalation). Adding this rule should lift substantive agreement on this control from ~74% back toward the 85% threshold.
+              <br/><br/>
+              <strong>Scope.</strong> This rule is scoped to IT.AC.1.C01 specifically — it does not affect any other access-review control. The universal layer (structural checks) is unchanged.
+            </div>
+
+            <div class="diff-header" style="display: flex; align-items: center; gap: 12px;">
+              <span>policy/it-ac-1-c01.optro</span>
+              <span class="diff-stats"><span class="add">+8</span> <span class="rem">-0</span></span>
+            </div>
+            <div class="diff-body">
+              <div class="code-pane">
+<span class="ln">17</span>  <span class="com"># Substantive sufficiency checks (specific to THIS control)</span>
+<span class="ln">18</span>  <span class="kw">substantive</span> {
+<span class="added"><span class="ln">19</span>    <span class="com"># Added 2026-09-18 in response to Q3 r.taylor finding</span></span>
+<span class="added"><span class="ln">20</span>    <span class="kw">rule</span> <span class="str">"approval_for_every_escalation"</span> {</span>
+<span class="added"><span class="ln">21</span>      <span class="kw">when</span>   = <span class="str">"row.role_changed AND row.role_delta == 'escalation'"</span></span>
+<span class="added"><span class="ln">22</span>      <span class="kw">assert</span> = <span class="str">"exists(snow.cr_ticket WHERE refs == row.user AND type == 'ITGC-CR')"</span></span>
+<span class="added"><span class="ln">23</span>      <span class="kw">on_fail</span> = <span class="str">"inadequate"</span></span>
+<span class="added"><span class="ln">24</span>      <span class="kw">message</span> = <span class="str">"Role escalation without matching approval ticket"</span></span>
+<span class="added"><span class="ln">25</span>    }</span>
+<span class="added"><span class="ln">26</span></span>
+<span class="ln">27</span>    <span class="kw">rule</span> <span class="str">"carryover_findings_inherited"</span> {
+<span class="ln">28</span>      <span class="kw">when</span>   = <span class="str">"prior_cycle.findings.any(status == 'open')"</span>
+              </div>
+            </div>
+
+            <div style="margin-top:16px; padding: 12px 14px; background: var(--luna-gray-50); border-radius: 6px; font-size: 12.5px; color: var(--luna-gray-700); line-height: 1.55;">
+              <strong style="color: var(--luna-gray-900);">Dana's review comment (2026-09-17 11:21 UTC):</strong>
+              "Approving. This is the exact rule I was applying by hand in Q3. Glad it's getting encoded. One ask — make sure the on-fail message is owner-actionable (it is). Approved."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 2.</strong> Familiar shape: branch, diff, named reviewers, comments, required approvals. The two adaptations for governance: the reviewers are management roles (PMO, CFO, audit committee chair), and the change description has a "scope" section that's specifically about which controls are affected. Click "Next" to merge.
+      </p>
+    </div>
+
+    <!-- State 3: Merged -->
+    <div class="flow-state" data-state="merged">
+      <div class="cap-panel">
+        <div class="merged-banner">
+          <div class="ic">✓</div>
+          <div>
+            <h3>PR #218 merged</h3>
+            <div class="sub">2026-09-18 09:42 UTC by Sarah Park · all 3 required approvals · advisory acknowledgment from Deloitte</div>
+          </div>
+          <button class="luna-btn is-secondary" style="margin-left:auto;font-size:12px;padding:5px 10px;">View commit ↗</button>
+        </div>
+
+        <div class="deploy-timeline">
+          <h4>Deployment timeline</h4>
+          <div class="deploy-step">
+            <div class="ic">1</div>
+            <div>
+              <h5>Merge to main</h5>
+              <div class="body">3 of 3 required approvals collected. Squash-merged with full signoff trail in commit message.</div>
+            </div>
+            <div class="when">09-18 09:42 UTC</div>
+          </div>
+          <div class="deploy-step">
+            <div class="ic">2</div>
+            <div>
+              <h5>Rule validated against the override registry</h5>
+              <div class="body">New rule run against the last 12 quarters of override data. Would have raised the 3 Q3 false-pass overrides correctly. No false-positives on prior-quarter clean cycles.</div>
+            </div>
+            <div class="when">09-18 09:43 UTC</div>
+          </div>
+          <div class="deploy-step">
+            <div class="ic">3</div>
+            <div>
+              <h5>Deployed to ECM production</h5>
+              <div class="body">Rule active for IT.AC.1.C01 submissions going forward. Owners and reviewers notified via Slack channel <code>#sox-policy-changes</code>.</div>
+            </div>
+            <div class="when">09-18 09:44 UTC</div>
+          </div>
+          <div class="deploy-step">
+            <div class="ic">4</div>
+            <div>
+              <h5>Committed to the audit chain</h5>
+              <div class="body">PR #218 metadata + diff + reviewer signatures committed to block #4,178,902. External auditor's verifier can reproduce the policy state at any past timestamp.</div>
+            </div>
+            <div class="when">09-18 09:44 UTC</div>
+          </div>
+          <div class="deploy-step">
+            <div class="ic">5</div>
+            <div>
+              <h5>Model card updated</h5>
+              <div class="body">Change log entry added to public-facing model card (Take A). Audit committee notified of the next quarterly review entry.</div>
+            </div>
+            <div class="when">09-18 09:45 UTC</div>
+          </div>
+          <div class="deploy-step is-pending">
+            <div class="ic">6</div>
+            <div>
+              <h5>Q4 measurement window opens</h5>
+              <div class="body">Substantive agreement on IT.AC.1.C01 will be re-measured at Q4 close. Target: ≥85%.</div>
+            </div>
+            <div class="when">pending</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 3.</strong> Six steps from merge to live, all logged. The strategic point isn't that ECM "uses code" — it's that ECM's substantive layer is <em>owned by humans the company has to identify by name</em>, changed by <em>workflows the company has to defend in a deficiency review</em>, and recorded in <em>artifacts the external auditor can fetch independently</em>. Policy-as-code is the form factor; defensibility is the substance.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

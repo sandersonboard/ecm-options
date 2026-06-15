@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wearable · Take C — Escalation-only · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .watch-stage { display: flex; gap: 60px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+  .stage-side { flex: 1; min-width: 280px; max-width: 380px; padding: 14px 0; }
+  .stage-side h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--luna-teal-500); margin: 0 0 6px; }
+  .stage-side p { font-size: 14px; color: var(--luna-gray-700); line-height: 1.55; margin: 0 0 12px; }
+  .stage-side .step-detail { padding: 12px 14px; background: var(--luna-gray-50); border-left: 3px solid var(--luna-teal-500); border-radius: 0 6px 6px 0; margin-bottom: 14px; }
+  .stage-side .step-detail .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 4px; }
+  .stage-side .step-detail p { font-size: 13px; color: var(--luna-gray-800); margin: 0; line-height: 1.5; }
+  .stage-side .step-detail.is-purple { border-left-color: var(--luna-purple-500); background: var(--luna-purple-50); }
+  .stage-side .step-detail.is-purple .lbl { color: var(--luna-purple-700); }
+  .stage-side .step-detail.is-red { border-left-color: var(--luna-red-500); background: var(--luna-red-50); }
+  .stage-side .step-detail.is-red .lbl { color: var(--luna-red-700); }
+
+  .silent-face { height: 100%; background: radial-gradient(circle at 50% 30%, #112b5c, #0a1834 70%); padding: 18px 14px; display: flex; flex-direction: column; color: #fff; align-items: center; justify-content: center; text-align: center; }
+  .silent-face .clock { font-size: 56px; font-weight: 200; color: #fff; letter-spacing: -0.02em; line-height: 1; font-feature-settings: "tnum"; }
+  .silent-face .date { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 6px; }
+  .silent-face .quiet-badge { margin-top: 16px; display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.45); letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; }
+  .silent-face .quiet-badge .pulse { width: 5px; height: 5px; background: #84b8d1; border-radius: 50%; opacity: 0.4; }
+
+  .escalation-face { height: 100%; padding: 14px 12px; background: linear-gradient(180deg, #8c1c1c 0%, #3e0c0c 70%); color: #fff; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+  .escalation-face::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.18), transparent 60%); pointer-events: none; }
+  .escalation-face .haptic-ring { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.8); animation: ripple 1.6s infinite; }
+  .escalation-face .haptic-ring::after { content: ""; position: absolute; inset: -3px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.4); animation: ripple 1.6s 0.4s infinite; }
+  @keyframes ripple { 0% { transform: translate(-50%, 0) scale(0.6); opacity: 1; } 100% { transform: translate(-50%, 0) scale(2.2); opacity: 0; } }
+  .escalation-face .top-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 6px; z-index: 1; position: relative; }
+  .escalation-face .app { font-size: 11px; font-weight: 700; }
+  .escalation-face .clock { font-size: 11px; color: rgba(255,255,255,0.7); font-feature-settings: "tnum"; }
+  .escalation-face .body { position: relative; z-index: 1; margin-top: 60px; text-align: center; }
+  .escalation-face h2 { font-size: 17px; font-weight: 700; margin: 0 0 4px; line-height: 1.15; }
+  .escalation-face .why { font-size: 11px; color: rgba(255,255,255,0.85); line-height: 1.4; margin: 6px 8px 0; }
+  .escalation-face .cite { color: #ffeacf; font-weight: 600; }
+  .escalation-face .open-phone { margin-top: 14px; padding: 8px; background: rgba(255,255,255,0.12); border-radius: 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
+  .escalation-face .arrow-phone { font-size: 20px; margin-top: 2px; }
+
+  .post-quiet-face { height: 100%; background: linear-gradient(180deg, #0c3f5c 0%, #0a1834 70%); color: #fff; padding: 18px 12px; display: flex; flex-direction: column; justify-content: space-between; }
+  .post-quiet-face .top-row { display: flex; justify-content: space-between; align-items: center; }
+  .post-quiet-face .app { font-size: 11px; font-weight: 700; color: #84b8d1; }
+  .post-quiet-face .clock { font-size: 11px; color: #f1d01b; font-feature-settings: "tnum"; }
+  .post-quiet-face .middle { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .post-quiet-face .icon { font-size: 36px; margin-bottom: 8px; opacity: 0.8; }
+  .post-quiet-face h2 { font-size: 13px; font-weight: 700; margin: 0 0 4px; }
+  .post-quiet-face p { font-size: 11px; color: rgba(255,255,255,0.7); margin: 0 6px; line-height: 1.45; }
+  .post-quiet-face .footer-meta { display: flex; justify-content: space-between; font-size: 9px; color: rgba(255,255,255,0.5); letter-spacing: 0.04em; text-transform: uppercase; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .reset-tap { padding: 4px 10px; background: rgba(255,255,255,0.1); border: none; color: #fff; border-radius: 4px; font-size: 10px; cursor: pointer; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Wearable · <span style="color:var(--luna-text);">Take C</span>
+      </div>
+      <h1 class="luna-heading-600">Silent until it matters.</h1>
+      <p class="subtitle">No watch UI. The face shows the time. ECM only intrudes when something needs human eyeballs.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Control owner</span>
+      <span class="luna-badge">Noun · Task</span>
+      <span class="luna-badge is-purple">Take C</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="wearable-a.html">A · Confidence ring ★</a>
+    <span class="sep">·</span>
+    <a href="wearable-b.html">B · Glanceable status</a>
+    <span class="sep">·</span>
+    <a href="wearable-c.html" class="is-current">C · Escalation-only</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow · A day in the wrist</span>
+    <div class="flow-step" data-step="idle"><span class="num">1</span> Idle (most of the day)</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="buzz"><span class="num">2</span> Buzz · 4:48 PM</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="quiet"><span class="num">3</span> Acknowledged</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <div class="flow-state" data-state="idle">
+      <div class="watch-stage">
+        <div class="stage-side">
+          <h3>Step 1 of 3 · Idle (most of the day)</h3>
+          <p>By design, the watch is silent. Just the time, the date, and a quiet badge confirming ECM is on and not finding anything that needs Weston.</p>
+          <div class="step-detail"><div class="lbl">The bet</div><p>For 23 hours out of 24, the right thing is to show nothing. Notifications-as-noise is the failure mode the other two wearable takes risk.</p></div>
+          <div class="step-detail is-purple"><div class="lbl">Try it</div><p>Click <strong>Next →</strong> in the stepper to simulate ECM finally needing Weston.</p></div>
+        </div>
+
+        <div class="watch">
+          <div class="watch-band-top"></div>
+          <div class="watch-screen">
+            <div class="silent-face">
+              <div class="clock">3:12</div>
+              <div class="date">Friday · September 25</div>
+              <div class="quiet-badge"><span class="pulse"></span>ECM · 0 alerts today</div>
+            </div>
+          </div>
+          <div class="watch-band-bottom"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-state" data-state="buzz">
+      <div class="watch-stage">
+        <div class="stage-side">
+          <h3>Step 2 of 3 · Buzz · 4:48 PM</h3>
+          <p>Late afternoon. Dana flagged something on Weston's filing. ECM rings the watch with the smallest possible explanation and one next step: <strong>open phone</strong>.</p>
+          <div class="step-detail is-red"><div class="lbl">Why ECM escalated</div><p>Dana's flag was a privilege-escalation finding — high severity, low confidence ECM can resolve solo. Watch becomes the urgent-paging surface, phone becomes the resolution surface.</p></div>
+          <div class="step-detail is-purple"><div class="lbl">Try it</div><p>Tap <strong>Open phone for the full thread</strong>.</p></div>
+        </div>
+
+        <div class="watch">
+          <div class="watch-band-top"></div>
+          <div class="watch-screen">
+            <div class="escalation-face">
+              <div class="top-row">
+                <span class="app"><img src="optro-mark.svg" alt="" style="width:12px;height:auto;display:inline-block;vertical-align:middle;margin-right:5px;filter:brightness(0) invert(1);" />Optro ECM</span>
+                <span class="clock">4:48</span>
+              </div>
+              <div class="haptic-ring"></div>
+              <div class="body">
+                <h2>Needs your eyeballs</h2>
+                <div class="why">Dana flagged the Q3 AR. <span class="cite">r.taylor</span> escalated to <span class="cite">dba-admin</span>; no approval ticket.</div>
+                <div class="open-phone" data-go="quiet">
+                  Open phone for the full thread
+                  <div class="arrow-phone">↘</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="watch-band-bottom"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-state" data-state="quiet">
+      <div class="watch-stage">
+        <div class="stage-side">
+          <h3>Step 3 of 3 · Acknowledged</h3>
+          <p>Weston opens his phone, reviews the finding, ratifies the escalation. The watch returns to silent. Today: 1 alert in 8 hours.</p>
+          <div class="step-detail"><div class="lbl">Calibration</div><p>The footer "Avg 0.9/day" is the trust metric. If alerts per day climb above ~2, the watch loses its meaning. Below that, it earns the right to demand attention.</p></div>
+          <div class="step-detail" style="border-left-color: var(--luna-green-500); background: var(--luna-green-50);"><div class="lbl">Trade-off</div><p>Calibration is the hard part — set the threshold too low and the watch becomes noise; set it too high and Weston misses something that matters. The point is to stay silent until silence would actually be wrong.</p></div>
+        </div>
+
+        <div class="watch">
+          <div class="watch-band-top"></div>
+          <div class="watch-screen">
+            <div class="post-quiet-face">
+              <div class="top-row">
+                <span class="app"><img src="optro-mark.svg" alt="" style="width:12px;height:auto;display:inline-block;vertical-align:middle;margin-right:5px;filter:brightness(0) invert(1);" />Optro ECM</span>
+                <span class="clock">4:51</span>
+              </div>
+              <div class="middle">
+                <div class="icon">💤</div>
+                <h2>Quiet again.</h2>
+                <p>You opened the thread on your phone. ECM goes back to silent until something else genuinely needs you.</p>
+                <button class="reset-tap" data-go="reset">↻ Reset flow</button>
+              </div>
+              <div class="footer-meta">
+                <span>Today · 1 alert</span>
+                <span>Avg 0.9/day</span>
+              </div>
+            </div>
+          </div>
+          <div class="watch-band-bottom"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="surface-caption">
+    The watch behaves like a high-stakes pager rather than a dashboard. ECM swallows the routine 99% and only haptics when an outcome needs a human in the next ten minutes.
+  </p>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Causal AI · Take A — Root-cause finding analysis · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .cap-stage { max-width: 1100px; margin: 0 auto; }
+  .cap-panel { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); overflow: hidden; box-shadow: var(--luna-shadow-100); margin-bottom: 16px; }
+  .cap-panel .head { padding: 14px 18px; border-bottom: 1px solid var(--luna-gray-200); display: flex; align-items: center; gap: 10px; }
+  .cap-panel .head h3 { font-size: 14px; font-weight: 700; color: var(--luna-gray-900); margin: 0; flex: 1; }
+  .cap-panel .head .meta { font-size: 11px; color: var(--luna-gray-500); }
+
+  /* Finding hero */
+  .finding-hero { padding: 18px 22px; background: linear-gradient(135deg, var(--luna-red-50), var(--luna-orange-50)); border-bottom: 1px solid var(--luna-red-100); display: flex; gap: 14px; align-items: flex-start; }
+  .finding-hero .ic { width: 40px; height: 40px; border-radius: 50%; background: var(--luna-red-500); color: var(--luna-white); display: grid; place-items: center; font-size: 18px; flex-shrink: 0; }
+  .finding-hero h3 { margin: 0 0 4px; font-size: 16px; font-weight: 700; color: var(--luna-red-700); }
+  .finding-hero .sub { font-size: 13px; color: var(--luna-gray-800); line-height: 1.55; }
+  .finding-hero .sub code { background: var(--luna-white); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; }
+
+  /* Surface-level finding details */
+  .symptom-box { padding: 18px 22px; }
+  .symptom-box h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin: 0 0 8px; }
+  .symptom-box p { font-size: 13.5px; color: var(--luna-gray-800); line-height: 1.6; margin: 0 0 8px; }
+
+  /* Causal graph */
+  .causal-graph { padding: 24px 22px; background:
+    radial-gradient(circle at 20% 30%, var(--luna-purple-50), transparent 40%),
+    radial-gradient(circle at 80% 70%, var(--luna-orange-50), transparent 40%);
+    min-height: 380px;
+  }
+  .causal-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; align-items: center; margin-bottom: 24px; }
+  .causal-node {
+    padding: 12px 14px;
+    background: var(--luna-white);
+    border: 1.5px solid var(--luna-gray-300);
+    border-radius: 8px;
+    box-shadow: var(--luna-shadow-100);
+    text-align: left;
+    position: relative;
+  }
+  .causal-node .role { font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 4px; }
+  .causal-node h4 { margin: 0 0 4px; font-size: 12.5px; font-weight: 600; color: var(--luna-gray-900); }
+  .causal-node .det { font-size: 11px; color: var(--luna-gray-600); line-height: 1.4; }
+  .causal-node .ctrl-id { font-family: ui-monospace, monospace; font-size: 10.5px; color: var(--luna-teal-700); background: var(--luna-teal-50); padding: 1px 5px; border-radius: 3px; font-weight: 600; }
+  .causal-node.is-symptom { border-color: var(--luna-red-300, #fca5a5); background: linear-gradient(135deg, var(--luna-red-50), var(--luna-white)); }
+  .causal-node.is-symptom .role { color: var(--luna-red-700); }
+  .causal-node.is-link { border-color: var(--luna-yellow-500); background: linear-gradient(135deg, var(--luna-yellow-50), var(--luna-white)); }
+  .causal-node.is-link .role { color: var(--luna-yellow-700); }
+  .causal-node.is-cause { border-color: var(--luna-orange-500); background: linear-gradient(135deg, var(--luna-orange-50), var(--luna-white)); box-shadow: 0 0 0 3px rgba(204,78,0,0.18), var(--luna-shadow-200); }
+  .causal-node.is-cause .role { color: var(--luna-orange-700); }
+  .causal-edge { text-align: center; color: var(--luna-gray-400); font-family: ui-monospace, monospace; font-size: 14px; }
+  .causal-edge .label { font-size: 9.5px; color: var(--luna-gray-600); display: block; margin-top: -2px; }
+
+  /* Conclusion strip */
+  .root-cause-strip {
+    padding: 16px 22px;
+    background: var(--luna-orange-50);
+    border-left: 3px solid var(--luna-orange-500);
+    border-radius: 0 6px 6px 0;
+    margin: 14px 22px;
+  }
+  .root-cause-strip h4 { margin: 0 0 6px; font-size: 13px; font-weight: 700; color: var(--luna-orange-700); display: flex; align-items: center; gap: 8px; }
+  .root-cause-strip p { font-size: 13px; color: var(--luna-gray-800); line-height: 1.6; margin: 0; }
+  .root-cause-strip p strong { color: var(--luna-gray-900); }
+  .root-cause-strip p code { background: var(--luna-white); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; }
+
+  /* Remediation actions */
+  .actions-card { padding: 18px 22px; }
+  .actions-card h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin: 0 0 10px; }
+  .actions-card .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 760px) { .actions-card .grid { grid-template-columns: 1fr; } }
+  .action-card { padding: 14px 16px; border: 1.5px solid var(--luna-gray-200); border-radius: 8px; background: var(--luna-white); }
+  .action-card.is-symptom { border-left: 3px solid var(--luna-yellow-500); }
+  .action-card.is-cause { border-left: 3px solid var(--luna-orange-500); }
+  .action-card .label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 4px; }
+  .action-card .label.is-symptom { color: var(--luna-yellow-700); }
+  .action-card .label.is-cause { color: var(--luna-orange-700); }
+  .action-card h5 { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--luna-gray-900); }
+  .action-card .body { font-size: 12.5px; color: var(--luna-gray-700); line-height: 1.55; }
+  .action-card .body code { background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; }
+  .action-card .footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--luna-gray-100); display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--luna-gray-600); }
+  .action-card .footer .assigned { font-weight: 600; color: var(--luna-gray-800); }
+  .action-card .footer button { margin-left: auto; padding: 4px 10px; font-size: 11px; font-weight: 600; border-radius: 4px; border: 1px solid var(--luna-gray-300); background: var(--luna-white); color: var(--luna-gray-700); cursor: pointer; }
+  .action-card .footer button.is-primary { background: var(--luna-orange-500); color: var(--luna-white); border-color: var(--luna-orange-500); }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Causal AI · <span style="color:var(--luna-text);">Take A ★</span>
+      </div>
+      <h1 class="luna-heading-600">A finding's symptom and its cause are two different controls.</h1>
+      <p class="subtitle">When something fails, ECM doesn't just name where it surfaced — it traces back through the control graph to where the design weakness actually lives. The finding gets fixed; the cause gets remediated; the recurrence gets prevented.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Reviewer</span>
+      <span class="luna-badge">Noun · Cause</span>
+      <span class="luna-badge is-purple">Take A ★</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="causal-a.html" class="is-current">A · Root-cause analysis ★</a>
+    <span class="sep">·</span>
+    <a href="causal-b.html">B · Counterfactual evidence</a>
+    <span class="sep">·</span>
+    <a href="causal-c.html">C · Risk propagation map</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="symptom"><span class="num">1</span> The symptom</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="trace"><span class="num">2</span> Causal trace</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="remediate"><span class="num">3</span> Remediation</div>
+    <span class="flow-arrow">⤴</span>
+    <div class="flow-step" data-step="inconclusive" style="border-color: var(--luna-orange-200, #fed7aa); background: var(--luna-orange-50); color: var(--luna-orange-700);"><span class="num" style="background: var(--luna-orange-500); color: #fff;">!</span> Inconclusive trace</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content cap-stage">
+
+    <!-- State 1: Symptom -->
+    <div class="flow-state" data-state="symptom">
+      <div class="cap-panel">
+        <div class="finding-hero">
+          <div class="ic">⚠</div>
+          <div>
+            <h3>New finding · IT.AC.1.C01</h3>
+            <div class="sub">r.taylor escalated <code>dba-read</code> → <code>dba-admin</code> on 2026-08-14 without a corresponding approval ticket in the ServiceNow CR queue.</div>
+          </div>
+        </div>
+        <div class="symptom-box">
+          <h4>The surface-level finding</h4>
+          <p>
+            Dana flagged this during Q3 review of <strong>IT.AC.1.C01</strong> (quarterly access review). The AR snapshot shows the escalation; the substantive sufficiency rule requires a matching approval ticket; the ticket doesn't exist. Verdict: inadequate, with a finding routed to the carryover queue.
+          </p>
+          <p>
+            <strong>This is what every audit tool surfaces today</strong> — the finding lives on the control where it was caught. But the access review didn't <em>cause</em> the gap; it <em>detected</em> the gap. Click "Next" to see where the cause actually lives.
+          </p>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 1.</strong> A standard finding, presented the standard way. The escalation happened weeks before Dana saw it; the AR is the wrong place to fix the problem because the AR is downstream of the actual gap. The finding gets logged at IT.AC.1.C01, but if you stop there, the same finding will recur in Q4.
+      </p>
+    </div>
+
+    <!-- State 2: Causal trace -->
+    <div class="flow-state" data-state="trace">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Causal trace · r.taylor escalation</h3>
+          <span class="meta">walking back through the control graph</span>
+        </div>
+        <div class="causal-graph">
+          <div class="causal-row">
+            <div class="causal-node is-cause">
+              <div class="role">Root cause · design gap</div>
+              <h4>IT.CM.5.1.2</h4>
+              <div class="det"><span class="ctrl-id">5.1.2</span> Change approval — emergency-access path doesn't enforce post-event documentation.</div>
+            </div>
+            <div class="causal-edge">→<span class="label">caused</span></div>
+            <div class="causal-node is-link">
+              <div class="role">Operational gap</div>
+              <h4>Privilege escalation</h4>
+              <div class="det">On <strong>2026-08-14</strong>, r.taylor's role was changed via emergency path, no approval ticket created.</div>
+            </div>
+            <div class="causal-edge">→<span class="label">surfaced in</span></div>
+            <div class="causal-node is-symptom">
+              <div class="role">Symptom · Q3 finding</div>
+              <h4>IT.AC.1.C01</h4>
+              <div class="det"><span class="ctrl-id">4.2.1</span> Access review flagged the unauthorized escalation 12 days later, in Dana's Q3 review.</div>
+            </div>
+          </div>
+
+          <div style="text-align: center; font-size: 13px; color: var(--luna-gray-700); padding: 14px 22px; background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 6px; max-width: 720px; margin: 0 auto;">
+            <strong>The detective story.</strong>
+            Okta logged the role change. The Workday connector saw no termination/role-justification record. The ServiceNow CR queue had no ITGC-CR ticket created in the 48 hours around the change. Three connectors, one missing artifact, one design gap upstream.
+          </div>
+        </div>
+
+        <div class="root-cause-strip">
+          <h4>✦ Root cause attribution</h4>
+          <p>
+            The Q3 finding is a <strong>detection</strong> by IT.AC.1.C01, not a <strong>failure</strong> of IT.AC.1.C01.
+            The control performed as designed — it caught the unauthorized escalation. The actual gap is in <code>5.1.2 (change approval)</code>:
+            the emergency-access path doesn't require a post-event approval ticket, so an escalation can happen without leaving a trail until the quarterly review.
+            <strong>Fixing 4.2.1 won't prevent recurrence; fixing 5.1.2 will.</strong>
+          </p>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 2.</strong> The detective work is mechanical, not magic — every system already has its log, every connector already has the data. What's new is that the trace is automatic: when Dana confirms the finding, ECM walks back through the affected systems and proposes the upstream cause. The walk is enumerable, not inferred from a model.
+      </p>
+    </div>
+
+    <!-- State 3: Remediation -->
+    <div class="flow-state" data-state="remediate">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Two remediations, not one</h3>
+          <span class="meta">symptom-level + cause-level · routed independently</span>
+        </div>
+        <div class="actions-card">
+          <h4>Routed actions</h4>
+          <div class="grid">
+            <div class="action-card is-symptom">
+              <div class="label is-symptom">Symptom-level · Q3 cycle</div>
+              <h5>Roll back r.taylor's elevated role</h5>
+              <div class="body">
+                Reverse the unauthorized escalation immediately. Verify subsequent activity for any actions taken under the elevated role. Document the rollback in the Q3 sign-off package.
+                <br/><br/>
+                <strong>Assigned:</strong> Weston Prohaska (IT Lead). <strong>Due:</strong> 24 hours.
+              </div>
+              <div class="footer">
+                <span class="assigned">Weston Prohaska</span> · <code style="background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;font-size:11px;">HEL-3489</code>
+                <button class="is-primary" style="background:var(--luna-yellow-500);border-color:var(--luna-yellow-500);">Acknowledge &amp; ack</button>
+              </div>
+            </div>
+            <div class="action-card is-cause">
+              <div class="label is-cause">Root-cause · design fix</div>
+              <h5>Add post-event approval to emergency-access path</h5>
+              <div class="body">
+                Modify the change-management policy: any emergency-access escalation must create a post-event ITGC-CR ticket within 24 hours of the change. Update IT.CM.5.1.2 control design and its evidence schema to require this.
+                <br/><br/>
+                <strong>Assigned:</strong> Carlos Vargas (change-mgmt owner). <strong>Due:</strong> end of Q4.
+              </div>
+              <div class="footer">
+                <span class="assigned">Carlos Vargas</span> · <code style="background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;font-size:11px;">HEL-3490</code>
+                <button class="is-primary">Open PR for 5.1.2</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding: 14px 18px; background: var(--luna-purple-50); border: 1px solid var(--luna-purple-100); border-radius: 6px; font-size: 13px; color: var(--luna-gray-800); line-height: 1.6; margin: 0 18px 18px;">
+          <strong style="color: var(--luna-purple-700);">The strategic claim.</strong>
+          Most GRC tools file a finding and stop. Causal attribution turns one finding into two outcomes: <em>fix what surfaced</em> and <em>fix what caused</em>. Over a year, that's the difference between &ldquo;same Q3 finding every Q3&rdquo; and a control catalog that learns. The audit committee notices, the external auditor notices, the deficiency rate drops.
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 3.</strong> Two tickets created from one finding. The escalation gets rolled back in 24 hours (symptom). The change-approval policy gets rewritten in Q4 (cause). Next year's Q3 review doesn't see this finding again — not because the access-review control got better, but because the upstream control stopped letting the gap exist. <a href="#inconclusive" data-go="inconclusive" style="color:var(--luna-orange-700);">What if the trace can't find a cause? →</a>
+      </p>
+    </div>
+
+    <!-- State 4 (error path): Inconclusive trace -->
+    <div class="flow-state" data-state="inconclusive">
+      <div class="cap-panel">
+        <div class="finding-hero" style="background: linear-gradient(135deg, var(--luna-orange-50), var(--luna-yellow-50)); border-color: var(--luna-orange-100);">
+          <div class="ic" style="background: var(--luna-orange-500);">?</div>
+          <div>
+            <h3 style="color: var(--luna-orange-700);">Causal trace inconclusive · finding stays at IT.AC.1.C01</h3>
+            <div class="sub">A different finding (anomalous data export, 2026-09-22 22:08 UTC) traces back into the connector graph but the walk stops before reaching a root cause ECM is confident about.</div>
+          </div>
+        </div>
+
+        <div class="symptom-box">
+          <h4>What ECM tried</h4>
+          <p>
+            Started from the symptom (a large data export from <code style="background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;font-size:11px;">prod-db-01</code> by an authorized account, at a time when no scheduled job was running). Walked backward through connectors:
+          </p>
+          <ul style="margin: 6px 0 10px 18px; padding: 0; font-size: 13px; color: var(--luna-gray-800); line-height: 1.55;">
+            <li><strong>Okta</strong> — account used was active, no escalation in the prior 30 days. ✓ Clean.</li>
+            <li><strong>ServiceNow</strong> — no incident or CR ticket associated with the export.</li>
+            <li><strong>Workday</strong> — account holder still employed, no role change recently.</li>
+            <li><strong>GitHub</strong> — no automation/script change pushed in the 7 days before the export.</li>
+            <li><strong>Databricks/Snowflake</strong> — no scheduled query ran. Manual ad-hoc query, no recorded business purpose.</li>
+          </ul>
+          <p>
+            Every upstream surface checks out individually. There's no single control whose design weakness explains this. The most likely cause is <strong>off-policy ad-hoc behavior by an authorized actor</strong> — which is exactly the kind of thing automated trace doesn't resolve.
+          </p>
+        </div>
+
+        <div class="root-cause-strip" style="background: var(--luna-orange-50); border-left-color: var(--luna-orange-500);">
+          <h4 style="color: var(--luna-orange-700);">⚠ ECM is honest about its limits</h4>
+          <p>
+            <strong>Confidence on root-cause attribution: 42%</strong> — below the 70% threshold ECM uses to propose remediation.
+            Rather than guess at a control to fix (which would route to an owner who can't actually solve the problem), ECM hands the trace to Dana for human investigation, with the partial walk attached.
+          </p>
+        </div>
+
+        <div class="actions-card">
+          <h4>Hand-off to human</h4>
+          <div style="padding: 14px 16px; border: 1.5px solid var(--luna-orange-200, #fed7aa); border-left: 3px solid var(--luna-orange-500); border-radius: 8px; background: var(--luna-white);">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+              <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-orange-700);">Routed for human investigation</div>
+              <span class="luna-badge is-orange" style="padding:2px 8px; background: var(--luna-orange-50); color: var(--luna-orange-700); border: 1px solid var(--luna-orange-100);">HEL-INV-2026-12</span>
+            </div>
+            <h5 style="margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--luna-gray-900);">Anomalous data export — root cause undetermined</h5>
+            <div style="font-size: 12.5px; color: var(--luna-gray-700); line-height: 1.55;">
+              ECM's trace and the 5 source-system checks are attached. Dana takes it from here — interview the account holder, look for off-system context (Slack messages, email, calendar around the event), check whether this is part of a legitimate workflow that ECM doesn't know about.
+              <br/><br/>
+              <strong>What ECM will do meanwhile.</strong> Hold the finding as <em>open · investigating</em> in the chain. Watch for similar patterns in future events — if this is the start of a trend, ECM will surface it. If it's a one-off, Dana's investigation closes it.
+            </div>
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--luna-gray-200); display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--luna-gray-600);">
+              Assigned to <strong style="color:var(--luna-gray-900);">Dana Cho</strong> · due 2026-10-08 · ECM monitors for recurrence
+              <button class="luna-btn is-ghost" style="margin-left: auto; font-size: 12px; padding: 4px 10px;" data-go="symptom">← Back to happy path</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding: 14px 18px; background: var(--luna-purple-50); border: 1px solid var(--luna-purple-100); border-radius: 6px; font-size: 13px; color: var(--luna-gray-800); line-height: 1.6; margin: 0 18px 18px;">
+          <strong style="color: var(--luna-purple-700);">Why this is the right behavior.</strong>
+          A causal AI that always returns an answer is one that confabulates. ECM admitting "I traced as far as I can and the cause isn't a control failure — here's what I found, here's what I couldn't determine, a human takes it from here" is the defensible posture. The audit trail still benefits — the partial walk, the negative findings on each connector, the 42% confidence — none of that is wasted; it's the starting point for Dana's investigation.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

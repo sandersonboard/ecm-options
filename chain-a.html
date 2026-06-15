@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Blockchain · Take A — Receipt + narration · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .chain-ai-strip {
+    max-width: 720px; margin: 0 auto 16px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50));
+    border: 1px solid var(--luna-purple-100);
+    border-left: 3px solid var(--luna-purple-500);
+    border-radius: var(--luna-radius-md);
+    font-size: 13px; color: var(--luna-gray-800);
+    line-height: 1.5;
+  }
+  .chain-ai-strip .head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-weight: 600; color: var(--luna-purple-700); font-size: 12px; }
+  .chain-step .badge { display: inline-block; padding: 1px 7px; border-radius: 3px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; background: var(--luna-teal-100); color: var(--luna-teal-700); margin-left: 6px; vertical-align: middle; }
+  .chain-step.signed .badge { background: var(--luna-green-100); color: var(--luna-green-700); }
+  .verify-strip {
+    max-width: 720px; margin: 16px auto 0;
+    padding: 14px 18px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: var(--luna-radius-md);
+    display: flex; align-items: center; gap: 14px;
+    font-size: 12px; color: var(--luna-gray-700);
+  }
+  .verify-strip .ok-badge { padding: 4px 10px; background: var(--luna-green-50); color: var(--luna-green-700); border: 1px solid var(--luna-green-100); border-radius: var(--luna-radius-full); font-size: 12px; font-weight: 700; }
+  .verify-strip .checking-badge { padding: 4px 10px; background: var(--luna-blue-50); color: var(--luna-blue-700); border: 1px solid var(--luna-blue-100); border-radius: var(--luna-radius-full); font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+  .verify-strip .checking-badge .spinner { width: 12px; height: 12px; border: 2px solid var(--luna-blue-200); border-top-color: var(--luna-blue-500); border-radius: 50%; animation: spin 0.8s infinite linear; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .verify-strip .hash { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-purple-700); background: var(--luna-purple-50); padding: 2px 6px; border-radius: 3px; }
+
+  .verifier-modal {
+    max-width: 720px; margin: 0 auto;
+    background: var(--luna-white);
+    border: 2px solid var(--luna-purple-300);
+    border-radius: var(--luna-radius-md);
+    padding: 24px;
+    box-shadow: 0 20px 60px rgba(105, 49, 227, 0.18);
+  }
+  .verifier-modal h3 { margin: 0 0 6px; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .verifier-modal .check-list { margin-top: 14px; }
+  .verifier-modal .check-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--luna-gray-100); font-size: 13px; }
+  .verifier-modal .check-item .ic { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; font-size: 12px; font-weight: 700; }
+  .verifier-modal .check-item.is-done .ic { background: var(--luna-green-500); color: var(--luna-white); }
+  .verifier-modal .check-item.is-running .ic { background: var(--luna-blue-100); color: var(--luna-blue-700); }
+  .verifier-modal .check-item.is-running .ic .dot { animation: blink 1.2s infinite; }
+  .verifier-modal .check-item.is-pending .ic { background: var(--luna-gray-200); color: var(--luna-gray-500); }
+  .verifier-modal .check-item .text { flex: 1; color: var(--luna-gray-800); }
+  .verifier-modal .check-item .hash { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-gray-500); }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Blockchain · <span style="color:var(--luna-text);">Take A ★</span>
+      </div>
+      <h1 class="luna-heading-600">An audit-grade receipt.</h1>
+      <p class="subtitle">Every attestation Optro routes — owner upload, AI classification, reviewer sign-off — gets committed to a public hash chain. Sarah hands this URL to the audit committee. They verify in one click.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · PMO</span>
+      <span class="luna-badge is-purple">Noun · Evidence</span>
+      <span class="luna-badge is-purple">Take A ★</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="chain-a.html" class="is-current">A · Receipt + narration ★</a>
+    <span class="sep">·</span>
+    <a href="chain-b.html">B · Verification widget</a>
+    <span class="sep">·</span>
+    <a href="chain-c.html">C · Audit committee dashboard</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="receipt"><span class="num">1</span> Open receipt</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="checking"><span class="num">2</span> Verifier checks</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="verified"><span class="num">3</span> Verified ✓</div>
+    <span class="flow-arrow">⤴</span>
+    <div class="flow-step" data-step="tampered" style="border-color: var(--luna-red-200, #fecaca); background: var(--luna-red-50); color: var(--luna-red-700);"><span class="num" style="background: var(--luna-red-500); color: #fff;">!</span> When verification fails</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <div class="flow-state" data-state="receipt">
+      <div class="chain-ai-strip">
+        <div class="head"><span class="ai-chip">Optro ECM</span> Receipt summary</div>
+        This evidence artifact has <strong>4 attestations</strong> across <strong>3 parties</strong> over a 19-day window.
+        Last refresh <strong>18 days ago</strong>. No edits, deletions, or reassignments after the reviewer sign-off.
+        <strong>Safe to present to the audit committee as-is.</strong>
+      </div>
+
+      <div class="chain-receipt">
+        <div class="receipt-head">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--luna-gray-900);">Evidence receipt</div>
+            <div style="font-size:11px;color:var(--luna-gray-500);">Optro audit-grade chain · Helios Robotics</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:11px;color:var(--luna-gray-500);">Artifact ID</div>
+            <div style="font-size:12px;font-family:ui-monospace,monospace;color:var(--luna-teal-700);">opt-evd-helios-AR-Q3FY26-prod-db</div>
+          </div>
+        </div>
+
+        <div class="receipt-row"><div class="k">Customer</div><div class="v">Helios Robotics, Inc.</div></div>
+        <div class="receipt-row"><div class="k">Control</div><div class="v">4.2.1 — Quarterly user access review · prod-db-01</div></div>
+        <div class="receipt-row"><div class="k">Cycle</div><div class="v">Q3 FY2026</div></div>
+        <div class="receipt-row"><div class="k">Artifact</div><div class="v">AR-Q3FY26-prod-db.pdf · 1.2 MB</div></div>
+        <div class="receipt-row"><div class="k">Root hash</div><div class="v hash">0x91a3·c4ed·7b22·4f08·d9e1·2f5a·6c81·b03d</div></div>
+        <div class="receipt-row is-last"><div class="k">First commit</div><div class="v">2026-09-25T15:13:04Z</div></div>
+
+        <div style="margin-top:20px;font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--luna-gray-500);">Chain of attestations</div>
+
+        <div class="chain-step signed">
+          <div class="when">2026-09-25T15:13:04Z · block #4,180,221</div>
+          <div class="who">Weston Prohaska <span class="badge">OWNER · UPLOAD</span></div>
+          <div class="what">Uploaded AR-Q3FY26-prod-db.pdf from iOS Camera capture. SHA-256 committed.</div>
+        </div>
+
+        <div class="chain-step">
+          <div class="when">2026-09-25T15:13:09Z · block #4,180,222</div>
+          <div class="who">Optro ECM <span class="badge">AGENT · CLASSIFY</span></div>
+          <div class="what">Classified artifact as match to control 4.2.1 with 93% confidence. Tagged Q3 FY26, freshness=today.</div>
+        </div>
+
+        <div class="chain-step signed">
+          <div class="when">2026-09-26T09:42:31Z · block #4,182,118</div>
+          <div class="who">Dana Cho <span class="badge">REVIEWER · SIGN-OFF</span></div>
+          <div class="what">Verdict: <strong>adequate with finding</strong>. Pencil annotation: "contractor-svc-09 deprovision pending." Filed cross-reference to JIRA HEL-3471.</div>
+        </div>
+
+        <div class="chain-step signed">
+          <div class="when">2026-10-14T11:02:08Z · block #4,256,901</div>
+          <div class="who">Sarah Park <span class="badge">PMO · PROGRAM-LOCK</span></div>
+          <div class="what">Locked Q3 evidence package for external audit handoff. Locked artifact set: 47 controls, 218 artifacts.</div>
+        </div>
+      </div>
+
+      <div class="verify-strip">
+        <span class="ok-badge">✓ Trusted</span>
+        Anyone with this URL can independently verify the chain.
+        Latest root <span class="hash">0x91a3·c4ed·…</span>
+        <span style="flex:1;"></span>
+        <button class="luna-btn" data-go="checking">Run verifier ↗</button>
+      </div>
+
+      <p class="surface-caption"><strong>State 1.</strong> The receipt page. AI narrates the chain in plain English at the top. Click "Run verifier" to independently check that no row of the chain has been altered.</p>
+    </div>
+
+    <div class="flow-state" data-state="checking">
+      <div style="max-width:720px;margin:0 auto;">
+        <div class="verifier-modal">
+          <h3><span class="ai-chip">Optro ECM</span> Verifier — checking against the public ledger</h3>
+          <p style="font-size:13px;color:var(--luna-gray-700);margin:6px 0 0;line-height:1.5;">
+            Re-fetching each block, re-hashing each artifact, comparing against the chain.
+            This runs entirely client-side; nothing is sent to Optro's servers.
+          </p>
+
+          <div class="check-list">
+            <div class="check-item is-done">
+              <div class="ic">✓</div>
+              <div class="text">Fetched chain history (4 blocks)</div>
+              <div class="hash">12 ms</div>
+            </div>
+            <div class="check-item is-done">
+              <div class="ic">✓</div>
+              <div class="text">Re-hashed artifact (1.2 MB · SHA-256)</div>
+              <div class="hash">0x91a3·c4ed·…</div>
+            </div>
+            <div class="check-item is-done">
+              <div class="ic">✓</div>
+              <div class="text">Block #4,180,221 — owner signature valid</div>
+              <div class="hash">Weston Prohaska</div>
+            </div>
+            <div class="check-item is-done">
+              <div class="ic">✓</div>
+              <div class="text">Block #4,180,222 — agent classification preserved</div>
+              <div class="hash">93% conf</div>
+            </div>
+            <div class="check-item is-running">
+              <div class="ic"><span class="dot">⋯</span></div>
+              <div class="text">Block #4,182,118 — re-validating reviewer signature</div>
+              <div class="hash">running…</div>
+            </div>
+            <div class="check-item is-pending">
+              <div class="ic">5</div>
+              <div class="text">Block #4,256,901 — PMO lock signature</div>
+              <div class="hash">queued</div>
+            </div>
+            <div class="check-item is-pending">
+              <div class="ic">6</div>
+              <div class="text">Cross-check root hash matches latest committed</div>
+              <div class="hash">queued</div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px;display:flex;gap:8px;">
+            <button class="luna-btn" data-go="verified">Skip to result →</button>
+            <button class="luna-btn is-ghost" data-go="receipt">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption" style="margin-top: 18px;"><strong>State 2.</strong> The verifier runs the cryptographic checks client-side — no need to trust Optro's servers for the verification itself.</p>
+    </div>
+
+    <div class="flow-state" data-state="verified">
+      <div style="max-width:720px;margin:0 auto;">
+        <div class="verifier-modal" style="border-color: var(--luna-green-300);">
+          <h3 style="color:var(--luna-green-700);">✓ Verified — chain integrity confirmed</h3>
+          <p style="font-size:13px;color:var(--luna-gray-700);margin:6px 0 14px;line-height:1.5;">
+            All 4 blocks re-validated. The artifact, all attestations, and the root hash match the public ledger.
+            <strong>No edits, deletions, or reassignments since the original sign-off.</strong> Safe to present to the audit committee.
+          </p>
+
+          <div style="padding: 14px; background: var(--luna-green-50); border: 1px solid var(--luna-green-100); border-radius: 6px; font-size: 13px; line-height: 1.55;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--luna-green-700);margin-bottom:6px;">Verification certificate</div>
+            <div style="display:grid;grid-template-columns:120px 1fr;gap:4px 12px;font-size:12px;">
+              <div style="color:var(--luna-gray-600);">Artifact</div><div style="color:var(--luna-gray-900);">opt-evd-helios-AR-Q3FY26-prod-db</div>
+              <div style="color:var(--luna-gray-600);">Verified at</div><div style="color:var(--luna-gray-900);">2026-11-02T14:21:08Z (just now)</div>
+              <div style="color:var(--luna-gray-600);">Blocks checked</div><div style="color:var(--luna-gray-900);">4 of 4 · all valid</div>
+              <div style="color:var(--luna-gray-600);">Root hash</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:var(--luna-purple-700);">0x91a3·c4ed·7b22·4f08·d9e1·2f5a·6c81·b03d</div>
+              <div style="color:var(--luna-gray-600);">Drift</div><div style="color:var(--luna-green-700);font-weight:600;">none detected</div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px;display:flex;gap:8px;">
+            <button class="luna-btn" data-go="receipt">Back to receipt</button>
+            <button class="luna-btn is-secondary">Download cert (.pdf)</button>
+            <button class="luna-btn is-ghost" data-go="reset">↻ Re-run</button>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption" style="margin-top: 18px;"><strong>State 3.</strong> Cryptographic proof. Sarah hands this URL to the audit committee — they can click "Run verifier" themselves and trust the result without trusting Optro. <a href="#tampered" data-go="tampered" style="color:var(--luna-red-700);">See what happens when verification fails →</a></p>
+    </div>
+
+    <!-- State 4 (error path): Verification failed -->
+    <div class="flow-state" data-state="tampered">
+      <div style="max-width:720px;margin:0 auto;">
+        <div class="verifier-modal" style="border-color: var(--luna-red-300, #fca5a5); border-width: 2.5px; box-shadow: 0 20px 60px rgba(239,68,68,0.18);">
+          <h3 style="color: var(--luna-red-700); display:flex; align-items:center; gap:8px;">
+            <span style="width:24px;height:24px;border-radius:50%;background:var(--luna-red-500);color:var(--luna-white);display:grid;place-items:center;font-size:14px;font-weight:700;">!</span>
+            Verification failed — chain integrity broken
+          </h3>
+          <p style="font-size:13px;color:var(--luna-gray-700);margin:6px 0 14px;line-height:1.5;">
+            One block's recomputed hash does not match the chain's recorded root. That means either the artifact, the metadata, or one of the signatures has been altered since the sign-off was committed. <strong>This is the surface ECM is built to detect — and the verifier behaves correctly by refusing to issue a green certificate.</strong>
+          </p>
+
+          <div style="padding:14px;background:var(--luna-red-50);border:1px solid var(--luna-red-100);border-radius:6px;font-size:13px;line-height:1.55;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--luna-red-700);margin-bottom:6px;">What the verifier found</div>
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:6px 12px;font-size:12px;">
+              <div style="color:var(--luna-gray-600);">Artifact</div><div style="color:var(--luna-gray-900);">opt-evd-helios-AR-Q3FY26-prod-db</div>
+              <div style="color:var(--luna-gray-600);">Failed block</div><div style="color:var(--luna-gray-900);">#4,182,118 (Dana Cho's sign-off · 09-26 09:42)</div>
+              <div style="color:var(--luna-gray-600);">Expected hash</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:var(--luna-purple-700);">0x77ef·92aa·c1b4·8de2·a0c7·3f91</div>
+              <div style="color:var(--luna-gray-600);">Computed hash</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:var(--luna-red-700);">0x77ef·92aa·c1b4·8de2·d4f9·2c08</div>
+              <div style="color:var(--luna-gray-600);">Drift detected</div><div style="color:var(--luna-red-700);font-weight:600;">last 8 hex digits diverge — metadata edit suspected</div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px;padding:12px 14px;background:var(--luna-gray-50);border:1px solid var(--luna-gray-200);border-radius:6px;font-size:12.5px;color:var(--luna-gray-700);line-height:1.6;">
+            <strong style="color:var(--luna-gray-900);">What to do next.</strong>
+            <ol style="margin:6px 0 0 18px;padding:0;">
+              <li>Audit committee is auto-notified. External auditor's working paper widget will refuse the cite.</li>
+              <li>Optro pulls the divergent block's audit log to identify the actor + timestamp of the edit.</li>
+              <li>Dana's original sign-off package is reconstructed from the immutable ledger snapshot (not the local store).</li>
+              <li>Sarah opens a deficiency review under HEL-DEF-2026-04 with full chain history attached.</li>
+            </ol>
+          </div>
+
+          <div style="margin-top:16px;display:flex;gap:8px;">
+            <button class="luna-btn" style="background:var(--luna-red-500);border-color:var(--luna-red-500);">Open deficiency review</button>
+            <button class="luna-btn is-secondary">Notify audit committee</button>
+            <button class="luna-btn is-ghost" data-go="receipt">← Back to receipt</button>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption" style="margin-top: 18px;">
+        <strong>When it fails.</strong> The verifier doesn't "pass with a warning" — it refuses the certificate entirely. The system is built so this surface only ever fires when something has genuinely happened, and when it fires, the path to resolution starts with auto-notification, not with a human noticing later. <em>The point of the chain isn't that nothing ever goes wrong; it's that when something does, the evidence is in the ledger, not in someone's testimony.</em>
+      </p>
+    </div>
+
+  </div>
+
+  <p class="surface-caption" style="margin-top:32px;">
+    ECM writes the chain narrative in plain English so a CFO or audit-committee chair can read it without learning blockchain vocabulary. The cryptography is real; the page in front of the executive is a paragraph and a list.
+  </p>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Blockchain · Take C — Audit committee dashboard · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .ac-dash { max-width: 1200px; margin: 0 auto; background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); box-shadow: var(--luna-shadow-200); overflow: hidden; position: relative; }
+  .ac-head { background: linear-gradient(135deg, var(--luna-gray-900), #0a3655); color: var(--luna-white); padding: 32px 40px; }
+  .ac-head .meta-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; font-size: 11px; color: rgba(255,255,255,0.65); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+  .ac-head .meta-bar .share-btn { padding: 5px 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18); color: #fff; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; letter-spacing: 0.04em; }
+  .ac-head h1 { font-size: 32px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.015em; }
+  .ac-head .sub { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: 16px; }
+  .ac-head .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
+  .ac-head .kpi { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px; }
+  .ac-head .kpi .l { font-size: 10px; color: rgba(255,255,255,0.55); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+  .ac-head .kpi .n { font-size: 26px; font-weight: 700; margin-top: 4px; line-height: 1; }
+  .ac-head .kpi .delta { font-size: 11px; color: #99f2b5; margin-top: 4px; font-weight: 600; }
+  .ac-head .kpi .delta.is-down { color: #ffa94d; }
+
+  .ac-body { padding: 32px 40px; }
+  .ai-prep { padding: 20px 24px; background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50)); border: 1px solid var(--luna-purple-100); border-radius: var(--luna-radius-md); margin-bottom: 28px; }
+  .ai-prep .head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .ai-prep h3 { font-size: 14px; font-weight: 700; color: var(--luna-purple-700); margin: 0; }
+  .ai-prep p { font-size: 14px; color: var(--luna-gray-800); line-height: 1.65; margin: 0 0 8px; }
+  .ai-prep p strong { color: var(--luna-gray-900); }
+  .ai-prep ul { margin: 6px 0 0; padding-left: 18px; font-size: 13px; color: var(--luna-gray-800); }
+  .ai-prep ul li { margin-bottom: 4px; line-height: 1.5; cursor: pointer; }
+  .ai-prep ul li:hover { color: var(--luna-purple-700); text-decoration: underline; }
+
+  .ac-section { margin-bottom: 32px; }
+  .ac-section h2 { font-size: 18px; font-weight: 700; margin: 0 0 14px; color: var(--luna-gray-900); letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; }
+  .ac-section h2 .count { font-size: 11px; padding: 2px 8px; background: var(--luna-gray-100); color: var(--luna-gray-600); border-radius: 10px; font-weight: 600; }
+
+  .chain-timeline { position: relative; padding: 16px 0; }
+  .chain-timeline::before { content: ""; position: absolute; left: 110px; top: 24px; bottom: 24px; width: 2px; background: var(--luna-gray-200); }
+  .chain-event { display: grid; grid-template-columns: 110px 32px 1fr; gap: 12px; align-items: flex-start; padding: 10px 0; cursor: pointer; transition: background 0.12s; }
+  .chain-event:hover .body { box-shadow: var(--luna-shadow-200); border-color: var(--luna-teal-300); }
+  .chain-event .when { font-size: 11px; color: var(--luna-gray-600); text-align: right; padding-top: 6px; font-family: ui-monospace, monospace; }
+  .chain-event .dot-marker { width: 14px; height: 14px; background: var(--luna-teal-500); border-radius: 50%; margin: 8px 0 0 9px; box-shadow: 0 0 0 4px var(--luna-white), 0 0 0 5px var(--luna-gray-200); position: relative; z-index: 1; }
+  .chain-event .dot-marker.is-finding { background: var(--luna-orange-500); }
+  .chain-event .dot-marker.is-block { background: var(--luna-purple-500); }
+  .chain-event .dot-marker.is-good { background: var(--luna-green-500); }
+  .chain-event .body { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 6px; padding: 10px 14px; transition: box-shadow 0.12s, border-color 0.12s; }
+  .chain-event .body .title { font-size: 13px; font-weight: 600; color: var(--luna-gray-900); }
+  .chain-event .body .meta { font-size: 12px; color: var(--luna-gray-600); margin-top: 2px; }
+  .chain-event .body.is-finding { border-left: 3px solid var(--luna-orange-500); background: var(--luna-orange-50); }
+  .chain-event .body.is-good { border-left: 3px solid var(--luna-green-500); }
+  .chain-event .body.is-block { border-left: 3px solid var(--luna-purple-500); background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50)); }
+  .chain-event .body .hash { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-purple-700); background: rgba(105,49,227,0.08); padding: 1px 6px; border-radius: 3px; margin-left: 4px; }
+
+  .footer-strip { background: var(--luna-gray-50); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--luna-gray-600); border-top: 1px solid var(--luna-gray-200); }
+  .footer-strip .verify { padding: 6px 10px; background: var(--luna-green-50); color: var(--luna-green-700); border: 1px solid var(--luna-green-100); border-radius: 6px; font-weight: 600; font-size: 12px; }
+
+  /* Event detail modal */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: grid; place-items: center;
+    padding: 40px;
+  }
+  .modal {
+    background: var(--luna-white);
+    border-radius: var(--luna-radius-lg);
+    max-width: 560px; width: 100%;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+    overflow: hidden;
+  }
+  .modal-head { padding: 18px 22px; border-bottom: 1px solid var(--luna-gray-200); display: flex; align-items: center; gap: 12px; }
+  .modal-head h3 { margin: 0; font-size: 16px; font-weight: 700; flex: 1; }
+  .modal-head .close { background: none; border: none; color: var(--luna-gray-500); cursor: pointer; font-size: 18px; padding: 4px 8px; }
+  .modal-body { padding: 18px 22px; font-size: 13px; line-height: 1.6; color: var(--luna-gray-800); }
+  .modal-body .row { display: grid; grid-template-columns: 130px 1fr; gap: 6px 12px; padding: 8px 0; border-bottom: 1px solid var(--luna-gray-100); font-size: 13px; }
+  .modal-body .row .k { color: var(--luna-gray-600); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; padding-top: 2px; }
+  .modal-body .row .v { color: var(--luna-gray-900); }
+  .modal-body .row .v.hash { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-purple-700); word-break: break-all; }
+  .modal-body .ai-narration { margin-top: 12px; padding: 12px; background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50)); border-radius: 6px; font-size: 13px; line-height: 1.55; }
+  .modal-foot { padding: 14px 22px; background: var(--luna-gray-50); border-top: 1px solid var(--luna-gray-200); display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* Share modal */
+  .share-content { padding: 18px 22px; }
+  .share-content .url-box {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 10px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--luna-gray-800);
+    margin: 10px 0;
+  }
+  .share-content .url-box .url { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .share-content .url-box .copy { padding: 3px 10px; background: var(--luna-teal-500); color: var(--luna-white); border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; }
+  .share-content .opts { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--luna-gray-700); }
+  .share-content .opts label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .share-content .opts input { accent-color: var(--luna-teal-500); }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Blockchain · <span style="color:var(--luna-text);">Take C</span>
+      </div>
+      <h1 class="luna-heading-600">The chain becomes the quarterly board readout.</h1>
+      <p class="subtitle">Sarah sends one URL to the audit committee. They open it Friday before Monday's meeting. AI has written the prep. The chain visualizes as a timeline.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · PMO + Committee</span>
+      <span class="luna-badge is-purple">Noun · Evidence</span>
+      <span class="luna-badge is-purple">Take C</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="chain-a.html">A · Receipt + narration ★</a>
+    <span class="sep">·</span>
+    <a href="chain-b.html">B · Verification widget</a>
+    <span class="sep">·</span>
+    <a href="chain-c.html" class="is-current">C · Audit committee dashboard</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="dash"><span class="num">1</span> Dashboard</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="detail"><span class="num">2</span> Open event detail</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="share"><span class="num">3</span> Share with committee</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- State 1: Dashboard -->
+    <div class="flow-state" data-state="dash">
+      <div class="ac-dash">
+        <div class="ac-head">
+          <div class="meta-bar">
+            <span>Helios Robotics, Inc. · Audit Committee · Q3 FY2026</span>
+            <button class="share-btn" data-go="share">📤 Share with committee</button>
+          </div>
+          <h1>Q3 SOX program — committee readout</h1>
+          <div class="sub">A verifiable, tamper-proof view of the quarter. Every number on this page is signed and immutable.</div>
+          <div class="kpis">
+            <div class="kpi"><div class="l">Controls in scope</div><div class="n">47</div><div class="delta">no change from Q2</div></div>
+            <div class="kpi"><div class="l">Evidence sealed</div><div class="n">218</div><div class="delta">+12 vs. Q2</div></div>
+            <div class="kpi"><div class="l">Open findings</div><div class="n">3</div><div class="delta is-down">+1 vs. Q2</div></div>
+            <div class="kpi"><div class="l">Days to S-1</div><div class="n">210</div><div class="delta">on track</div></div>
+          </div>
+        </div>
+
+        <div class="ac-body">
+          <div class="ai-prep">
+            <div class="head">
+              <span class="ai-chip">Optro ECM</span>
+              <h3>Meeting prep · drafted by ECM, ratified by Sarah Park · 3-minute read</h3>
+            </div>
+            <p>
+              <strong>The headline.</strong> Q3 closed on time with 218 sealed evidence packets across 47 controls.
+              All ITGC and entity-level controls operated as designed. Three open findings carry into Q4 — one new, two carry-overs.
+            </p>
+            <p><strong>What changed since Q2.</strong></p>
+            <ul>
+              <li data-go="detail"><strong>New finding</strong> (4.2.1, prod-db AR): r.taylor escalated dba-read → dba-admin without an approval ticket. Discovered by Dana on 09-26 during review. <em>Click for the chain event.</em></li>
+              <li><strong>Carryover</strong> (4.2.1, prod-db AR): contractor-svc-09 deprovisioning still open (HEL-3471, open 132 days).</li>
+              <li><strong>Operational shift</strong>: 14 controls auto-attest now via the policies the committee approved in Q2.</li>
+            </ul>
+          </div>
+
+          <div class="ac-section">
+            <h2>The quarter, as a chain <span class="count">7 chain events · click any</span></h2>
+            <div class="chain-timeline">
+              <div class="chain-event" data-go="detail">
+                <div class="when">2026-07-01</div>
+                <div class="dot-marker is-block"></div>
+                <div class="body is-block"><div class="title">Q3 program-open · block #4,012,108</div><div class="meta">Sarah opened Q3 evidence cycle. Locked Q2 archive. <span class="hash">0x33b1·8a2f·…</span></div></div>
+              </div>
+              <div class="chain-event" data-go="detail">
+                <div class="when">2026-08-11</div>
+                <div class="dot-marker is-good"></div>
+                <div class="body is-good"><div class="title">Auto-attest expansion (14 controls)</div><div class="meta">Committee policy 2026-Q2.7 took effect. <span class="hash">0x55c4·8d10·…</span></div></div>
+              </div>
+              <div class="chain-event" data-go="detail">
+                <div class="when">2026-09-25</div>
+                <div class="dot-marker"></div>
+                <div class="body"><div class="title">Q3 evidence intake begins · 142 packets in 3 weeks</div><div class="meta">First packet: AR Q3 prod-db, filed by Weston via mobile. <span class="hash">0x91a3·c4ed·…</span></div></div>
+              </div>
+              <div class="chain-event" data-go="detail">
+                <div class="when">2026-09-26</div>
+                <div class="dot-marker is-finding"></div>
+                <div class="body is-finding"><div class="title">New finding: 4.2.1 · privilege escalation (r.taylor)</div><div class="meta">Dana flagged during compare-view review. Privilege rolled back same day. <span class="hash">0x77ef·92aa·…</span></div></div>
+              </div>
+              <div class="chain-event" data-go="detail">
+                <div class="when">2026-10-08</div>
+                <div class="dot-marker is-good"></div>
+                <div class="body is-good"><div class="title">218 of 218 evidence packets sealed</div><div class="meta">All controls reviewed and signed by their designated reviewer. <span class="hash">0xaa54·b7ce·…</span></div></div>
+              </div>
+              <div class="chain-event" data-go="detail">
+                <div class="when">2026-10-14</div>
+                <div class="dot-marker is-block"></div>
+                <div class="body is-block"><div class="title">Q3 program-lock · block #4,256,901</div><div class="meta">Sarah locked Q3 for external audit handoff to Deloitte. <span class="hash">0x91a3·c4ed·7b22·…</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-strip">
+          <span class="verify">✓ All 218 evidence packets independently verifiable</span>
+          <span>Latest root <code style="font-family:ui-monospace,monospace;font-size:11px;background:var(--luna-purple-50);color:var(--luna-purple-700);padding:1px 5px;border-radius:3px;">0x91a3·c4ed·7b22·4f08·…</code> · <a href="chain-a.html">view receipt ↗</a></span>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 1.</strong> The dashboard. The KPIs at the top, AI's 3-minute meeting prep below, the chain visualized as a timeline. Tap any chain event or finding to drill in.</p>
+    </div>
+
+    <!-- State 2: Event detail modal -->
+    <div class="flow-state" data-state="detail">
+      <div class="ac-dash">
+        <div class="ac-head">
+          <div class="meta-bar">
+            <span>Helios Robotics, Inc. · Audit Committee · Q3 FY2026</span>
+            <button class="share-btn" data-go="share">📤 Share with committee</button>
+          </div>
+          <h1>Q3 SOX program — committee readout</h1>
+          <div class="sub" style="opacity:0.5;">Drilling into the privilege-escalation finding…</div>
+        </div>
+        <div class="ac-body" style="opacity: 0.3; pointer-events: none;">
+          <div class="ai-prep"><h3>Meeting prep · 3-minute read</h3><p>(behind modal)</p></div>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" data-go="dash">
+        <div class="modal" onclick="event.stopPropagation();">
+          <div class="modal-head">
+            <span class="luna-badge is-orange" style="padding:3px 9px;">⚠ Finding</span>
+            <h3>r.taylor — privilege escalation</h3>
+            <button class="close" data-go="dash">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="row"><div class="k">Control</div><div class="v">4.2.1 · prod-db-01 AR · Q3 FY2026</div></div>
+            <div class="row"><div class="k">Discovered</div><div class="v">2026-09-26 09:42 PT by Dana Cho during review</div></div>
+            <div class="row"><div class="k">Type</div><div class="v">Privilege escalation without approval ticket</div></div>
+            <div class="row"><div class="k">Account</div><div class="v">r.taylor@helios.com · dba-read → dba-admin on 2026-08-14</div></div>
+            <div class="row"><div class="k">Resolution</div><div class="v">Privilege rolled back 2026-09-26. Root-cause assigned to Carlos (HEL-3489, due 10-22).</div></div>
+            <div class="row"><div class="k">Chain block</div><div class="v hash">#4,182,118 · 0x77ef·92aa·c1b4·…</div></div>
+            <div class="row"><div class="k">Reviewer</div><div class="v">Dana Cho · Internal Audit</div></div>
+
+            <div class="ai-narration">
+              <strong style="color:var(--luna-purple-700);">For the committee:</strong>
+              This is a <strong>control-design</strong> finding, not a <strong>control-operation</strong> finding —
+              4.2.1 (the review control) <em>caught</em> the issue. The gap is upstream in
+              <span class="ai-citation">5.1.2 (change approval)</span>. Carlos's root-cause analysis (due 10-22) will determine whether to remediate 5.1.2 design or expand its testing for Q4.
+            </div>
+          </div>
+          <div class="modal-foot">
+            <a href="chain-a.html" class="luna-btn is-secondary" style="text-decoration:none;">Open full chain receipt ↗</a>
+            <button class="luna-btn" data-go="dash">Back to dashboard</button>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 2.</strong> Click any timeline event or finding to drill in. The modal includes AI's framing of what the finding <em>means</em> for the committee — design gap vs. operation gap. Click outside the modal or the ✕ to close.</p>
+    </div>
+
+    <!-- State 3: Share -->
+    <div class="flow-state" data-state="share">
+      <div class="ac-dash">
+        <div class="ac-head">
+          <div class="meta-bar">
+            <span>Helios Robotics, Inc. · Audit Committee · Q3 FY2026</span>
+            <button class="share-btn" style="background: var(--luna-teal-500); border-color: var(--luna-teal-500);">📤 Share with committee</button>
+          </div>
+          <h1>Q3 SOX program — committee readout</h1>
+          <div class="sub" style="opacity:0.5;">Preparing share link…</div>
+        </div>
+        <div class="ac-body" style="opacity: 0.3; pointer-events: none;">
+          <div class="ai-prep"><h3>Meeting prep · 3-minute read</h3><p>(behind modal)</p></div>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" data-go="dash">
+        <div class="modal" onclick="event.stopPropagation();">
+          <div class="modal-head">
+            <h3>Share with audit committee</h3>
+            <button class="close" data-go="dash">✕</button>
+          </div>
+          <div class="share-content">
+            <p style="margin:0;font-size:13px;color:var(--luna-gray-700);line-height:1.55;">
+              Generates a tokenized, read-only URL for committee members. Each click is logged in the chain. URL expires 7 days after Monday's meeting.
+            </p>
+            <div class="url-box">
+              <span class="url">https://optro.audit.helios.com/q3fy26/committee?token=eyJh…1c1</span>
+              <button class="copy">Copy</button>
+            </div>
+            <div class="opts">
+              <label><input type="checkbox" checked /> Include the 3-minute meeting prep</label>
+              <label><input type="checkbox" checked /> Show chain timeline</label>
+              <label><input type="checkbox" checked /> Allow click-through to event detail</label>
+              <label><input type="checkbox" /> Allow Deloitte verifier (external auditor only)</label>
+              <label><input type="checkbox" /> Slack the link to #board-audit-committee</label>
+            </div>
+            <div style="margin-top:14px;padding:12px;background:linear-gradient(135deg,var(--luna-purple-50),var(--luna-blue-50));border-radius:6px;font-size:12px;color:var(--luna-gray-800);line-height:1.55;">
+              <span class="ai-chip">Optro ECM</span>
+              <strong>Reading order for the committee:</strong>
+              Meeting prep → timeline → r.taylor finding modal.
+              Median read time on Q2 share was 6:48 across 5 committee members. <strong>3 of 5 ratified before the meeting.</strong>
+            </div>
+          </div>
+          <div class="modal-foot">
+            <button class="luna-btn is-ghost" data-go="dash">Cancel</button>
+            <button class="luna-btn is-secondary">Copy link</button>
+            <button class="luna-btn">📤 Share</button>
+          </div>
+        </div>
+      </div>
+      <p class="surface-caption"><strong>State 3.</strong> Generate a tokenized URL for the committee. Each click is logged in the chain — the audit committee's reading itself becomes auditable.</p>
+    </div>
+
+  </div>
+
+  <p class="surface-caption" style="margin-top:32px;">
+    The narrative is drafted by ECM and ratified by Sarah Park before the committee sees it — it's management's executive summary, not the AI's framing. The chain visualization is the primary readout; the narrative is the supplementary summary management endorses. The committee reviews management's attestation, with the chain itself as the verifiable substrate.
+  </p>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

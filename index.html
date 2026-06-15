@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Optro ECM · Signal — 18 design takes</title>
+<link rel="stylesheet" href="tokens.css?v=20260615b" />
+<link rel="stylesheet" href="styles.css?v=20260615b" />
+<link rel="icon" type="image/svg+xml" href="optro-mark.svg" />
+<style>
+  .landing-hero {
+    padding: 72px 24px 48px;
+    background:
+      radial-gradient(circle at 20% 0%, var(--luna-teal-50), transparent 50%),
+      radial-gradient(circle at 80% 0%, var(--luna-purple-50), transparent 50%),
+      var(--luna-white);
+    border-bottom: var(--luna-border);
+  }
+  .landing-hero-inner { max-width: 1080px; margin: 0 auto; }
+  .landing-hero .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--luna-teal-500);
+    margin-bottom: 16px;
+  }
+  .landing-hero .eyebrow::before {
+    content: ""; width: 24px; height: 1.5px; background: var(--luna-teal-500);
+  }
+  .landing-hero h1 {
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    color: var(--luna-gray-900);
+    margin: 0 0 20px;
+    max-width: 880px;
+  }
+  .landing-hero h1 .accent { color: var(--luna-teal-500); }
+  .landing-hero .lede {
+    font-size: 18px;
+    color: var(--luna-text-subdued);
+    line-height: 1.55;
+    max-width: 760px;
+    margin: 0 0 32px;
+  }
+  .stats-row {
+    display: flex; flex-wrap: wrap; gap: 32px;
+    padding-top: 24px; border-top: var(--luna-border);
+  }
+  .stat .n { font-size: 28px; font-weight: 700; color: var(--luna-gray-900); line-height: 1; }
+  .stat .l { font-size: 12px; color: var(--luna-gray-600); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-top: 4px; }
+  .stat .n.is-zero { color: var(--luna-gray-400); }
+
+  /* PRD block */
+  .frame-block {
+    max-width: 1080px;
+    margin: 56px auto 0;
+    padding: 28px 32px;
+    background: var(--luna-white);
+    border: 2px solid var(--luna-gray-200);
+    border-radius: var(--luna-radius-md);
+    box-shadow: var(--luna-shadow-100);
+  }
+  .frame-block .eyebrow {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--luna-purple-700);
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .frame-block .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--luna-purple-500); }
+  .frame-block h2 { font-size: 22px; font-weight: 700; margin: 0 0 12px; color: var(--luna-gray-900); }
+  .frame-block p { font-size: 15px; color: var(--luna-gray-700); line-height: 1.6; margin: 0 0 10px; }
+  .frame-block .hard-rules { margin-top: 16px; font-size: 13px; color: var(--luna-gray-800); }
+  .frame-block .hard-rules strong { font-weight: 700; color: var(--luna-gray-900); }
+  .frame-block .hard-rules span { display: inline-block; margin: 0 4px; color: var(--luna-gray-400); }
+
+  /* Section header */
+  .surface-section { max-width: 1080px; margin: 64px auto 0; padding: 0 24px; }
+  .section-head {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: var(--luna-border);
+  }
+  .section-head .left { flex: 1; min-width: 0; }
+  .section-head .section-eyebrow {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--luna-teal-500);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .section-head h2 {
+    font-size: 26px; font-weight: 700; color: var(--luna-gray-900);
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+  .section-head .section-sub {
+    font-size: 14px;
+    color: var(--luna-text-subdued);
+    max-width: 600px;
+    line-height: 1.5;
+  }
+  .section-head .right { flex-shrink: 0; }
+  .section-head .right .lbl { font-size: 11px; color: var(--luna-gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .section-head .right .what { font-size: 13px; color: var(--luna-gray-800); font-weight: 600; }
+
+  /* Card grid */
+  .takes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 920px) {
+    .takes-grid { grid-template-columns: 1fr; }
+  }
+  .take-card {
+    position: relative;
+    background: var(--luna-white);
+    border: var(--luna-border);
+    border-radius: var(--luna-radius-md);
+    padding: 20px 22px 22px;
+    text-decoration: none;
+    color: inherit;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .take-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--luna-shadow-300);
+    border-color: var(--luna-teal-300);
+    text-decoration: none;
+  }
+  .take-card.is-recommended {
+    border-color: var(--luna-teal-500);
+    box-shadow: 0 0 0 1px var(--luna-teal-500), var(--luna-shadow-100);
+  }
+  .take-card .take-letter {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--luna-teal-500);
+  }
+  .take-card .take-letter .L {
+    display: inline-grid; place-items: center;
+    width: 22px; height: 22px;
+    background: var(--luna-teal-50);
+    color: var(--luna-teal-700);
+    border-radius: var(--luna-radius-sm);
+    font-size: 13px;
+    font-weight: 800;
+    font-family: ui-monospace, monospace;
+  }
+  .take-card.is-recommended .take-letter .L { background: var(--luna-teal-500); color: var(--luna-white); }
+  .take-card .rec-pill {
+    display: inline-flex; align-items: center;
+    padding: 2px 8px;
+    background: var(--luna-teal-500);
+    color: var(--luna-white);
+    border-radius: var(--luna-radius-full);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .take-card h3 {
+    font-size: 17px; font-weight: 700;
+    color: var(--luna-gray-900);
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .take-card .tag {
+    font-size: 13px;
+    color: var(--luna-gray-700);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .take-card .voice {
+    font-size: 13px;
+    color: var(--luna-gray-600);
+    font-style: italic;
+    line-height: 1.5;
+    padding: 10px 12px;
+    background: var(--luna-gray-50);
+    border-left: 2px solid var(--luna-gray-300);
+    border-radius: 0 4px 4px 0;
+    margin: 4px 0;
+  }
+  .take-card.is-recommended .voice {
+    background: var(--luna-teal-50);
+    border-left-color: var(--luna-teal-500);
+    color: var(--luna-teal-700);
+  }
+  .take-card .open {
+    margin-top: auto;
+    font-size: 13px; font-weight: 600;
+    color: var(--luna-teal-500);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .take-card .open .arrow { transition: transform 0.15s; }
+  .take-card:hover .open .arrow { transform: translateX(3px); }
+  .take-card .noun-tag {
+    position: absolute; top: 16px; right: 16px;
+    padding: 1px 8px;
+    background: var(--luna-gray-100);
+    border-radius: var(--luna-radius-full);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--luna-gray-600);
+  }
+
+  .bottom-block { max-width: 1080px; margin: 80px auto 0; padding: 0 24px; }
+  .scenario-card {
+    padding: 24px 28px;
+    background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50));
+    border: 1px solid var(--luna-purple-100);
+    border-left: 4px solid var(--luna-purple-500);
+    border-radius: var(--luna-radius-md);
+  }
+  .scenario-card h3 { font-size: 15px; font-weight: 700; color: var(--luna-purple-700); margin: 0 0 8px; display: flex; align-items: center; gap: 10px; }
+  .scenario-card p { font-size: 14px; color: var(--luna-gray-800); line-height: 1.6; margin: 0; }
+  .scenario-card p strong { color: var(--luna-gray-900); }
+</style>
+</head>
+<body>
+
+<div class="frame-block" style="margin-top: 56px;">
+  <div class="eyebrow">Problem</div>
+  <h2>The cost was never the upload.</h2>
+  <p>
+    The way SOX evidence gets collected today assumes the control owner will go into a web app to upload artifacts,
+    the reviewer will log in to judge them, and the PMO will check a dashboard to see where things stand.
+  </p>
+  <p>
+    The people doing this mostly do not work in audit, so the app is the part they put off. And the real cost was never the upload.
+    When evidence comes back incomplete or wrong, someone has to work out what is missing before they can even ask for a corrected version,
+    then chase the owner until it shows up. Multiply that across every control and every quarter and you have the actual job.
+  </p>
+</div>
+
+<div class="frame-block" style="margin-top: 24px; border-color: var(--luna-teal-300);">
+  <div class="eyebrow" style="color: var(--luna-teal-700);">Solution</div>
+  <h2>Move the judgment, not just the form.</h2>
+  <p>
+    The slow part of collection was always the judgment, not the file transfer. Someone has to decide whether the evidence covers the
+    right period, carries the fields it needs, and actually shows the control operated. That decision is the thing an agent can now make.
+    ECM reads what gets submitted, compares it against what the control requires, and surfaces the gaps before a reviewer has to find them by hand.
+  </p>
+  <p>
+    Once the agent carries that judgment, the work stops needing a fixed home in a web app. It can run wherever the owner and reviewer already are.
+  </p>
+  <p class="hard-rules" style="margin-top: 18px;">
+    <strong>Four rules hold on every surface.</strong>
+    Never accept evidence automatically <span>·</span>
+    Always leave an escape hatch for a person <span>·</span>
+    Every AI judgment is legible <span>·</span>
+    The trace is the output.
+  </p>
+</div>
+
+<!-- ============== Surface 1: Command palette ============== -->
+<section class="surface-section">
+  <div class="section-head">
+    <div class="left">
+      <span class="section-eyebrow">Surface 1 · Keyboard overlay</span>
+      <h2>The command palette</h2>
+      <p class="section-sub">
+        Weston Prohaska hits ⌘K from anywhere in AuditBoard. Three different things could open.
+      </p>
+    </div>
+    <div class="right">
+      <div class="lbl">Persona</div>
+      <div class="what">Weston Prohaska · Owner</div>
+    </div>
+  </div>
+
+  <div class="takes-grid">
+    <a class="take-card" href="palette-a.html">
+      <span class="noun-tag">Task</span>
+      <span class="take-letter"><span class="L">A</span> Take A</span>
+      <h3>Smart search</h3>
+      <p class="tag">Pure fuzzy navigation. Type → match → enter. AI just ranks results by intent.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="palette-b.html">
+      <span class="noun-tag">Task</span>
+      <span class="take-letter"><span class="L">B</span> Take B</span>
+      <h3>Agentic dialog</h3>
+      <p class="tag">Multi-turn chat in a box. AI asks clarifying questions, proposes evidence, files when confirmed.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card is-recommended" href="palette-c.html">
+      <span class="noun-tag">Task</span>
+      <span class="take-letter"><span class="L">C</span> Take C <span class="rec-pill">Recommended</span></span>
+      <h3>Prepped drafts</h3>
+      <p class="tag">Opens already half-done. Top hits are AI-drafted evidence tasks for what's due this week.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+  </div>
+</section>
+
+<!-- ============== Surface 2: Slack / Teams ============== -->
+<section class="surface-section">
+  <div class="section-head">
+    <div class="left">
+      <span class="section-eyebrow">Surface 2 · Chat platform</span>
+      <h2>Slack &amp; Teams</h2>
+      <p class="section-sub">
+        Where IT leads already live. ECM could join the conversation as a bot DM, a per-control channel, or a fluent chat colleague.
+      </p>
+    </div>
+    <div class="right">
+      <div class="lbl">Persona</div>
+      <div class="what">Weston Prohaska · Owner</div>
+    </div>
+  </div>
+
+  <div class="takes-grid">
+    <a class="take-card is-recommended" href="slack-a.html">
+      <span class="noun-tag">Task</span>
+      <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
+      <h3>Bot DM + rich card</h3>
+      <p class="tag">One DM, one approve. Prefilled card with confidence bar, one-tap file.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="slack-b.html">
+      <span class="noun-tag">Control</span>
+      <span class="take-letter"><span class="L">B</span> Take B</span>
+      <h3>Channel-per-control</h3>
+      <p class="tag">Each control becomes a Slack channel. Persistent context. AI posts weekly digests, owners drop evidence, reviewers thumbs up.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="slack-c.html">
+      <span class="noun-tag">Task</span>
+      <span class="take-letter"><span class="L">C</span> Take C</span>
+      <h3>Conversational intake</h3>
+      <p class="tag">Weston DMs the bot in natural language. No card UI. AI parses, asks clarifications if needed, files.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+  </div>
+</section>
+
+<!-- ============== Surface 3: Mobile ============== -->
+<section class="surface-section">
+  <div class="section-head">
+    <div class="left">
+      <span class="section-eyebrow">Surface 3 · Phone</span>
+      <h2>Mobile</h2>
+      <p class="section-sub">
+        IT leads do half their work from airports. Three different shapes for a phone-native SOX experience.
+      </p>
+    </div>
+    <div class="right">
+      <div class="lbl">Persona</div>
+      <div class="what">Weston Prohaska · Owner</div>
+    </div>
+  </div>
+
+  <div class="takes-grid">
+    <a class="take-card is-recommended" href="mobile-a.html">
+      <span class="noun-tag">Task</span>
+      <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
+      <h3>Push + camera intake</h3>
+      <p class="tag">Push notification → camera shortcut → AI auto-classifies + files. 12 seconds, no app loaded.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="mobile-b.html">
+      <span class="noun-tag">Task</span>
+      <span class="take-letter"><span class="L">B</span> Take B</span>
+      <h3>Pocket triage</h3>
+      <p class="tag">Mobile dashboard of your SOX week. Swipe-to-triage. Each row carries an AI summary.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="mobile-c.html">
+      <span class="noun-tag">Task</span>
+      <span class="take-letter"><span class="L">C</span> Take C</span>
+      <h3>Voice-first capture</h3>
+      <p class="tag">"Hey ECM, filed Q3 AR for prod-db." Speech-to-evidence pipeline. Hands-busy moments.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+  </div>
+</section>
+
+<!-- ============== Surface 4: iPad ============== -->
+<section class="surface-section">
+  <div class="section-head">
+    <div class="left">
+      <span class="section-eyebrow">Surface 4 · Tablet</span>
+      <h2>iPad — reviewer fieldwork</h2>
+      <p class="section-sub">
+        Larger than a phone, more tactile than a laptop. Three ways AI can support the reviewer's judgment.
+      </p>
+    </div>
+    <div class="right">
+      <div class="lbl">Persona</div>
+      <div class="what">Dana Cho · Reviewer</div>
+    </div>
+  </div>
+
+  <div class="takes-grid">
+    <a class="take-card" href="ipad-a.html">
+      <span class="noun-tag">Evidence</span>
+      <span class="take-letter"><span class="L">A</span> Take A</span>
+      <h3>Pencil + findings panel</h3>
+      <p class="tag">Read the PDF like always. AI side-panel flags drift vs. last quarter, suggests verdict.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card is-recommended" href="ipad-b.html">
+      <span class="noun-tag">Evidence</span>
+      <span class="take-letter"><span class="L">B</span> Take B <span class="rec-pill">Recommended</span></span>
+      <h3>Side-by-side compare</h3>
+      <p class="tag">This quarter on left, last quarter on right. AI aligns rows + highlights deltas. Pencil to ratify or dispute each delta.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="ipad-c.html">
+      <span class="noun-tag">Evidence</span>
+      <span class="take-letter"><span class="L">C</span> Take C</span>
+      <h3>Narrated walk-through</h3>
+      <p class="tag">AI generates a Loom-style narrated video of the evidence. Dana scrubs through, taps to dispute moments.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+  </div>
+</section>
+
+<!-- ============== Surface 5: Wearable ============== -->
+<section class="surface-section">
+  <div class="section-head">
+    <div class="left">
+      <span class="section-eyebrow">Surface 5 · Wrist</span>
+      <h2>Wearable</h2>
+      <p class="section-sub">
+        Almost no UI to work with. Three takes on what, if anything, a SOX agent should do on a watch.
+      </p>
+    </div>
+    <div class="right">
+      <div class="lbl">Persona</div>
+      <div class="what">Weston Prohaska · Owner</div>
+    </div>
+  </div>
+
+  <div class="takes-grid">
+    <a class="take-card is-recommended" href="wearable-a.html">
+      <span class="noun-tag">Task</span>
+      <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
+      <h3>Confidence ring + tap</h3>
+      <p class="tag">Wrist buzz on high-confidence pattern match. Ring shows confidence. One tap confirms.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="wearable-b.html">
+      <span class="noun-tag">Task</span>
+      <span class="take-letter"><span class="L">B</span> Take B</span>
+      <h3>Glanceable program status</h3>
+      <p class="tag">Watch complication shows program-wide SOX health. Tap → drill into pending.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="wearable-c.html">
+      <span class="noun-tag">Task</span>
+      <span class="take-letter"><span class="L">C</span> Take C</span>
+      <h3>Escalation-only</h3>
+      <p class="tag">No watch UI at all. Watch only haptics when AI escalates something needing eyeballs on the phone.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+  </div>
+</section>
+
+<!-- ============== Surface 6: Blockchain ============== -->
+<section class="surface-section">
+  <div class="section-head">
+    <div class="left">
+      <span class="section-eyebrow">Surface 6 · Audit-grade output</span>
+      <h2>Blockchain receipt</h2>
+      <p class="section-sub">
+        Tamper-proof attestations after sign-off. Three takes on how (and whether) auditors and the audit committee should see the chain.
+      </p>
+    </div>
+    <div class="right">
+      <div class="lbl">Persona</div>
+      <div class="what">Sarah Park · PMO</div>
+    </div>
+  </div>
+
+  <div class="takes-grid">
+    <a class="take-card is-recommended" href="chain-a.html">
+      <span class="noun-tag">Evidence</span>
+      <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
+      <h3>Receipt with chain narration</h3>
+      <p class="tag">Card with artifact + chain of attestations. AI translates the chain in plain English.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="chain-b.html">
+      <span class="noun-tag">Evidence</span>
+      <span class="take-letter"><span class="L">B</span> Take B</span>
+      <h3>Verification widget</h3>
+      <p class="tag">Embeddable badge the external auditor drops into fieldwork docs. Pulls the latest hash, confirms in one click.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="chain-c.html">
+      <span class="noun-tag">Evidence</span>
+      <span class="take-letter"><span class="L">C</span> Take C</span>
+      <h3>Audit committee dashboard</h3>
+      <p class="tag">Public-share URL of the whole program's chain, visualized for the quarterly committee meeting.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+  </div>
+</section>
+
+<!-- ============== Axis separator: capability surfaces ============== -->
+<section class="surface-section" style="margin-top: 96px;">
+  <div style="max-width: 1080px; margin: 0 auto; padding: 32px 28px; background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50)); border: 1px solid var(--luna-purple-100); border-radius: var(--luna-radius-md);">
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--luna-purple-700); margin-bottom: 8px; display: inline-flex; align-items: center; gap: 8px;">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--luna-purple-500);"></span>
+      Different axis · Capability surfaces
+    </div>
+    <h2 style="font-size: 28px; font-weight: 700; color: var(--luna-gray-900); margin: 0 0 8px; letter-spacing: -0.015em;">What makes Optro ECM defensible.</h2>
+    <p style="font-size: 14px; color: var(--luna-gray-700); line-height: 1.6; margin: 0; max-width: 720px;">
+      The first six surfaces explore <em>where</em> ECM lives. The next three explore <em>what makes ECM credible enough to live anywhere</em> — the data plumbing,
+      the governance, and the causal reasoning underneath. Same problem (diagnosis is the cost; the agent moves judgment upstream), different layer of the answer.
+    </p>
+  </div>
+</section>
+
+<!-- ============== Surface 7: AI-ready data ============== -->
+<section class="surface-section">
+  <div class="section-head">
+    <div class="left">
+      <span class="section-eyebrow" style="color: var(--luna-purple-700);">Surface 7 · Capability layer</span>
+      <h2>AI-ready data</h2>
+      <p class="section-sub">
+        Diagnosis disappears when the schema is enforced upstream. Three ways the agent gets evidence it can actually judge.
+      </p>
+    </div>
+    <div class="right">
+      <div class="lbl">Persona</div>
+      <div class="what">Mixed · Eng + PMO + Owner</div>
+    </div>
+  </div>
+
+  <div class="takes-grid">
+    <a class="take-card is-recommended" href="aiready-a.html">
+      <span class="noun-tag">Source-of-record</span>
+      <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
+      <h3>Write-time classification connectors</h3>
+      <p class="tag">ServiceNow / JIRA / Salesforce / ERP connectors classify events to controls at write time. When a change ticket closes, it's already tagged with the controls it touches.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="aiready-b.html">
+      <span class="noun-tag">Schema</span>
+      <span class="take-letter"><span class="L">B</span> Take B</span>
+      <h3>Schema-aware evidence templates</h3>
+      <p class="tag">The control's evidence requirement is a typed schema. Submissions get parsed against it; the owner sees structural gaps live before they upload.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="aiready-c.html">
+      <span class="noun-tag">Lineage</span>
+      <span class="take-letter"><span class="L">C</span> Take C</span>
+      <h3>Provenance graph</h3>
+      <p class="tag">Every artifact carries a verifiable source chain. ECM (and the auditor) can answer "is this fresh, where did it come from, has it been edited" from the graph, not from human testimony.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+  </div>
+</section>
+
+<!-- ============== Surface 8: AI governance ============== -->
+<section class="surface-section">
+  <div class="section-head">
+    <div class="left">
+      <span class="section-eyebrow" style="color: var(--luna-purple-700);">Surface 8 · Capability layer</span>
+      <h2>AI governance</h2>
+      <p class="section-sub">
+        ECM is itself in SOX scope — the agent is a control that operates. Three ways to make its judgment as reviewable as a control matrix.
+      </p>
+    </div>
+    <div class="right">
+      <div class="lbl">Persona</div>
+      <div class="what">Sarah Park · PMO + Audit committee</div>
+    </div>
+  </div>
+
+  <div class="takes-grid">
+    <a class="take-card" href="gov-a.html">
+      <span class="noun-tag">Model</span>
+      <span class="take-letter"><span class="L">A</span> Take A</span>
+      <h3>Model card + change log</h3>
+      <p class="tag">Public-facing model card showing what ECM does, what it doesn't, what changed and when. Every rule update is human-signed and logged. Audit committee reviews before sign-off.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="gov-b.html">
+      <span class="noun-tag">Override</span>
+      <span class="take-letter"><span class="L">B</span> Take B</span>
+      <h3>Override registry</h3>
+      <p class="tag">Every human override of ECM is logged with reason. Statistical drift across controls shows where the agent is misaligned. Reviewers can see how often ECM has been wrong on a given control.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card is-recommended" href="gov-c.html">
+      <span class="noun-tag">Policy</span>
+      <span class="take-letter"><span class="L">C</span> Take C <span class="rec-pill">Recommended</span></span>
+      <h3>Policy-as-code</h3>
+      <p class="tag">ECM's rules are explicit, versioned, signed code. Changing a rule is a PR-style approval flow with management sign-off. Rules are enumerable and tied to specific controls.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+  </div>
+</section>
+
+<!-- ============== Surface 9: Causal AI ============== -->
+<section class="surface-section">
+  <div class="section-head">
+    <div class="left">
+      <span class="section-eyebrow" style="color: var(--luna-purple-700);">Surface 9 · Capability layer</span>
+      <h2>Causal AI</h2>
+      <p class="section-sub">
+        ECM doesn't just match patterns — it explains the chain from artifact to control to risk. Causality replaces correlation in the diagnosis step.
+      </p>
+    </div>
+    <div class="right">
+      <div class="lbl">Persona</div>
+      <div class="what">Mixed · Reviewer + Owner + PMO</div>
+    </div>
+  </div>
+
+  <div class="takes-grid">
+    <a class="take-card is-recommended" href="causal-a.html">
+      <span class="noun-tag">Cause</span>
+      <span class="take-letter"><span class="L">A</span> Take A <span class="rec-pill">Recommended</span></span>
+      <h3>Root-cause finding analysis</h3>
+      <p class="tag">When a finding occurs, the agent identifies the upstream control cause, not just the symptom. The escalation finding traces back to a change-approval design weakness, not a review weakness.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="causal-b.html">
+      <span class="noun-tag">Counterfactual</span>
+      <span class="take-letter"><span class="L">B</span> Take B</span>
+      <h3>Counterfactual evidence asks</h3>
+      <p class="tag">"If you had filed X instead of Y, would Midship have accepted it?" The agent simulates alternative submissions and shows which would pass. Direct attack on the chase-for-corrections cost.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+
+    <a class="take-card" href="causal-c.html">
+      <span class="noun-tag">Risk</span>
+      <span class="take-letter"><span class="L">C</span> Take C</span>
+      <h3>Risk propagation map</h3>
+      <p class="tag">Causal graph of controls → risks → assertions. When a control fails, the graph shows downstream impact: which assertions are now at risk, which material misstatement risks become possible.</p>
+      <span class="open">Open mockup <span class="arrow">→</span></span>
+    </a>
+  </div>
+</section>
+
+<div class="bottom-block">
+  <div class="scenario-card">
+    <h3><span class="ai-chip">Scenario</span> The same Helios cycle, across all 27 takes</h3>
+    <p>
+      <strong>Helios Robotics, Inc.</strong> is a Series D industrial robotics company targeting an S-1 filing in Q1 2027, currently mid-Q3 close.
+      Control <strong>4.2.1</strong> is a quarterly user-access review on the production database.
+      <strong>Weston Prohaska</strong> (IT Lead) owns the evidence, <strong>Dana Cho</strong> (Internal Audit) reviews it, and <strong>Sarah Park</strong> (SOX PMO) tracks the program.
+      The same scenario runs through every take, so you only have to learn the cast once.
+    </p>
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer" style="margin-top: 64px;"></footer>
+<script src="shared.js"></script>
+</body>
+</html>

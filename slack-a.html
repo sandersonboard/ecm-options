@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Slack · Take A — Bot DM · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .slack-evidence-card {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-300);
+    border-left: 3px solid var(--luna-purple-500);
+    border-radius: 4px;
+    max-width: 460px;
+  }
+  .slack-evidence-card .head { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .slack-evidence-card .meta { font-size: 12px; color: var(--luna-gray-600); margin-bottom: 8px; }
+  .slack-evidence-card .conf-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 12px; color: var(--luna-gray-700); }
+  .slack-evidence-card .conf-row .ai-confidence-bar { flex: 1; }
+  .slack-evidence-card .actions { display: flex; gap: 6px; margin-top: 8px; }
+  .slack-evidence-card .actions button {
+    padding: 5px 10px; font-size: 12px; font-weight: 600;
+    border-radius: 4px; border: 1px solid var(--luna-gray-300); background: var(--luna-white); color: var(--luna-gray-800);
+    cursor: pointer;
+  }
+  .slack-evidence-card .actions button.primary { background: var(--luna-teal-500); color: var(--luna-white); border-color: var(--luna-teal-500); }
+  .slack-evidence-card .actions button.primary:hover { background: var(--luna-teal-600); }
+  .slack-thumb {
+    margin-top: 8px;
+    width: 280px; height: 160px;
+    background: var(--luna-gray-100);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 4px;
+    display: grid; place-items: center;
+    font-size: 12px; color: var(--luna-gray-500);
+    background-image:
+      linear-gradient(135deg, transparent 49%, var(--luna-gray-200) 50%, transparent 51%),
+      linear-gradient(45deg, transparent 49%, var(--luna-gray-200) 50%, transparent 51%);
+  }
+  .slack-typing-bubble {
+    display: inline-flex; gap: 3px;
+    padding: 6px 10px;
+    background: var(--luna-gray-100);
+    border-radius: 12px;
+    margin-top: 2px;
+  }
+  .slack-typing-bubble span {
+    width: 6px; height: 6px;
+    background: var(--luna-gray-500);
+    border-radius: 50%;
+    animation: blink 1.2s infinite ease-in-out;
+  }
+  .slack-typing-bubble span:nth-child(2) { animation-delay: 0.15s; }
+  .slack-typing-bubble span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+
+  .filed-receipt-line {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: var(--luna-green-50);
+    border: 1px solid var(--luna-green-100);
+    border-left: 3px solid var(--luna-green-500);
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--luna-green-700);
+    font-family: ui-monospace, monospace;
+    line-height: 1.5;
+  }
+  .filed-receipt-line strong { color: var(--luna-green-700); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Slack &amp; Teams · <span style="color:var(--luna-text);">Take A ★</span>
+      </div>
+      <h1 class="luna-heading-600">A Friday afternoon bot DM.</h1>
+      <p class="subtitle">Weston's in a meeting. The Optro bot DMs him with the AR Q3 ask, a confidence bar, and a one-tap approve. He replies with a screenshot from his phone.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Control owner</span>
+      <span class="luna-badge">Noun · Task</span>
+      <span class="luna-badge is-purple">Take A ★</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="slack-a.html" class="is-current">A · Bot DM ★</a>
+    <span class="sep">·</span>
+    <a href="slack-b.html">B · Channel-per-control</a>
+    <span class="sep">·</span>
+    <a href="slack-c.html">C · Conversational intake</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="dm"><span class="num">1</span> Bot DM arrives</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="reply"><span class="num">2</span> Weston replies</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="filed"><span class="num">3</span> Filed &amp; routed</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- State 1: Bot DM arrives -->
+    <div class="flow-state" data-state="dm">
+      <div class="slack-window" role="region">
+        <aside class="slack-sidebar">
+          <div class="workspace">
+            <span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>
+            Helios Robotics
+          </div>
+          <div class="section">Direct messages</div>
+          <div class="channel is-active">Optro</div>
+          <div class="channel">@ Dana Cho</div>
+          <div class="channel">@ Sarah Park</div>
+          <div class="section">Channels</div>
+          <div class="channel"># sox-q3-close</div>
+          <div class="channel"># it-security</div>
+          <div class="channel"># dba-team</div>
+        </aside>
+
+        <main class="slack-main">
+          <header class="slack-header">
+            <span style="width:24px;height:24px;border-radius:4px;background:linear-gradient(135deg,#e5ddfa,#dbeaff);display:grid;place-items:center;"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></span>
+            Optro
+            <span style="font-size:11px;color:var(--luna-gray-500);font-weight:500;margin-left:4px;">App · GRC assistant</span>
+          </header>
+
+          <div class="slack-messages">
+            <div class="slack-msg">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head">
+                  <span class="name">Optro</span>
+                  <span class="bot-tag">APP</span>
+                  <span class="ts">Friday · 2:48 PM</span>
+                </div>
+                <p>Hey Weston — heads up, your <strong>quarterly user-access review for <span class="ai-citation">control 4.2.1</span> (prod-db-01)</strong> is due Monday. I drafted the evidence task and prefilled the ServiceNow query you used last quarter.</p>
+
+                <div class="slack-evidence-card">
+                  <div class="head">
+                    <span class="ai-chip">Optro ECM</span>
+                    Evidence draft · AR-Q3FY26-prod-db
+                  </div>
+                  <div class="meta">Control 4.2.1 · Cadence: quarterly · Reviewer: Dana Cho</div>
+                  <div class="conf-row">
+                    <span>Match to your usual pattern:</span>
+                    <div class="ai-confidence-bar" style="max-width:200px;"><span style="width:85%;"></span></div>
+                    <strong>85%</strong>
+                  </div>
+                  <div style="font-size:12px;color:var(--luna-gray-700);">
+                    Suggested artifact: <span class="ai-citation">snow-query-AR-prod-db.csv</span> +
+                    <span class="ai-citation">DBA attestation email</span>. Same shape as Q2.
+                  </div>
+                  <div class="actions">
+                    <button class="primary" data-go="reply">✓ Approve &amp; file</button>
+                    <button>Edit query</button>
+                    <button data-go="reply">Upload your own</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slack-input">Message Optro…</div>
+        </main>
+      </div>
+      <p class="surface-caption"><strong>State 1.</strong> Bot DM with a rich evidence card. Click "Approve &amp; file" or "Upload your own" to reply.</p>
+    </div>
+
+    <!-- State 2: Weston replies -->
+    <div class="flow-state" data-state="reply">
+      <div class="slack-window" role="region">
+        <aside class="slack-sidebar">
+          <div class="workspace"><span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>Helios Robotics</div>
+          <div class="section">Direct messages</div>
+          <div class="channel is-active">Optro</div>
+          <div class="channel">@ Dana Cho</div>
+          <div class="channel">@ Sarah Park</div>
+          <div class="section">Channels</div>
+          <div class="channel"># sox-q3-close</div>
+          <div class="channel"># it-security</div>
+          <div class="channel"># dba-team</div>
+        </aside>
+
+        <main class="slack-main">
+          <header class="slack-header">
+            <span style="width:24px;height:24px;border-radius:4px;background:linear-gradient(135deg,#e5ddfa,#dbeaff);display:grid;place-items:center;"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></span>
+            Optro
+            <span style="font-size:11px;color:var(--luna-gray-500);font-weight:500;margin-left:4px;">App · GRC assistant</span>
+          </header>
+
+          <div class="slack-messages">
+            <div class="slack-msg">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">Friday · 2:48 PM</span></div>
+                <p>Hey Weston — heads up, your <strong>quarterly user-access review for <span class="ai-citation">control 4.2.1</span></strong> is due Monday. I drafted the evidence task and prefilled the ServiceNow query you used last quarter.</p>
+              </div>
+            </div>
+
+            <div class="slack-msg">
+              <div class="avatar">W</div>
+              <div class="body">
+                <div class="head"><span class="name">Weston Prohaska</span><span class="ts">Friday · 3:11 PM</span></div>
+                <p>In a meeting — but I have the export already, snapped from my phone. Filing it now.</p>
+                <div class="slack-thumb">📸 AR-Q3FY26-prod-db.png · 1.2 MB</div>
+              </div>
+            </div>
+
+            <div class="slack-msg">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">just now</span></div>
+                <div class="slack-typing-bubble"><span></span><span></span><span></span></div>
+                <p style="font-size:11px;color:var(--luna-gray-500);margin-top:4px;">Parsing screenshot, tagging control, routing for review…</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slack-input">Message Optro…</div>
+        </main>
+      </div>
+      <p class="surface-caption"><strong>State 2.</strong> Weston replied with a phone screenshot. ECM is parsing, classifying, and routing — in real time. Advance to see the result.</p>
+    </div>
+
+    <!-- State 3: Filed & routed -->
+    <div class="flow-state" data-state="filed">
+      <div class="slack-window" role="region">
+        <aside class="slack-sidebar">
+          <div class="workspace"><span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>Helios Robotics</div>
+          <div class="section">Direct messages</div>
+          <div class="channel is-active">Optro</div>
+          <div class="channel">@ Dana Cho</div>
+          <div class="channel">@ Sarah Park</div>
+          <div class="section">Channels</div>
+          <div class="channel"># sox-q3-close</div>
+          <div class="channel"># it-security</div>
+          <div class="channel"># dba-team</div>
+        </aside>
+
+        <main class="slack-main">
+          <header class="slack-header">
+            <span style="width:24px;height:24px;border-radius:4px;background:linear-gradient(135deg,#e5ddfa,#dbeaff);display:grid;place-items:center;"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></span>
+            Optro
+            <span style="font-size:11px;color:var(--luna-gray-500);font-weight:500;margin-left:4px;">App · GRC assistant</span>
+          </header>
+
+          <div class="slack-messages">
+            <div class="slack-msg" style="opacity:0.6;">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">2:48 PM</span></div><p style="font-size:13px;">Drafted Q3 evidence card…</p></div>
+            </div>
+            <div class="slack-msg" style="opacity:0.6;">
+              <div class="avatar">W</div>
+              <div class="body"><div class="head"><span class="name">Weston Prohaska</span><span class="ts">3:11 PM</span></div><p style="font-size:13px;">Filing it now [screenshot attached]</p></div>
+            </div>
+
+            <div class="slack-msg">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head">
+                  <span class="name">Optro</span>
+                  <span class="bot-tag">APP</span>
+                  <span class="ts">Friday · 3:11 PM</span>
+                </div>
+                <p>
+                  Got it. Auto-tagged the screenshot:
+                  <span class="ai-citation">control 4.2.1</span> ·
+                  <span class="ai-citation">Q3FY26</span> ·
+                  <span class="ai-citation">freshness: today</span>.
+                  Routed to Dana for review. <strong>I'll DM her now.</strong>
+                  <span class="luna-badge is-green" style="margin-left:6px;">Filed</span>
+                </p>
+                <div class="filed-receipt-line">
+                  filed: <strong>AR-Q3FY26-prod-db.png</strong> → control 4.2.1 · classifier 93% · routed=Dana · sla=2bd · chain=block #4,180,221
+                </div>
+                <p style="margin-top:8px;font-size:13px;">Want me to wrist-tap you if Dana bounces back, or @-mention you in <code style="font-size:11px;background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;">#sox-q3-close</code>?</p>
+                <div style="display:flex;gap:6px;margin-top:6px;">
+                  <button data-go="reset" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-teal-500);background:var(--luna-teal-500);color:var(--luna-white);cursor:pointer;">↻ Run another</button>
+                  <button style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">Wrist-tap on bounce</button>
+                  <a href="chain-a.html" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);text-decoration:none;">View chain receipt ↗</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slack-input">Message Optro…</div>
+        </main>
+      </div>
+      <p class="surface-caption"><strong>State 3.</strong> Filed in under 30 seconds. The one-tap approve flow is gated to high-confidence pattern matches against Weston's prior approvals — anything novel (new account, new finding, new attester) forces an expand-and-review step before the file button becomes available. So one-tap doesn't mean one-thought; it means a routine pattern Weston has already attested to before.</p>
+    </div>
+
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

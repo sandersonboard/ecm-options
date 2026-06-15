@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI-ready data · Take C — Provenance graph · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .cap-stage { max-width: 1100px; margin: 0 auto; }
+  .cap-panel { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); overflow: hidden; box-shadow: var(--luna-shadow-100); margin-bottom: 16px; }
+  .cap-panel .head { padding: 14px 18px; border-bottom: 1px solid var(--luna-gray-200); display: flex; align-items: center; gap: 10px; }
+  .cap-panel .head h3 { font-size: 14px; font-weight: 700; color: var(--luna-gray-900); margin: 0; flex: 1; }
+  .cap-panel .head .meta { font-size: 11px; color: var(--luna-gray-500); }
+
+  /* The lineage graph */
+  .lineage-canvas { padding: 24px 18px; min-height: 380px; position: relative; background:
+    radial-gradient(circle at 10% 50%, var(--luna-purple-50), transparent 30%),
+    radial-gradient(circle at 90% 50%, var(--luna-teal-50), transparent 30%); }
+  .lineage-flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; align-items: center; position: relative; }
+  .ln-node {
+    padding: 10px 12px;
+    background: var(--luna-white);
+    border: 1.5px solid var(--luna-gray-300);
+    border-radius: 8px;
+    box-shadow: var(--luna-shadow-100);
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    position: relative;
+  }
+  .ln-node:hover { transform: translateY(-1px); box-shadow: var(--luna-shadow-200); }
+  .ln-node.is-selected { border-color: var(--luna-purple-500); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18); }
+  .ln-node .src-name { font-family: ui-monospace, monospace; font-size: 10px; color: var(--luna-gray-500); margin-bottom: 4px; }
+  .ln-node .ic { font-size: 18px; }
+  .ln-node .label { font-size: 11.5px; font-weight: 600; color: var(--luna-gray-900); margin-top: 4px; line-height: 1.3; }
+  .ln-node .ts { font-size: 10px; color: var(--luna-gray-500); font-family: ui-monospace, monospace; margin-top: 2px; }
+  .ln-node.is-source { background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-white)); border-color: var(--luna-purple-300); }
+  .ln-node.is-ecm { background: linear-gradient(135deg, var(--luna-blue-50), var(--luna-white)); border-color: var(--luna-blue-300); }
+  .ln-node.is-midship { background: linear-gradient(135deg, var(--luna-orange-50, #fff7ed), var(--luna-white)); border-color: var(--luna-orange-200, #fed7aa); }
+  .ln-node.is-auditor { background: linear-gradient(135deg, var(--luna-green-50), var(--luna-white)); border-color: var(--luna-green-300); }
+
+  .ln-arrow { text-align: center; color: var(--luna-gray-400); font-size: 18px; font-family: ui-monospace, monospace; }
+
+  .ln-detail-panel {
+    margin-top: 18px;
+    padding: 16px 18px;
+    background: var(--luna-purple-50);
+    border: 1px solid var(--luna-purple-100);
+    border-left: 3px solid var(--luna-purple-500);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--luna-gray-800);
+    line-height: 1.6;
+  }
+  .ln-detail-panel .det-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+  .ln-detail-panel .det-head h4 { margin: 0; font-size: 14px; color: var(--luna-purple-700); }
+  .ln-detail-panel .det-head .meta { font-size: 11px; color: var(--luna-gray-500); margin-left: auto; font-family: ui-monospace, monospace; }
+  .ln-detail-panel .grid { display: grid; grid-template-columns: 130px 1fr; gap: 4px 12px; margin-top: 8px; }
+  .ln-detail-panel .grid .k { color: var(--luna-gray-600); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding-top: 2px; }
+  .ln-detail-panel .grid .v { color: var(--luna-gray-900); }
+  .ln-detail-panel .grid .v.hash { font-family: ui-monospace, monospace; font-size: 11.5px; color: var(--luna-purple-700); word-break: break-all; }
+
+  .freshness-strip {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 18px;
+    background: var(--luna-green-50);
+    border-bottom: 1px solid var(--luna-green-100);
+    font-size: 12.5px; color: var(--luna-green-700);
+  }
+  .freshness-strip strong { color: var(--luna-green-700); }
+  .freshness-strip .right { margin-left: auto; font-family: ui-monospace, monospace; font-size: 11px; }
+
+  .cross-system { padding: 18px; }
+  .cross-system h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin: 0 0 12px; }
+  .cross-system .system-row { display: grid; grid-template-columns: 130px 1fr 100px; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--luna-gray-100); align-items: center; font-size: 12.5px; }
+  .cross-system .system-row:last-child { border-bottom: 0; }
+  .cross-system .system-name { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--luna-gray-900); }
+  .cross-system .system-name .logo { width: 22px; height: 22px; border-radius: 4px; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff; }
+  .cross-system .details { color: var(--luna-gray-700); }
+  .cross-system .details code { background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; }
+  .cross-system .verify { text-align: right; font-size: 11px; font-weight: 600; }
+  .cross-system .verify.is-ok { color: var(--luna-green-700); }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · AI-ready data · <span style="color:var(--luna-text);">Take C</span>
+      </div>
+      <h1 class="luna-heading-600">Every artifact carries its source chain.</h1>
+      <p class="subtitle">When a reviewer or auditor asks "is this fresh, where did it come from, has it been edited" — the answer comes from the lineage graph, not from human testimony. Provenance is the substrate of trust, not an afterthought.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · External auditor</span>
+      <span class="luna-badge">Noun · Lineage</span>
+      <span class="luna-badge is-purple">Take C</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="aiready-a.html">A · Write-time connectors ★</a>
+    <span class="sep">·</span>
+    <a href="aiready-b.html">B · Schema-aware templates</a>
+    <span class="sep">·</span>
+    <a href="aiready-c.html" class="is-current">C · Provenance graph</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="graph"><span class="num">1</span> Artifact lineage</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="node"><span class="num">2</span> Inspect a node</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="cross"><span class="num">3</span> Cross-system view</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content cap-stage">
+
+    <!-- State 1: Graph -->
+    <div class="flow-state" data-state="graph">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Lineage · AR-Q3FY26-prod-db</h3>
+          <span class="meta">artifact opt-evd-helios-AR-Q3FY26-prod-db · chain id 0x91a3·c4ed</span>
+        </div>
+        <div class="freshness-strip">
+          <strong>✓ Freshness verified</strong>
+          Last attestation 12 days ago · all 4 source-system signatures valid · no edits since reviewer sign-off
+          <span class="right">root: 0x91a3·c4ed·7b22·4f08</span>
+        </div>
+        <div class="lineage-canvas">
+          <div class="lineage-flow">
+            <div class="ln-node is-source" data-go="node">
+              <div class="src-name">ServiceNow</div>
+              <div class="ic">🛢</div>
+              <div class="label">snow-query<br/>AR-prod-db.csv</div>
+              <div class="ts">09-25 14:22</div>
+            </div>
+            <div class="ln-arrow">→</div>
+            <div class="ln-node is-ecm" data-go="node">
+              <div class="src-name">Optro ECM</div>
+              <div class="ic">⊕</div>
+              <div class="label">classified +<br/>tagged 4.2.1</div>
+              <div class="ts">09-25 14:22</div>
+            </div>
+            <div class="ln-arrow">→</div>
+            <div class="ln-node is-midship is-selected" data-go="node">
+              <div class="src-name">Midship</div>
+              <div class="ic">▲</div>
+              <div class="label">tested +<br/>signed by Dana</div>
+              <div class="ts">09-26 09:42</div>
+            </div>
+            <div class="ln-arrow">→</div>
+          </div>
+          <div class="lineage-flow" style="margin-top: 18px;">
+            <div></div><div></div><div></div><div></div>
+            <div class="ln-node is-midship" data-go="node">
+              <div class="src-name">ECM</div>
+              <div class="ic">⛓</div>
+              <div class="label">sealed + hashed<br/>block #4,182,118</div>
+              <div class="ts">09-26 09:42</div>
+            </div>
+            <div class="ln-arrow">→</div>
+          </div>
+          <div class="lineage-flow" style="margin-top: 18px;">
+            <div></div><div></div><div></div><div></div><div></div>
+            <div class="ln-node is-auditor" data-go="node">
+              <div class="src-name">Deloitte</div>
+              <div class="ic">📋</div>
+              <div class="label">pulled for<br/>WP-SOX-4.2.1</div>
+              <div class="ts">10-15 11:08</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 1.</strong> A single AR snapshot's life: extracted from ServiceNow at 14:22 on 09-25, classified by ECM the same second, tested and signed by Dana the next morning, sealed to the chain at 09:42, pulled by the external auditor three weeks later. Five systems, one continuous chain of custody. Click any node for the verification detail.
+      </p>
+    </div>
+
+    <!-- State 2: Node detail -->
+    <div class="flow-state" data-state="node">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Lineage · AR-Q3FY26-prod-db</h3>
+          <span class="meta">inspecting node · Midship test verdict</span>
+          <button class="luna-btn is-ghost" style="font-size:11px;padding:4px 9px;" data-go="graph">← Full graph</button>
+        </div>
+        <div class="lineage-canvas">
+          <div class="lineage-flow">
+            <div class="ln-node is-source" data-go="node" style="opacity:0.5;">
+              <div class="src-name">ServiceNow</div>
+              <div class="ic">🛢</div>
+              <div class="label">snow-query</div>
+              <div class="ts">09-25 14:22</div>
+            </div>
+            <div class="ln-arrow">→</div>
+            <div class="ln-node is-ecm" data-go="node" style="opacity:0.5;">
+              <div class="src-name">Optro ECM</div>
+              <div class="ic">⊕</div>
+              <div class="label">classified</div>
+              <div class="ts">09-25 14:22</div>
+            </div>
+            <div class="ln-arrow">→</div>
+            <div class="ln-node is-midship is-selected">
+              <div class="src-name">Midship</div>
+              <div class="ic">▲</div>
+              <div class="label">tested +<br/>signed by Dana</div>
+              <div class="ts">09-26 09:42</div>
+            </div>
+            <div class="ln-arrow">→</div>
+            <div class="ln-node is-midship" data-go="node" style="opacity:0.5;">
+              <div class="src-name">ECM</div>
+              <div class="ic">⛓</div>
+              <div class="label">sealed</div>
+              <div class="ts">09-26 09:42</div>
+            </div>
+            <div class="ln-arrow">→</div>
+            <div></div>
+          </div>
+        </div>
+
+        <div class="ln-detail-panel">
+          <div class="det-head">
+            <h4>Midship verdict</h4>
+            <span class="meta">block #4,182,118 · 2026-09-26 09:42:31 UTC</span>
+          </div>
+          <p style="margin: 0 0 8px;">
+            Dana Cho tested the artifact against the IT.AC.1.C01 control test plan. Verdict: <strong>adequate with finding</strong>.
+            The finding (carryover from Q2 — <code>contractor-svc-09</code>) was inherited from Dana's prior sign-off via the schema's <code>carryover_findings</code> field.
+            One new finding (<code>r.taylor</code> escalation without approval ticket) was raised at this node and propagated downstream.
+          </p>
+          <div class="grid">
+            <div class="k">Reviewer</div><div class="v">Dana Cho · Internal Audit · signed</div>
+            <div class="k">Pencil annotations</div><div class="v">2 (carryover note + new finding flag)</div>
+            <div class="k">Input hash</div><div class="v hash">0x91a3·c4ed·7b22·4f08·d9e1·2f5a (artifact at submission)</div>
+            <div class="k">Output hash</div><div class="v hash">0x77ef·92aa·c1b4·8de2·a0c7·3f91 (artifact + reviewer signature)</div>
+            <div class="k">Drift since</div><div class="v" style="color: var(--luna-green-700); font-weight: 600;">none — current state matches signed state</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 2.</strong> Every node carries the inputs it received, the outputs it produced, the actor who acted on it, and the cryptographic state at the moment of action. When an external auditor wants to know "did this evidence change between Dana's sign-off and your fieldwork?" the answer is here — not in a back-and-forth email.
+      </p>
+    </div>
+
+    <!-- State 3: Cross-system -->
+    <div class="flow-state" data-state="cross">
+      <div class="cap-panel">
+        <div class="head">
+          <h3>Cross-system verification</h3>
+          <span class="meta">all 5 source systems re-checked on demand</span>
+        </div>
+        <div class="cross-system">
+          <h4>Per-system chain-of-custody</h4>
+          <div class="system-row">
+            <div class="system-name"><span class="logo" style="background:#48a9c5;">SN</span>ServiceNow</div>
+            <div class="details">Source query: <code>snow-query-AR-prod-db-Q3FY26.csv</code> · 22 rows · pulled by ECM connector · query hash matches.</div>
+            <div class="verify is-ok">✓ Valid</div>
+          </div>
+          <div class="system-row">
+            <div class="system-name"><span class="logo" style="background:#16a085;">WD</span>Workday</div>
+            <div class="details">Active-employee check for attester <code>j.kowalski</code>: ✓ active at 2026-09-25, ✓ active today.</div>
+            <div class="verify is-ok">✓ Valid</div>
+          </div>
+          <div class="system-row">
+            <div class="system-name"><span class="logo" style="background:#5865f2;">GH</span>GitHub</div>
+            <div class="details">No upstream code changes to the AR query script between Q2 and Q3 (last edit 2025-11-02).</div>
+            <div class="verify is-ok">✓ Valid</div>
+          </div>
+          <div class="system-row">
+            <div class="system-name"><span class="logo" style="background:#ff6600;">OK</span>Okta</div>
+            <div class="details">Role-history for <code>r.taylor</code>: confirmed <code>dba-read → dba-admin</code> at 2026-08-14 13:08 UTC. Approval ticket reference <code>HEL-3471</code> exists.</div>
+            <div class="verify is-ok">✓ Valid</div>
+          </div>
+          <div class="system-row">
+            <div class="system-name"><span class="logo" style="background:#0a3655;">⊕</span>Optro chain</div>
+            <div class="details">Block <code>#4,182,118</code> root hash: <code style="color:var(--luna-purple-700);">0x91a3·c4ed·7b22·4f08·…</code> matches independently-fetched ledger state.</div>
+            <div class="verify is-ok">✓ Valid</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: 14px 18px; background: var(--luna-purple-50); border: 1px solid var(--luna-purple-100); border-radius: 6px; font-size: 13px; color: var(--luna-gray-800); line-height: 1.55;">
+        <strong style="color: var(--luna-purple-700);">The strategic claim.</strong>
+        Provenance isn't a feature — it's the substrate. Once every artifact carries its source chain, the question "is this evidence trustworthy" becomes a graph traversal, not a judgment call. The external auditor runs the same verifier ECM does; trust doesn't depend on trusting Optro.
+      </div>
+
+      <p class="surface-caption">
+        <strong>State 3.</strong> Five systems, one consistent answer. This isn't a marketing dashboard — it's the verification path the external auditor will actually run when they need to defend the SOX opinion. The lineage graph is what makes the chain credible, and the cross-system check is what makes the lineage believable.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

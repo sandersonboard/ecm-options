@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mobile · Take C — Voice-first capture · Optro Signal</title>
+<link rel="stylesheet" href="tokens.css?v=20260615c" />
+<link rel="stylesheet" href="styles.css?v=20260615c" />
+<style>
+  .device-stage { display: flex; gap: 60px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+  .stage-side { flex: 1; min-width: 280px; max-width: 380px; padding: 14px 0; }
+  .stage-side h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--luna-teal-500); margin: 0 0 6px; }
+  .stage-side p { font-size: 14px; color: var(--luna-gray-700); line-height: 1.55; margin: 0 0 12px; }
+  .stage-side .step-detail { padding: 12px 14px; background: var(--luna-gray-50); border-left: 3px solid var(--luna-teal-500); border-radius: 0 6px 6px 0; margin-bottom: 14px; }
+  .stage-side .step-detail .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 4px; }
+  .stage-side .step-detail p { font-size: 13px; color: var(--luna-gray-800); margin: 0; line-height: 1.5; }
+  .stage-side .step-detail.is-purple { border-left-color: var(--luna-purple-500); background: var(--luna-purple-50); }
+  .stage-side .step-detail.is-purple .lbl { color: var(--luna-purple-700); }
+
+  .voice-screen {
+    height: calc(100% - 36px);
+    background: linear-gradient(180deg, #0f172a 0%, #1a0a3d 60%, #0a1834 100%);
+    color: #fff; padding: 22px 18px 28px;
+    display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+  }
+  .voice-screen .top-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: rgba(255,255,255,0.6); }
+  .voice-screen .top-row .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--luna-purple-400); }
+  .voice-screen .top-row .dot.is-live { background: var(--luna-red-500); animation: pulse-dot 1s infinite; }
+  @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .voice-screen h2 { font-size: 22px; font-weight: 700; margin: 32px 0 0; line-height: 1.2; letter-spacing: -0.01em; }
+  .voice-screen .small { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 4px; }
+  .voice-transcript { margin-top: 22px; font-size: 19px; line-height: 1.45; color: #fff; letter-spacing: -0.005em; }
+  .voice-transcript .pending { color: rgba(255,255,255,0.55); }
+  .voice-transcript .matched { background: rgba(132, 184, 209, 0.18); padding: 1px 5px; border-radius: 3px; color: #c9ecee; }
+  .voice-transcript .caret { display: inline-block; width: 2px; height: 22px; background: #84b8d1; vertical-align: text-bottom; margin-left: 2px; animation: caret-blink 1s infinite; }
+  @keyframes caret-blink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
+  .voice-bottom { margin-top: auto; text-align: center; }
+  .waveform { display: flex; gap: 3px; align-items: center; justify-content: center; height: 40px; margin-bottom: 14px; }
+  .waveform .bar { width: 3px; background: linear-gradient(180deg, #84b8d1, #6931e3); border-radius: 2px; animation: wave 1.3s infinite ease-in-out; }
+  @keyframes wave { 0%,100% { height: 6px; } 50% { height: var(--h, 24px); } }
+  .waveform .bar:nth-child(1) { --h: 20px; animation-delay: 0s; }
+  .waveform .bar:nth-child(2) { --h: 32px; animation-delay: 0.1s; }
+  .waveform .bar:nth-child(3) { --h: 18px; animation-delay: 0.2s; }
+  .waveform .bar:nth-child(4) { --h: 28px; animation-delay: 0.3s; }
+  .waveform .bar:nth-child(5) { --h: 36px; animation-delay: 0.4s; }
+  .waveform .bar:nth-child(6) { --h: 22px; animation-delay: 0.5s; }
+  .waveform .bar:nth-child(7) { --h: 30px; animation-delay: 0.6s; }
+  .waveform .bar:nth-child(8) { --h: 16px; animation-delay: 0.7s; }
+  .waveform .bar:nth-child(9) { --h: 28px; animation-delay: 0.8s; }
+  .waveform .bar:nth-child(10) { --h: 20px; animation-delay: 0.9s; }
+  .waveform .bar:nth-child(11) { --h: 34px; animation-delay: 1s; }
+  .waveform .bar:nth-child(12) { --h: 22px; animation-delay: 1.1s; }
+  .waveform .bar:nth-child(13) { --h: 16px; animation-delay: 1.2s; }
+  .mic-btn {
+    width: 76px; height: 76px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6931e3, #266c92);
+    box-shadow: 0 0 0 6px rgba(105, 49, 227, 0.18), 0 0 24px rgba(105,49,227,0.4);
+    margin: 0 auto;
+    display: grid; place-items: center;
+    font-size: 26px; color: #fff;
+    cursor: pointer; border: none;
+    transition: transform 0.12s;
+  }
+  .mic-btn:hover { transform: scale(1.05); }
+  .mic-btn:active { transform: scale(0.95); }
+  .mic-btn.is-static { background: var(--luna-gray-200); box-shadow: none; color: var(--luna-gray-500); }
+
+  .voice-result { padding: 16px; background: var(--luna-white); height: calc(100% - 36px); overflow-y: auto; }
+  .voice-result h2 { font-size: 22px; font-weight: 700; margin: 8px 0 4px; letter-spacing: -0.01em; }
+  .voice-result .what-you-said { padding: 12px 14px; background: var(--luna-gray-50); border-left: 3px solid var(--luna-gray-300); border-radius: 0 6px 6px 0; font-size: 14px; color: var(--luna-gray-700); font-style: italic; margin: 10px 0 16px; line-height: 1.5; }
+  .voice-result .what-you-said::before { content: "you said"; display: block; font-size: 10px; font-weight: 700; font-style: normal; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 4px; }
+  .voice-result .ai-parsed { padding: 14px; background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50)); border: 1px solid var(--luna-purple-100); border-radius: 8px; margin-bottom: 12px; }
+  .voice-result .ai-parsed .head { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-purple-700); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .voice-result .ai-parsed .row { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.6); font-size: 13px; }
+  .voice-result .ai-parsed .row:last-child { border: none; }
+  .voice-result .ai-parsed .row .k { color: var(--luna-purple-700); font-weight: 600; min-width: 80px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .voice-result .ai-parsed .row .v { color: var(--luna-gray-900); font-weight: 500; }
+  .voice-result .actions-row { display: flex; gap: 8px; margin-top: 14px; }
+  .voice-result .btn-big { flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; }
+  .voice-result .btn-big.is-primary { background: var(--luna-teal-500); color: var(--luna-white); }
+  .voice-result .btn-big.is-ghost { background: var(--luna-gray-100); color: var(--luna-gray-700); }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">Optro · Signal</a> · Mobile · <span style="color:var(--luna-text);">Take C</span>
+      </div>
+      <h1 class="luna-heading-600">"Hey ECM, filed Q3 AR for prod db."</h1>
+      <p class="subtitle">Weston's walking to his car, hands full. He squeezes the action button, dictates one sentence, and ECM parses control, cycle, and intent — then asks one clarifying question.</p>
+    </div>
+    <div class="right-meta">
+      <span class="luna-badge is-teal">Persona · Control owner</span>
+      <span class="luna-badge">Noun · Task</span>
+      <span class="luna-badge is-purple">Take C</span>
+    </div>
+  </div>
+
+  <div class="take-nav">
+    <span class="lbl">Other takes:</span>
+    <a href="mobile-a.html">A · Push + camera ★</a>
+    <span class="sep">·</span>
+    <a href="mobile-b.html">B · Pocket triage</a>
+    <span class="sep">·</span>
+    <a href="mobile-c.html" class="is-current">C · Voice-first capture</a>
+  </div>
+
+  <div class="flow-stepper">
+    <span class="lbl">Flow</span>
+    <div class="flow-step" data-step="speak"><span class="num">1</span> Hold &amp; speak</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="parsed"><span class="num">2</span> ECM parsed it</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="filed"><span class="num">3</span> Filed (verbal)</div>
+    <span class="ctrl">
+      <button data-go="prev">← Back</button>
+      <button data-go="next">Next →</button>
+      <button data-go="reset">Reset</button>
+    </span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- State 1: Speak -->
+    <div class="flow-state" data-state="speak">
+      <div class="device-stage">
+        <div class="stage-side">
+          <h3>Step 1 of 3 · Hold &amp; speak</h3>
+          <p>Weston squeezes the action button. The phone dims to a focus mode. She speaks naturally — no command syntax, no wake-word, no rigid structure.</p>
+          <div class="step-detail">
+            <div class="lbl">AI moment</div>
+            <p>Live transcription with intent-matching. The cyan highlights are AI's running interpretation — "Q3 AR" matched a cycle, "prod database" matched a cluster. By the time she stops talking, the entities are resolved.</p>
+          </div>
+          <div class="step-detail is-purple">
+            <div class="lbl">Try it</div>
+            <p>Tap the glowing mic to "release."</p>
+          </div>
+        </div>
+
+        <div class="device is-phone">
+          <div class="device-screen">
+            <div class="device-statusbar" style="background:#0f172a;color:#fff;"><span class="time">3:12</span><span class="icons"><span>5G</span><span>•</span><span>🔋 82%</span></span></div>
+            <div class="voice-screen">
+              <div class="top-row"><span class="dot is-live"></span>Optro ECM · listening</div>
+              <h2>Speak naturally.</h2>
+              <div class="small">I'll figure out the control and cycle from what you say.</div>
+              <div class="voice-transcript">
+                <span class="matched">Hey ECM</span>, <span class="matched">filed</span> the <span class="matched">Q3 AR</span> for the <span class="matched">prod database</span><span class="caret"></span>
+              </div>
+              <div class="voice-bottom">
+                <div class="waveform"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+                <button class="mic-btn" data-go="parsed">🎙</button>
+                <div class="small" style="margin-top:10px;">Tap mic to release · Hold ⏵ for more</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 2: Parsed -->
+    <div class="flow-state" data-state="parsed">
+      <div class="device-stage">
+        <div class="stage-side">
+          <h3>Step 2 of 3 · ECM parsed it</h3>
+          <p>320 milliseconds after Weston releases. AI's read of the sentence is laid out as structured fields. One thing it couldn't resolve from voice alone (the carryover finding) becomes a yes/no question.</p>
+          <div class="step-detail">
+            <div class="lbl">AI moment</div>
+            <p>The audit-grade trail is structured even though the input was prose. Voice → entities → action plan. Weston gets one chance to correct before filing.</p>
+          </div>
+          <div class="step-detail is-purple">
+            <div class="lbl">Try it</div>
+            <p>Tap <strong>Yes, file with note</strong> — or say "yes file it" aloud.</p>
+          </div>
+        </div>
+
+        <div class="device is-phone">
+          <div class="device-screen">
+            <div class="device-statusbar"><span class="time">3:12</span><span class="icons"><span>5G</span><span>•</span><span>🔋 82%</span></span></div>
+            <div class="voice-result">
+              <span class="luna-badge is-purple">Parsed in 320 ms</span>
+              <h2>One thing to confirm.</h2>
+              <div class="what-you-said">"Hey ECM, filed the Q3 AR for the prod database."</div>
+              <div class="ai-parsed">
+                <div class="head"><span class="ai-chip">Optro ECM</span> Here's what I heard</div>
+                <div class="row"><span class="k">Cycle</span><span class="v">Q3 FY26</span></div>
+                <div class="row"><span class="k">Control</span><span class="v">4.2.1 · prod-db-01 AR</span></div>
+                <div class="row"><span class="k">Artifact</span><span class="v">Latest screenshot in Photos (1.2 MB, 14s ago)</span></div>
+                <div class="row"><span class="k">Action</span><span class="v">File + route to Dana</span></div>
+              </div>
+              <div style="padding:10px 12px;background:var(--luna-orange-50);border:1px solid var(--luna-orange-100);border-radius:8px;font-size:13px;color:var(--luna-orange-700);line-height:1.5;">
+                <strong>One thing.</strong> contractor-svc-09 is still on the AR (Q2 carryover). Want me to flag in the receipt note?
+              </div>
+              <div class="actions-row">
+                <button class="btn-big is-primary" data-go="filed">✓ Yes, file with note</button>
+                <button class="btn-big is-ghost" data-go="speak">Edit</button>
+              </div>
+              <div style="margin-top:10px;text-align:center;font-size:11px;color:var(--luna-gray-500);">
+                or just say "yes file it" — I'll keep listening for 3 more seconds
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 3: Filed (verbal) -->
+    <div class="flow-state" data-state="filed">
+      <div class="device-stage">
+        <div class="stage-side">
+          <h3>Step 3 of 3 · Filed, verbally</h3>
+          <p>ECM responds in the same modality she used. The voice ack is shorter than the printed version below it — designed for the literal walking-to-the-car case. The visual receipt sits below for archive.</p>
+          <div class="step-detail">
+            <div class="lbl">AI moment</div>
+            <p>Same audit chain commits as every other surface. Voice doesn't soften the trail. The block number is committed before the verbal confirmation finishes playing.</p>
+          </div>
+          <div class="step-detail" style="border-left-color: var(--luna-green-500);">
+            <div class="lbl">What happens next</div>
+            <p>Weston is back at his car. The phone sleeps. Dana gets a notification in her Slack. If Dana questions anything, Weston gets a wrist-tap.</p>
+          </div>
+        </div>
+
+        <div class="device is-phone">
+          <div class="device-screen">
+            <div class="device-statusbar" style="background:#0f172a;color:#fff;"><span class="time">3:12</span><span class="icons"><span>5G</span><span>•</span><span>🔋 82%</span></span></div>
+            <div class="voice-screen" style="background:linear-gradient(180deg,#062412 0%,#1b4a2c 60%,#0a1834 100%);">
+              <div class="top-row"><span class="dot" style="background:#99f2b5;"></span>Optro ECM · responding</div>
+              <div style="margin-top:80px;font-size:48px;text-align:center;">✓</div>
+              <div class="voice-transcript" style="margin-top:18px;text-align:center;font-size:17px;">
+                <strong>"Filed Q3 AR for control 4.2.1.</strong>
+                Added the carryover note. Routed to Dana — she usually clears these by Tuesday.
+                Want me to wrist-tap you if anything bounces back?"
+              </div>
+              <div class="voice-bottom">
+                <div class="small" style="opacity:0.7;">Block #4,180,221 committed · routed=Dana</div>
+                <button class="mic-btn is-static" style="margin-top:10px;" data-go="reset">↻</button>
+                <div class="small" style="opacity:0.5;margin-top:6px;">Tap to start a new capture</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="surface-caption">
+    Voice is the input modality, not the attestation. ECM parses spoken English into a structured filing action, but filing requires Weston's explicit tap on the confirmation card before anything is committed. The audio is preserved as a UI receipt; the audit trail is the structured action plus the deliberate tap that approved it.
+  </p>
+</div>
+
+<footer id="family-footer" class="family-footer"></footer>
+<script src="shared.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>
