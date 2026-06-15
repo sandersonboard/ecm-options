@@ -146,7 +146,7 @@
         <div class="symptom-box">
           <h4>The surface-level finding</h4>
           <p>
-            Dana flagged this during Q3 review of <strong>IT.AC.1.C01</strong> (quarterly access review). The AR snapshot shows the escalation; the substantive sufficiency rule requires a matching approval ticket; the ticket doesn't exist. Verdict: inadequate, with a finding routed to the carryover queue.
+            Marie flagged this during Q3 review of <strong>IT.AC.1.C01</strong> (quarterly access review). The AR snapshot shows the escalation; the substantive sufficiency rule requires a matching approval ticket; the ticket doesn't exist. Verdict: inadequate, with a finding routed to the carryover queue.
           </p>
           <p>
             <strong>This is what every audit tool surfaces today</strong> — the finding lives on the control where it was caught. But the access review didn't <em>cause</em> the gap; it <em>detected</em> the gap. Click "Next" to see where the cause actually lives.
@@ -155,7 +155,7 @@
       </div>
 
       <p class="surface-caption">
-        <strong>State 1.</strong> A standard finding, presented the standard way. The escalation happened weeks before Dana saw it; the AR is the wrong place to fix the problem because the AR is downstream of the actual gap. The finding gets logged at IT.AC.1.C01, but if you stop there, the same finding will recur in Q4.
+        <strong>State 1.</strong> A standard finding, presented the standard way. The escalation happened weeks before Marie saw it; the AR is the wrong place to fix the problem because the AR is downstream of the actual gap. The finding gets logged at IT.AC.1.C01, but if you stop there, the same finding will recur in Q4.
       </p>
     </div>
 
@@ -183,7 +183,7 @@
             <div class="causal-node is-symptom">
               <div class="role">Symptom · Q3 finding</div>
               <h4>IT.AC.1.C01</h4>
-              <div class="det"><span class="ctrl-id">4.2.1</span> Access review flagged the unauthorized escalation 12 days later, in Dana's Q3 review.</div>
+              <div class="det"><span class="ctrl-id">4.2.1</span> Access review flagged the unauthorized escalation 12 days later, in Marie's Q3 review.</div>
             </div>
           </div>
 
@@ -205,7 +205,7 @@
       </div>
 
       <p class="surface-caption">
-        <strong>State 2.</strong> The detective work is mechanical, not magic — every system already has its log, every connector already has the data. What's new is that the trace is automatic: when Dana confirms the finding, ECM walks back through the affected systems and proposes the upstream cause. The walk is enumerable, not inferred from a model.
+        <strong>State 2.</strong> The detective work is mechanical, not magic — every system already has its log, every connector already has the data. What's new is that the trace is automatic: when Marie confirms the finding, ECM walks back through the affected systems and proposes the upstream cause. The walk is enumerable, not inferred from a model.
       </p>
     </div>
 
@@ -291,7 +291,7 @@
           <h4 style="color: var(--luna-orange-700);">⚠ ECM is honest about its limits</h4>
           <p>
             <strong>Confidence on root-cause attribution: 42%</strong> — below the 70% threshold ECM uses to propose remediation.
-            Rather than guess at a control to fix (which would route to an owner who can't actually solve the problem), ECM hands the trace to Dana for human investigation, with the partial walk attached.
+            Rather than guess at a control to fix (which would route to an owner who can't actually solve the problem), ECM hands the trace to Marie for human investigation, with the partial walk attached.
           </p>
         </div>
 
@@ -304,12 +304,12 @@
             </div>
             <h5 style="margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--luna-gray-900);">Anomalous data export — root cause undetermined</h5>
             <div style="font-size: 12.5px; color: var(--luna-gray-700); line-height: 1.55;">
-              ECM's trace and the 5 source-system checks are attached. Dana takes it from here — interview the account holder, look for off-system context (Slack messages, email, calendar around the event), check whether this is part of a legitimate workflow that ECM doesn't know about.
+              ECM's trace and the 5 source-system checks are attached. Marie takes it from here — interview the account holder, look for off-system context (Slack messages, email, calendar around the event), check whether this is part of a legitimate workflow that ECM doesn't know about.
               <br/><br/>
-              <strong>What ECM will do meanwhile.</strong> Hold the finding as <em>open · investigating</em> in the chain. Watch for similar patterns in future events — if this is the start of a trend, ECM will surface it. If it's a one-off, Dana's investigation closes it.
+              <strong>What ECM will do meanwhile.</strong> Hold the finding as <em>open · investigating</em> in the chain. Watch for similar patterns in future events — if this is the start of a trend, ECM will surface it. If it's a one-off, Marie's investigation closes it.
             </div>
             <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--luna-gray-200); display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--luna-gray-600);">
-              Assigned to <strong style="color:var(--luna-gray-900);">Dana Cho</strong> · due 2026-10-08 · ECM monitors for recurrence
+              Assigned to <strong style="color:var(--luna-gray-900);">Marie Curie</strong> · due 2026-10-08 · ECM monitors for recurrence
               <button class="luna-btn is-ghost" style="margin-left: auto; font-size: 12px; padding: 4px 10px;" data-go="symptom">← Back to happy path</button>
             </div>
           </div>
@@ -317,7 +317,7 @@
 
         <div style="padding: 14px 18px; background: var(--luna-purple-50); border: 1px solid var(--luna-purple-100); border-radius: 6px; font-size: 13px; color: var(--luna-gray-800); line-height: 1.6; margin: 0 18px 18px;">
           <strong style="color: var(--luna-purple-700);">Why this is the right behavior.</strong>
-          A causal AI that always returns an answer is one that confabulates. ECM admitting "I traced as far as I can and the cause isn't a control failure — here's what I found, here's what I couldn't determine, a human takes it from here" is the defensible posture. The audit trail still benefits — the partial walk, the negative findings on each connector, the 42% confidence — none of that is wasted; it's the starting point for Dana's investigation.
+          A causal AI that always returns an answer is one that confabulates. ECM admitting "I traced as far as I can and the cause isn't a control failure — here's what I found, here's what I couldn't determine, a human takes it from here" is the defensible posture. The audit trail still benefits — the partial walk, the negative findings on each connector, the 42% confidence — none of that is wasted; it's the starting point for Marie's investigation.
         </div>
       </div>
     </div>

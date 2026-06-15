@@ -18,9 +18,9 @@ Six surfaces, one Helios scenario (Q3 user-access review on control 4.2.1), zero
 | Command palette | Task | Weston (owner) | One phrase → matched control + drafted task + suggested artifact |
 | Slack/Teams | Task | Weston (owner) | Bot DM with confidence bar + one-tap approve |
 | Mobile | Task | Weston (owner) | Push → camera → auto-classified in 12 seconds |
-| iPad | Evidence | Dana (reviewer) | Pencil markup + AI drift detection + adequacy verdict |
+| iPad | Evidence | Marie (reviewer) | Pencil markup + AI drift detection + adequacy verdict |
 | Wearable | Task | Weston (owner) | Confidence ring → one tap confirms pattern match |
-| Blockchain | Evidence | Sarah (PMO) | Receipt with chain of attestations + plain-English AI narration |
+| Blockchain | Evidence | Ada (PMO) | Receipt with chain of attestations + plain-English AI narration |
 
 ## What's intentionally missing
 
@@ -62,7 +62,7 @@ docs/                   design spec + decision log
 - **Customer:** Helios Robotics, Inc. (Series D industrial robotics, $500M-1B revenue, Deloitte audit)
 - **Time:** Mid-Q3 FY2026 close · T-7 months to S-1 (target Q1 2027)
 - **Control:** 4.2.1 — Quarterly user access review on `prod-db-01.helios`
-- **Cast:** Weston Prohaska (IT Lead / control owner) · Dana Cho (Internal Audit) · Sarah Park (SOX PMO)
+- **Cast:** Weston Prohaska (IT Lead / control owner) · Marie Curie (Internal Audit) · Ada Lovelace (SOX PMO)
 
 ## Local dev
 

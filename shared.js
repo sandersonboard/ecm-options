@@ -6,8 +6,8 @@
     quarter: 'Q3 FY2026 close · T-7 months to S-1',
     cast: {
       owner:    { name: 'Weston Prohaska',  role: 'IT Lead / Control Owner' },
-      reviewer: { name: 'Dana Cho',    role: 'Internal Audit' },
-      pmo:      { name: 'Sarah Park',  role: 'SOX PMO' }
+      reviewer: { name: 'Marie Curie',    role: 'Internal Audit' },
+      pmo:      { name: 'Ada Lovelace',  role: 'SOX PMO' }
     }
   };
   window.SIGNAL_SCENARIO = SCENARIO;

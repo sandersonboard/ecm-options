@@ -40,13 +40,13 @@ Each mockup is a single Luna-skinned screen with one default persona, one strong
 | 1 | Command palette | Task | Weston (owner) | Cmd+K → "AR Q3 prod" → returns matched control, drafts evidence task, citation chips inline |
 | 2 | Slack/Teams | Task | Weston (owner) | Bot DM with confidence bar ("85% match — your usual Friday AR cycle"), one-tap approve |
 | 3 | Mobile | Task | Weston (owner) | Push → camera → AI auto-tags screenshot with control, freshness, classifier confidence |
-| 4 | iPad | Evidence | Dana (reviewer) | Pencil markup on PDF artifact → AI suggests adequacy verdict + flags drift vs. prior quarter |
+| 4 | iPad | Evidence | Marie (reviewer) | Pencil markup on PDF artifact → AI suggests adequacy verdict + flags drift vs. prior quarter |
 | 5 | Wearable | Task | Weston (owner) | Watch tap → "match prior pattern? Tap to confirm" with confidence ring |
-| 6 | Blockchain | Evidence | Sarah (PMO) | Receipt page: chain of hashes + signers + timestamps; AI captions "4 attestations, last refresh 18 days ago" |
+| 6 | Blockchain | Evidence | Ada (PMO) | Receipt page: chain of hashes + signers + timestamps; AI captions "4 attestations, last refresh 18 days ago" |
 
 **Noun distribution:** 4 Task, 2 Evidence, 0 Control. The absence of control-centric mockups is the punchline — when AI removes navigation cost, evidence work gravitates away from the control noun that dominates legacy GRC tools.
 
-**Persona distribution:** 4 Weston (owner), 1 Dana (reviewer), 1 Sarah (PMO). Owner-heavy because owners do the bulk of evidence collection grunt work — that's honest.
+**Persona distribution:** 4 Weston (owner), 1 Marie (reviewer), 1 Ada (PMO). Owner-heavy because owners do the bulk of evidence collection grunt work — that's honest.
 
 ## The hero diagram (landing page)
 
@@ -73,7 +73,7 @@ Every mockup pins to the same scenario so viewers only have to learn the context
 - **Time:** Mid-Q3 close, T-7 months to filing
 - **Control:** 4.2.1 — Quarterly user access review on the production database
 - **Evidence:** Q3 AR export screenshot + DBA attestation
-- **Cast:** Weston Prohaska (IT lead / control owner), Dana Cho (Internal Audit reviewer), Sarah at Helios (SOX PMO)
+- **Cast:** Weston Prohaska (IT lead / control owner), Marie Curie (Internal Audit reviewer), Ada at Helios (SOX PMO)
 
 This matches the existing family's Helios continuity. Cross-link footer to siblings (Velocity, Benchmark, Practice, Context, ECM-chat).
 
