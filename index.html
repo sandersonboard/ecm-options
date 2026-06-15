@@ -300,6 +300,54 @@
     padding-top: 8px;
     border-top: 1px solid var(--luna-gray-100);
   }
+  /* Progressive disclosure for caveat + anti-portfolio */
+  .more-disclosure {
+    max-width: 1080px;
+    margin: 64px auto 0;
+    padding: 0 24px;
+  }
+  .more-disclosure > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 16px 22px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: var(--luna-radius-md);
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .more-disclosure > summary::-webkit-details-marker { display: none; }
+  .more-disclosure > summary:hover {
+    background: var(--luna-gray-100);
+    border-color: var(--luna-gray-300);
+  }
+  .more-summary-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .more-summary-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--luna-gray-800);
+  }
+  .more-summary-hint {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--luna-gray-500);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .more-hide { display: none; }
+  .more-disclosure[open] .more-show { display: none; }
+  .more-disclosure[open] .more-hide { display: inline; }
+  .more-disclosure[open] > summary {
+    background: var(--luna-white);
+    border-color: var(--luna-gray-300);
+  }
+  .more-disclosure .surface-section { margin-top: 32px; }
+  .more-disclosure .surface-section:first-of-type { margin-top: 24px; padding: 0; max-width: none; }
+  .more-disclosure .surface-section { padding: 0; max-width: none; }
 </style>
 </head>
 <body>
@@ -318,19 +366,19 @@
     <div class="agent-card is-reminder">
       <div class="label">Reminder agent</div>
       <h3>The press-release win</h3>
-      <p class="body">Meets owners where they work. Distribution play; the moat is weak and copyable.</p>
+      <p class="body">Meets owners where they work. A distribution play — easy to copy, hard to defend long-term.</p>
       <div class="metrics">
         <div><strong>Primary user:</strong> Control owner</div>
-        <div><strong>Moat character:</strong> Distribution &amp; behavioral lock-in</div>
+        <div><strong>How it defends:</strong> Distribution &amp; behavioral lock-in</div>
       </div>
     </div>
     <div class="agent-card is-sufficiency">
       <div class="label">Sufficiency agent</div>
       <h3>What builds the company</h3>
-      <p class="body">Judges whether evidence actually proves the control operated. The structural moat — substantive rules tied to specific controls, signed off by the audit committee — compounds.</p>
+      <p class="body">Judges whether evidence actually proves the control operated. The durable advantage — substantive rules tied to specific controls, signed off by the audit committee — gets stronger over time.</p>
       <div class="metrics">
         <div><strong>Primary user:</strong> Reviewer / external auditor</div>
-        <div><strong>Moat character:</strong> Structural rules per control</div>
+        <div><strong>How it defends:</strong> Structural rules per control</div>
       </div>
     </div>
   </div>
@@ -376,7 +424,7 @@
   <div class="phase-row is-p2">
     <div class="head">
       <span class="ph-title">The moat</span>
-      <span class="ph-sub">Substrate · governance · audit-grade output</span>
+      <span class="ph-sub">Foundation · governance · audit-grade output</span>
     </div>
     <div class="takes-grid">
       <a class="take-card" href="gov-c.html">
@@ -393,7 +441,7 @@
       </a>
       <a class="take-card" href="aiready-c.html">
         <h3>Provenance graph</h3>
-        <p class="tag">Auditable lineage from source-of-record to receipt. Provenance is the substrate of trust.</p>
+        <p class="tag">Auditable lineage from source-of-record to receipt. Provenance is the foundation of trust.</p>
         <div class="card-meta">Sufficiency agent · Reviewer + auditor</div>
         <span class="open">Open mockup <span class="arrow">→</span></span>
       </a>
@@ -420,7 +468,7 @@
       </a>
       <a class="take-card" href="chain-c.html">
         <h3>Audit committee dashboard</h3>
-        <p class="tag">Quarterly governance readout with chain as verifiable substrate.</p>
+        <p class="tag">Quarterly governance readout with chain as a verifiable record.</p>
         <div class="card-meta">Sufficiency agent · Committee</div>
         <span class="open">Open mockup <span class="arrow">→</span></span>
       </a>
@@ -428,30 +476,41 @@
   </div>
 </section>
 
-<!-- ============== Section 3: Honest caveat ============== -->
+<details class="more-disclosure">
+  <summary>
+    <div class="more-summary-inner">
+      <span class="more-summary-text">
+        <span class="more-show">Show the honest caveat &amp; 18 declined takes ↓</span>
+        <span class="more-hide">Hide caveat &amp; declined takes ↑</span>
+      </span>
+      <span class="more-summary-hint">Sections 3 &amp; 4 below</span>
+    </div>
+  </summary>
+
+  <!-- ============== Section 3: Honest caveat ============== -->
 <section class="surface-section">
   <div class="caveat-card">
     <div class="label">3 — The honest caveat</div>
     <h3>The prototypes prove the design is plausible — not that the strategy is right</h3>
-    <p>Three load-bearing assumptions are still untested. The prototypes test design intent. The strategy gets tested by data.</p>
+    <p>Three big assumptions are still untested. The prototypes test whether the design works. Whether the strategy is right gets tested by data.</p>
     <div class="caveat-assumptions">
       <div class="caveat-assumption">
         <div class="num">Assumption 1</div>
-        <div class="what">Sufficiency is one ownable problem</div>
-        <div class="test">Test: shadow study with substantive-sufficiency vs. Midship reperformance</div>
+        <div class="what">Sufficiency is one defensible problem to own</div>
+        <div class="test">Test: shadow study comparing substantive sufficiency to Midship's existing reperformance flow</div>
       </div>
       <div class="caveat-assumption">
         <div class="num">Assumption 2</div>
-        <div class="what">Calling teams will adopt the primitive</div>
-        <div class="test">Test: interface-contract workshop with one calling team</div>
+        <div class="what">Other internal teams will adopt the interface</div>
+        <div class="test">Test: contract workshop with one internal team that would use the interface</div>
       </div>
       <div class="caveat-assumption">
         <div class="num">Assumption 3</div>
-        <div class="what">External auditors accept AI-gated evidence</div>
-        <div class="test">Test: Big Four advisory conversation before chain implementation locks</div>
+        <div class="what">External auditors will accept AI-vetted evidence</div>
+        <div class="test">Test: Big Four advisory conversation before we commit to the chain implementation</div>
       </div>
     </div>
-    <p class="closer">Shadow-study data before platform architecture locks.</p>
+    <p class="closer">We need shadow-study data before locking in the platform architecture.</p>
   </div>
 </section>
 
@@ -461,7 +520,7 @@
     <div class="left">
       <span class="section-eyebrow" style="color: var(--luna-red-700);">4 — Anti-portfolio</span>
       <h2>18 takes deliberately declined</h2>
-      <p class="section-sub">Several will get demo-loved but fail PCAOB scrutiny. Worth a leadership decline list now, before they re-emerge by demo gravity. Every card below is still browsable — muted because it shouldn't ship, not because it shouldn't exist.</p>
+      <p class="section-sub">Several will look great in a demo but fail PCAOB scrutiny. Worth getting leadership to commit to a decline list now, before these resurface just because they're flashy. Every card below is still browsable — muted because it shouldn't ship, not because it shouldn't exist.</p>
     </div>
   </div>
 
@@ -470,10 +529,10 @@
       <div class="label">GRC red flags · will fail PCAOB scrutiny</div>
       <div class="ap-list">
         <a class="ap-card is-red" href="mobile-a.html"><span class="ap-name">mobile-A</span><span class="ap-why">audit-evidence integrity (photo-of-screen)</span></a>
-        <a class="ap-card is-red" href="mobile-b.html"><span class="ap-name">mobile-B</span><span class="ap-why">SoD violation (delegates SOX 302)</span></a>
+        <a class="ap-card is-red" href="mobile-b.html"><span class="ap-name">mobile-B</span><span class="ap-why">Segregation-of-duties violation (delegates SOX 302 attestation)</span></a>
         <a class="ap-card is-red" href="mobile-c.html"><span class="ap-name">mobile-C</span><span class="ap-why">voice attribution; weak chain of custody</span></a>
-        <a class="ap-card is-red" href="slack-c.html"><span class="ap-name">slack-C</span><span class="ap-why">NL-parse wrapper risk; no moat</span></a>
-        <a class="ap-card is-red" href="ipad-c.html"><span class="ap-name">ipad-C</span><span class="ap-why">judgment migration; AI narrates verdict</span></a>
+        <a class="ap-card is-red" href="slack-c.html"><span class="ap-name">slack-C</span><span class="ap-why">Natural-language search wrapper; easy to copy</span></a>
+        <a class="ap-card is-red" href="ipad-c.html"><span class="ap-name">ipad-C</span><span class="ap-why">AI narrates the verdict; the human stops making the call</span></a>
       </div>
     </div>
 
@@ -488,19 +547,19 @@
     </div>
 
     <div class="ap-group is-gray">
-      <div class="label">Subsumed by a recommended take</div>
+      <div class="label">Covered by a recommended take</div>
       <div class="ap-list">
-        <a class="ap-card is-gray" href="palette-a.html"><span class="ap-name">palette-A</span><span class="ap-why">subsumed by palette-C</span></a>
-        <a class="ap-card is-gray" href="palette-b.html"><span class="ap-name">palette-B</span><span class="ap-why">subsumed by palette-C</span></a>
-        <a class="ap-card is-gray" href="ipad-a.html"><span class="ap-name">ipad-A</span><span class="ap-why">subsumed by ipad-B</span></a>
+        <a class="ap-card is-gray" href="palette-a.html"><span class="ap-name">palette-A</span><span class="ap-why">covered by palette-C</span></a>
+        <a class="ap-card is-gray" href="palette-b.html"><span class="ap-name">palette-B</span><span class="ap-why">covered by palette-C</span></a>
+        <a class="ap-card is-gray" href="ipad-a.html"><span class="ap-name">ipad-A</span><span class="ap-why">covered by ipad-B</span></a>
       </div>
     </div>
 
     <div class="ap-group is-gray">
       <div class="label">Research-stage · revisit later</div>
       <div class="ap-list">
-        <a class="ap-card is-gray" href="causal-b.html"><span class="ap-name">causal-B</span><span class="ap-why">counterfactuals — research-stage</span></a>
-        <a class="ap-card is-gray" href="causal-c.html"><span class="ap-name">causal-C</span><span class="ap-why">presupposes a full control graph</span></a>
+        <a class="ap-card is-gray" href="causal-b.html"><span class="ap-name">causal-B</span><span class="ap-why">what-if analysis — still research-stage</span></a>
+        <a class="ap-card is-gray" href="causal-c.html"><span class="ap-name">causal-C</span><span class="ap-why">needs a full control graph that doesn't exist yet</span></a>
       </div>
     </div>
 
@@ -509,12 +568,13 @@
       <div class="ap-list is-quad">
         <a class="ap-card is-gray" href="aiready-a.html"><span class="ap-name">aiready-A</span><span class="ap-why is-block">connectors · engineering scope</span></a>
         <a class="ap-card is-gray" href="aiready-b.html"><span class="ap-name">aiready-B</span><span class="ap-why is-block">schema templates · engineering</span></a>
-        <a class="ap-card is-gray" href="gov-a.html"><span class="ap-name">gov-A</span><span class="ap-why is-block">model card · internal artifact</span></a>
+        <a class="ap-card is-gray" href="gov-a.html"><span class="ap-name">gov-A</span><span class="ap-why is-block">model card · internal documentation</span></a>
         <a class="ap-card is-gray" href="gov-b.html"><span class="ap-name">gov-B</span><span class="ap-why is-block">override registry · internal tooling</span></a>
       </div>
     </div>
   </div>
 </section>
+</details>
 
 <div class="bottom-block">
   <div class="scenario-card">
