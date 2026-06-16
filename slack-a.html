@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615u" />
-<link rel="stylesheet" href="styles.css?v=20260615u" />
+<link rel="stylesheet" href="tokens.css?v=20260615v" />
+<link rel="stylesheet" href="styles.css?v=20260615v" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -120,6 +120,88 @@
     visibility: visible;
     transform: translateY(0);
   }
+  /* Take-the-guided-tour entry button */
+  .tour-start-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 11px;
+    background: var(--luna-teal-500);
+    color: #fff;
+    border: 1px solid var(--luna-teal-500);
+    border-radius: 5px;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .tour-start-btn:hover { background: var(--luna-teal-600); border-color: var(--luna-teal-600); }
+  .tour-start-btn svg { width: 13px; height: 13px; }
+
+  /* Tour overlay */
+  #tour[hidden] { display: none; }
+  #tour { position: fixed; inset: 0; z-index: 9000; pointer-events: none; }
+  .tour-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(10, 54, 85, 0.32);
+    pointer-events: auto;
+  }
+  .tour-spotlight {
+    position: absolute;
+    border: 2px solid var(--luna-teal-500);
+    border-radius: 8px;
+    box-shadow: 0 0 0 4px rgba(38, 108, 146, 0.25), 0 0 0 9999px rgba(10, 54, 85, 0.45);
+    pointer-events: none;
+    transition: top 0.3s ease, left 0.3s ease, width 0.3s ease, height 0.3s ease;
+    display: none;
+  }
+  .tour-spotlight.is-shown { display: block; }
+  .tour-pop {
+    position: absolute;
+    background: var(--luna-white);
+    border-radius: 10px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    padding: 18px 20px 16px;
+    width: 380px;
+    max-width: calc(100vw - 32px);
+    pointer-events: auto;
+    z-index: 9002;
+    transition: top 0.3s ease, left 0.3s ease;
+  }
+  .tour-pop.is-centered {
+    top: 50% !important; left: 50% !important;
+    transform: translate(-50%, -50%);
+  }
+  .tour-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .tour-step-count {
+    font-size: 10.5px; font-weight: 700;
+    color: var(--luna-teal-500);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .tour-skip {
+    background: none; border: 0;
+    color: var(--luna-gray-500);
+    font-size: 11.5px;
+    cursor: pointer; padding: 0;
+  }
+  .tour-skip:hover { color: var(--luna-gray-900); text-decoration: underline; }
+  .tour-title { font-size: 17px; font-weight: 700; margin: 0 0 8px; color: var(--luna-gray-900); letter-spacing: -0.01em; }
+  .tour-body { font-size: 13.5px; color: var(--luna-gray-700); line-height: 1.55; margin: 0 0 14px; }
+  .tour-body strong { color: var(--luna-gray-900); }
+  .tour-actions { display: flex; justify-content: space-between; gap: 8px; }
+  .tour-btn {
+    padding: 7px 14px;
+    font-size: 12.5px; font-weight: 600;
+    border-radius: 5px; cursor: pointer;
+    border: 1px solid var(--luna-gray-300);
+    background: var(--luna-white); color: var(--luna-gray-800);
+  }
+  .tour-btn:hover { background: var(--luna-gray-50); border-color: var(--luna-gray-400); }
+  .tour-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .tour-btn.is-primary {
+    background: var(--luna-teal-500); color: #fff; border-color: var(--luna-teal-500);
+  }
+  .tour-btn.is-primary:hover { background: var(--luna-teal-600); border-color: var(--luna-teal-600); }
+  body.tour-open .tour-target { position: relative; z-index: 9001; }
+
   /* Q2 reference inline link inside the bot's intro prose */
   .prior-link {
     appearance: none;
@@ -698,6 +780,10 @@
     </div>
     <div class="right-meta">
       <span class="luna-badge is-teal">Persona · Control owner</span>
+      <button id="start-tour-btn" type="button" class="tour-start-btn" onclick="startTour(); return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        Take the guided tour
+      </button>
     </div>
   </div>
 
@@ -1125,6 +1211,196 @@
 
 <script>
   let flowStarted = false;
+  let tourStep = 0;
+  let tourTargetEl = null;
+
+  const TOUR_STEPS = [
+    {
+      target: null,
+      title: 'A guided tour of ECM in Slack',
+      body: 'ECM is the Sufficiency agent — it judges whether evidence actually proves the control operated, not just whether it looks like prior quarters. Eleven beats walk you through what makes this different from a reminder bot.',
+    },
+    {
+      target: '.slack-evidence-card .head',
+      title: 'The bot meets owners where they work',
+      body: 'Slack DM to the control owner. No portal, no quarterly login. The card is a Slack rich attachment, not a custom UI — which means it behaves like every other Slack message: shareable, searchable, exportable for audit.',
+    },
+    {
+      target: '.slack-evidence-card .suff-verdict',
+      title: 'Sufficiency, not pattern-match',
+      body: 'Categorical verdict: <strong>Adequate to file</strong>. Not a 94% confidence score. Sufficiency in audit terms is pass/fail — evidence either proves the control operated or it doesn\\'t. The icon signals state cleanly; no false precision.',
+    },
+    {
+      target: '.slack-evidence-card .conf-why-wrap',
+      title: 'Show your work',
+      body: 'Hover the (?) for the substantive rules ECM evaluated against. These are the policy-as-code rules signed by the audit committee. The tooltip footer links to the <strong>model card</strong> — version, training data, error rates — for users who want deeper trust calibration.',
+      onEnter: () => {
+        const w = document.querySelector('.slack-evidence-card .conf-why-wrap');
+        if (w) w.classList.add('is-tour-open');
+      },
+      onLeave: () => {
+        const w = document.querySelector('.slack-evidence-card .conf-why-wrap');
+        if (w) w.classList.remove('is-tour-open');
+      },
+    },
+    {
+      target: '.prior-link',
+      title: 'Last quarter\\'s filing, one click away',
+      body: 'The bot claims it drafted from Q2 — and you can <em>verify</em> that claim. Click the link to see exactly what Marie signed off on last quarter. This is what makes the suggested artifact trustworthy: it traces back to a known-adequate baseline.',
+      onEnter: () => { const p = document.getElementById('q2-ref'); if (p) p.style.display = 'block'; },
+      onLeave: () => { const p = document.getElementById('q2-ref'); if (p) p.style.display = 'none'; },
+    },
+    {
+      target: '#approve-btn-anchor',
+      title: 'One tap, when ECM\\'s sure',
+      body: 'No competing edit buttons, no upload-your-own escape hatches. When sufficiency is adequate, Approve & file is the only primary action. That\\'s a deliberate UX claim: the AI did the work, the human ratifies.',
+      onEnter: () => {
+        // Highlight the actions group containing the Approve button
+      },
+      target: '.slack-evidence-card .actions',
+    },
+    {
+      target: '.slack-evidence-card .row-review-link',
+      title: 'The cautious path',
+      body: '<strong>Review the evidence →</strong> opens an inline panel listing every item, with the 2 flagged ones (carryover + escalation) called out and explained. From there you can approve, <strong>flag for Marie</strong> if something still feels off, or close. That flag-for-Marie path is the dispute mechanism — ECM doesn\\'t pretend it can\\'t be wrong.',
+      onEnter: () => { const p = document.getElementById('row-review-panel'); if (p) p.style.display = 'block'; },
+      onLeave: () => { const p = document.getElementById('row-review-panel'); if (p) p.style.display = 'none'; },
+    },
+    {
+      target: '.slack-evidence-card',
+      title: 'The card visibly transitions to filed',
+      body: 'After Approve, the card itself becomes the filed record: title shifts to <strong>Filed access list</strong>, the artifact line says <strong>Filed artifact:</strong>, and a green status row at the bottom shows who and when. One canonical confirmation surface — no duplicate "Tagged…" messages.',
+      onEnter: () => {
+        const card = document.querySelector('.slack-evidence-card');
+        if (card) card.classList.add('is-resolved');
+        // Reveal the filed-msg too
+        const filed = document.getElementById('filed-msg');
+        if (filed) { filed.classList.remove('is-hidden'); filed.classList.add('is-revealing'); }
+      },
+    },
+    {
+      target: '#filed-msg .notify-row',
+      title: 'Forward-looking after filing',
+      body: 'The bot\\'s follow-up is purely future-tense: <strong>Marie has 2 business days</strong>, and you\\'ll be DM\\'d if she has questions. Slack chips show how Marie was notified. <strong>+ Add channel</strong> is for escalation or audit-committee visibility, not redundancy.',
+    },
+    {
+      target: '#filed-msg .actions',
+      title: 'Two actions, two intents',
+      body: '<strong>What\\'s next →</strong> opens an inline queue of your upcoming SOX work — concrete value beyond filing one thing. <strong>View filing details</strong> shows the labeled audit-trail entry (artifact, signed-block, model card reference) — what the external auditor sees during Q3 testing.',
+      target: '.slack-msg#filed-msg',
+    },
+    {
+      target: null,
+      title: 'That\\'s the tour',
+      body: 'You\\'ve seen the moves that make this the sufficiency agent, not a reminder bot: categorical verdict, named rules, Q2 traceability, one-tap when adequate, the dispute path when not, and a card that knows when it\\'s filed. Click around to explore.',
+      onEnter: () => {
+        // Don't reset the demo state — let user explore
+      },
+    },
+  ];
+
+  function startTour() {
+    tourStep = 0;
+    document.getElementById('tour').hidden = false;
+    document.body.classList.add('tour-open');
+    showTourStep();
+  }
+
+  function endTour() {
+    const stepData = TOUR_STEPS[tourStep];
+    if (stepData && stepData.onLeave) try { stepData.onLeave(); } catch(e) {}
+    document.getElementById('tour').hidden = true;
+    document.body.classList.remove('tour-open');
+    if (tourTargetEl) { tourTargetEl.classList.remove('tour-target'); tourTargetEl = null; }
+    const spot = document.getElementById('tour-spotlight');
+    if (spot) spot.classList.remove('is-shown');
+  }
+
+  function tourPrev() {
+    const cur = TOUR_STEPS[tourStep];
+    if (cur && cur.onLeave) try { cur.onLeave(); } catch(e) {}
+    if (tourStep > 0) { tourStep--; showTourStep(); }
+  }
+  function tourNext() {
+    const cur = TOUR_STEPS[tourStep];
+    if (cur && cur.onLeave) try { cur.onLeave(); } catch(e) {}
+    if (tourStep < TOUR_STEPS.length - 1) { tourStep++; showTourStep(); }
+    else { endTour(); }
+  }
+
+  function showTourStep() {
+    const step = TOUR_STEPS[tourStep];
+    if (!step) return;
+    if (tourTargetEl) { tourTargetEl.classList.remove('tour-target'); tourTargetEl = null; }
+    if (step.onEnter) try { step.onEnter(); } catch(e) { console.warn(e); }
+
+    document.getElementById('tour-step-count').textContent = 'Step ' + (tourStep + 1) + ' of ' + TOUR_STEPS.length;
+    document.getElementById('tour-title').textContent = step.title;
+    document.getElementById('tour-body').innerHTML = step.body;
+    document.getElementById('tour-prev').disabled = (tourStep === 0);
+    document.getElementById('tour-next').textContent = (tourStep === TOUR_STEPS.length - 1) ? 'Done' : 'Next →';
+
+    setTimeout(() => positionTour(step.target), 60);
+  }
+
+  function positionTour(selector) {
+    const spot = document.getElementById('tour-spotlight');
+    const pop = document.getElementById('tour-pop');
+    if (!selector) {
+      spot.classList.remove('is-shown');
+      pop.classList.add('is-centered');
+      pop.style.top = ''; pop.style.left = '';
+      return;
+    }
+    const el = document.querySelector(selector);
+    if (!el) { spot.classList.remove('is-shown'); pop.classList.add('is-centered'); return; }
+    tourTargetEl = el;
+    el.classList.add('tour-target');
+    el.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+    setTimeout(() => {
+      const rect = el.getBoundingClientRect();
+      const scrollY = window.scrollY || window.pageYOffset;
+      const scrollX = window.scrollX || window.pageXOffset;
+      spot.classList.add('is-shown');
+      spot.style.top = (rect.top + scrollY - 6) + 'px';
+      spot.style.left = (rect.left + scrollX - 6) + 'px';
+      spot.style.width = (rect.width + 12) + 'px';
+      spot.style.height = (rect.height + 12) + 'px';
+
+      pop.classList.remove('is-centered');
+      const popW = 380;
+      const popH = pop.offsetHeight || 220;
+      const margin = 18;
+      const viewportRight = window.innerWidth;
+      const viewportBottom = window.innerHeight;
+      let top, left;
+      if (rect.right + margin + popW < viewportRight) {
+        left = rect.right + scrollX + margin;
+        top = rect.top + scrollY + Math.max(0, (rect.height - popH) / 2);
+      } else if (rect.left - margin - popW > 0) {
+        left = rect.left + scrollX - margin - popW;
+        top = rect.top + scrollY + Math.max(0, (rect.height - popH) / 2);
+      } else if (rect.bottom + margin + popH < viewportBottom) {
+        left = rect.left + scrollX + Math.max(0, (rect.width - popW) / 2);
+        top = rect.bottom + scrollY + margin;
+      } else {
+        left = rect.left + scrollX + Math.max(0, (rect.width - popW) / 2);
+        top = rect.top + scrollY - margin - popH;
+      }
+      left = Math.max(scrollX + 16, Math.min(scrollX + viewportRight - popW - 16, left));
+      top  = Math.max(scrollY + 16, Math.min(scrollY + viewportBottom - popH - 16, top));
+      pop.style.left = left + 'px';
+      pop.style.top  = top  + 'px';
+    }, 380);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (document.getElementById('tour').hidden) return;
+    if (e.key === 'Escape') endTour();
+    if (e.key === 'ArrowRight') tourNext();
+    if (e.key === 'ArrowLeft')  tourPrev();
+  });
 
   function toggleRowReview() {
     if (flowStarted) return;
@@ -1304,5 +1580,22 @@ hide(document.getElementById('filed-msg'));
     if (win) win.scrollIntoView({behavior: 'smooth', block: 'start'});
   }
 </script>
+
+<div id="tour" hidden aria-modal="true" role="dialog">
+  <div class="tour-backdrop" onclick="endTour()"></div>
+  <div class="tour-spotlight" id="tour-spotlight"></div>
+  <div class="tour-pop" id="tour-pop">
+    <div class="tour-meta">
+      <span class="tour-step-count" id="tour-step-count">Step 1 of 11</span>
+      <button class="tour-skip" type="button" onclick="endTour(); return false;">Skip tour</button>
+    </div>
+    <h4 class="tour-title" id="tour-title">Welcome</h4>
+    <p class="tour-body" id="tour-body"></p>
+    <div class="tour-actions">
+      <button class="tour-btn" id="tour-prev" type="button" onclick="tourPrev(); return false;">← Previous</button>
+      <button class="tour-btn is-primary" id="tour-next" type="button" onclick="tourNext(); return false;">Next →</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
