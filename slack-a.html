@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615g" />
-<link rel="stylesheet" href="styles.css?v=20260615g" />
+<link rel="stylesheet" href="tokens.css?v=20260615h" />
+<link rel="stylesheet" href="styles.css?v=20260615h" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -413,15 +413,15 @@
   }
   .panel-actions .open-external:hover { background: var(--luna-teal-50); }
   .optro-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 14px; height: 14px;
-    margin-left: 3px;
+    display: inline-block;
+    width: 12px; height: 12px;
+    margin-left: 4px;
     color: var(--luna-gray-500);
     text-decoration: none;
-    vertical-align: -2px;
-    transition: color 0.15s, transform 0.15s;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+    transition: color 0.15s;
     flex-shrink: 0;
   }
   .optro-link svg {
@@ -432,7 +432,21 @@
   .optro-link:hover {
     color: var(--luna-teal-500);
     text-decoration: none;
-    transform: translateY(-1px);
+  }
+  .success-check {
+    display: inline-block;
+    width: 16px; height: 16px;
+    background: var(--luna-green-500);
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 16px;
+    font-size: 10px;
+    font-weight: 700;
+    vertical-align: middle;
+    margin-right: 4px;
+    position: relative;
+    top: -1px;
   }
   /* What's-next queue panel */
   .slack-inline-panel .queue-list { display: flex; flex-direction: column; gap: 6px; }
@@ -650,11 +664,11 @@ ORDER BY user;</textarea>
                   <div class="email-preview">
                     <div class="em-row"><span class="em-k">From</span><span class="em-v">Weston Prohaska &lt;weston@helios.com&gt;</span></div>
                     <div class="em-row"><span class="em-k">To</span><span class="em-v">Marie Curie &lt;mcurie@helios.com&gt;</span></div>
-                    <div class="em-row"><span class="em-k">Subject</span><span class="em-v">Q3 FY26 access review attestation — prod-db-01 (control 4.2.1<a class="optro-link" href="ipad-b.html" target="_blank" rel="noopener" title="Open control 4.2.1 in Optro" aria-label="Open in new tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>)</span></div>
+                    <div class="em-row"><span class="em-k">Subject</span><span class="em-v">Q3 FY26 access review attestation — prod-db-01 (control 4.2.1)</span></div>
                     <div class="em-row"><span class="em-k">Sent</span><span class="em-v">Friday Sep 25 · 3:11 PM PT</span></div>
                     <div class="em-body">
                       <p>Marie,</p>
-                      <p>Attaching the Q3 access review for <strong>prod-db-01</strong> (control 4.2.1<a class="optro-link" href="ipad-b.html" target="_blank" rel="noopener" title="Open control 4.2.1 in Optro" aria-label="Open in new tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>). 22 active accounts reviewed against the ServiceNow export attached as <code>snow-query-AR-prod-db.csv</code>.</p>
+                      <p>Attaching the Q3 access review for <strong>prod-db-01</strong> (control 4.2.1). 22 active accounts reviewed against the ServiceNow export attached as <code>snow-query-AR-prod-db.csv</code>.</p>
                       <p><strong>Findings carried into Q3:</strong></p>
                       <ul>
                         <li><code>contractor-svc-09</code> still <code>dba-admin</code>; ticket HEL-3471 still open. Same status as Q2.</li>
@@ -740,13 +754,12 @@ ORDER BY user;</textarea>
                 <span class="ts">Friday · 3:11 PM</span>
               </div>
               <p>
-                Tagged
-                <span class="ai-citation">control 4.2.1</span><a class="optro-link" href="ipad-b.html" target="_blank" rel="noopener" title="Open control 4.2.1 in Optro" aria-label="Open in new tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a> ·
+                <span class="success-check">✓</span> Tagged
+                <span class="ai-citation">control 4.2.1</span> ·
                 <span class="ai-citation">Q3FY26</span>, routed to Marie.
-                <span class="luna-badge is-green" style="margin-left:6px;">Filed</span>
               </p>
               <div class="filed-receipt-line">
-                filed: <strong>AR-Q3FY26-prod-db.png</strong><a class="optro-link" href="ipad-b.html" target="_blank" rel="noopener" title="Open control 4.2.1 in Optro" aria-label="Open in new tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a> → control 4.2.1<a class="optro-link" href="ipad-b.html" target="_blank" rel="noopener" title="Open control 4.2.1 in Optro" aria-label="Open in new tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a> · classifier 93% · routed=Marie · sla=2bd · signed #4,180,221<a class="optro-link" href="chain-a.html" target="_blank" rel="noopener" title="Open audit-trail block in Optro" aria-label="Open in new tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
+                filed: <strong>AR-Q3FY26-prod-db.png</strong> → control 4.2.1 · classifier 93% · routed=Marie · sla=2bd · signed #4,180,221
               </div>
               <p style="margin-top:8px;font-size:13px;">I'll ping you here if Marie has questions.</p>
               <div style="display:flex;gap:6px;margin-top:6px;">
