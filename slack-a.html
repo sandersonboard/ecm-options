@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260616n" />
-<link rel="stylesheet" href="styles.css?v=20260616n" />
+<link rel="stylesheet" href="tokens.css?v=20260616o" />
+<link rel="stylesheet" href="styles.css?v=20260616o" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -354,8 +354,40 @@
   .slack-evidence-card .card-sec-row {
     display: flex; align-items: center; flex-wrap: wrap;
     gap: 8px;
-    margin-top: 10px;
+    margin-top: 8px;
   }
+  .slack-evidence-card .card-sec-row[hidden] { display: none; }
+
+  .slack-evidence-card .more-options-toggle {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 8px 0 0;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--luna-gray-500);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.15s;
+  }
+  .slack-evidence-card .more-options-toggle::after {
+    content: "\25BE";
+    font-size: 9px;
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  .slack-evidence-card .more-options-toggle.is-open::after {
+    transform: rotate(180deg);
+  }
+  .slack-evidence-card .more-options-toggle:hover {
+    color: var(--luna-gray-900);
+  }
+  .slack-evidence-card.is-resolved .more-options-toggle,
+  .slack-evidence-card.is-deferred .more-options-toggle,
+  .slack-evidence-card.is-needs-redraft .more-options-toggle { display: none; }
   .slack-evidence-card .card-sec-link {
     appearance: none;
     background: none;
@@ -1315,7 +1347,8 @@
                 <div class="actions">
                   <button class="primary" onclick="runFlow(); return false;">Approve &amp; file</button>
                 </div>
-                <div class="card-sec-row">
+                <button class="more-options-toggle" id="more-options-toggle" type="button" onclick="toggleMoreOptions(); return false;" aria-expanded="false" aria-controls="card-sec-row">More options</button>
+                <div class="card-sec-row" id="card-sec-row" hidden>
                   <button class="card-sec-link" type="button" onclick="toggleNotePanel(); return false;">+ Add a note</button>
                   <span class="card-sec-sep">·</span>
                   <button class="card-sec-link" type="button" onclick="toggleDeferPanel(); return false;">Defer</button>
@@ -1792,12 +1825,14 @@
         title: 'Add context, or defer',
         body: 'Two secondary options next to Review the evidence. <strong>+ Add a note</strong> captures context that should travel with the filing, like a vendor confirmation or a verbal authorization the data alone wouldn\'t show. <strong>Defer</strong> handles legitimate delays with a reason and a new due date.<span class="tour-why"><strong>Why:</strong> SOX evidence often needs explanatory notes the data doesn\'t carry on its own. And not every filing is ready by its original due date. Both paths leave audit-trail entries, so the reason survives review.</span>',
         selector: '.slack-evidence-card .card-sec-row',
+        before: function () { try { toggleMoreOptions(true); } catch (e) {} },
       },
       {
         title: 'Send back when the AI is wrong',
         body: 'When ECM gets the draft wrong, this is the path. Maybe the reporting period is wrong, or the scope, or there are missing accounts, or the verdict isn\'t right. Say what\'s wrong with the preset checkboxes plus free text. ECM logs the send-back and redrafts. The card flips to a yellow <strong>Sent back to ECM</strong> state so it\'s clear nothing was filed.<span class="tour-why"><strong>Why:</strong> AI doesn\'t always get it right. Without a structured send-back, owners file evidence they don\'t agree with or argue with the AI in side channels auditors never see. The send-back keeps the disagreement in the audit trail where it belongs.</span>',
         selector: '#sendback-panel',
         before: function () {
+          try { toggleMoreOptions(true); } catch (e) {}
           var p = document.getElementById('sendback-panel');
           if (p) p.style.display = 'block';
         },
@@ -1811,6 +1846,7 @@
         body: 'If anything feels off, this opens all 22 records inline. The two flagged ones are called out. From there Weston can approve as-is, or send it to Marie with a flag attached.<span class="tour-why"><strong>Why:</strong> Every AI system needs an error-recovery path. Flag-for-Marie routes the dispute to the reviewer and keeps segregation of duties intact.</span>',
         selector: '.slack-evidence-card .row-review-link',
         before: function () {
+          try { toggleMoreOptions(true); } catch (e) {}
           var p = document.getElementById('row-review-panel');
           if (p) p.style.display = 'block';
         },
@@ -2100,8 +2136,27 @@
   function startTour() { if (window.Tour) window.Tour.start(); }
 
 
+  function toggleMoreOptions(force) {
+    var btn = document.getElementById('more-options-toggle');
+    var row = document.getElementById('card-sec-row');
+    if (!btn || !row) return;
+    var open;
+    if (typeof force === 'boolean') open = force;
+    else open = row.hasAttribute('hidden');
+    if (open) {
+      row.removeAttribute('hidden');
+      btn.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+    } else {
+      row.setAttribute('hidden', '');
+      btn.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  }
+
   function toggleNotePanel() {
     if (flowStarted) return;
+    toggleMoreOptions(true);
     var p = document.getElementById('note-panel');
     if (!p) return;
     ['defer-panel', 'row-review-panel'].forEach(function (id) {
@@ -2136,6 +2191,7 @@
 
   function toggleSendBackPanel() {
     if (flowStarted) return;
+    toggleMoreOptions(true);
     var p = document.getElementById('sendback-panel');
     if (!p) return;
     ['note-panel', 'defer-panel', 'row-review-panel'].forEach(function (id) {
@@ -2183,6 +2239,7 @@
 
   function toggleDeferPanel() {
     if (flowStarted) return;
+    toggleMoreOptions(true);
     var p = document.getElementById('defer-panel');
     if (!p) return;
     ['note-panel', 'row-review-panel'].forEach(function (id) {
@@ -2228,6 +2285,7 @@
 
   function toggleRowReview() {
     if (flowStarted) return;
+    toggleMoreOptions(true);
     const p = document.getElementById('row-review-panel');
     if (!p) return;
     const willShow = p.style.display === 'none' || !p.style.display;
