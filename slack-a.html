@@ -1932,16 +1932,16 @@
     steps: [
       {
         title: 'Why this lives in Slack',
-        body: 'The short version: evidence collection should follow the user out of the platform, onto the surfaces where they already work.',
+        body: 'Evidence collection should meet the user where they already work, not pull them into another portal.',
       },
       {
         title: 'Compare with last quarter',
-        body: 'Most owners want to see what they filed last quarter before approving anything new. The <strong>your Q2 filing</strong> link in the bot\'s message takes Weston straight there. He doesn\'t have to open a portal or dig through an archive.<span class="tour-why"><strong>Why:</strong> Recognition over recall. Put the link where the user is already looking.</span>',
+        body: 'Most owners want to see what they filed last quarter before approving anything new. The <strong>your Q2 filing</strong> link takes Weston straight there. No portal, no archive dig.<span class="tour-why"><strong>Why:</strong> Recognition over recall. The link sits where Weston is already reading.</span>',
         selector: '.prior-link',
       },
       {
         title: 'Last quarter, opened in place',
-        body: 'This is what Marie signed off on in June. The r.taylor row has a small annotation showing the Q3 change. He\'s now dba-admin. That role change is what ECM flagged.<span class="tour-why"><strong>Why:</strong> In-place comparison beats opening a second window. The row-level annotation makes the change scannable at a glance.</span>',
+        body: 'This is what Marie signed off on in June. The r.taylor row carries a Q3 annotation: he\'s now dba-admin. That role change is what ECM flagged this quarter.<span class="tour-why"><strong>Why:</strong> In-place comparison beats opening a second window. The annotation makes the change scannable.</span>',
         selector: '#q2-ref',
         before: function () {
           var p = document.getElementById('q2-ref');
@@ -1954,28 +1954,28 @@
       },
       {
         title: 'Adequate to file',
-        body: '<strong>Adequate to file</strong> is a yes-or-no answer, not a percentage. Auditors think in pass or fail, so that\'s what ECM shows. A confidence bar would imply precision the verdict doesn\'t have.<span class="tour-why"><strong>Why:</strong> The visualization should match the data. Sufficiency is categorical, so a percentage bar would imply false precision.</span>',
+        body: '<strong>Adequate to file</strong> is a yes-or-no answer, not a percentage. Auditors decide in pass or fail. A confidence bar would imply precision the verdict doesn\'t actually have.<span class="tour-why"><strong>Why:</strong> Match the visualization to the data. Sufficiency is categorical; a percentage bar would fake precision.</span>',
         selector: '.slack-evidence-card .suff-verdict',
       },
       {
         title: 'The rules behind the verdict',
-        body: 'Hover the <strong>(?)</strong> to see the rules ECM evaluated. They\'re specific to control 4.2.1 and signed by the audit committee. The model-card link names which model judged the filing and how accurate it tends to be.<span class="tour-why"><strong>Why:</strong> Show your work. The tooltip plus the model card link let the user calibrate trust without forcing it.</span>',
+        body: 'Hover the <strong>(?)</strong> to see the specific rules ECM checked. They\'re written for control 4.2.1 and signed off by the audit committee. The model-card link names the model that judged this filing and its track record.<span class="tour-why"><strong>Why:</strong> Show your work. Weston can read the rules and the model card if he wants. He isn\'t forced to.</span>',
         selector: '.slack-evidence-card .conf-why-wrap',
       },
       {
         title: 'One click when the check passes',
-        body: 'When sufficiency is adequate, this is the <strong>primary</strong> action. There\'s no Edit query button (Weston doesn\'t write SQL) and no Upload your own (it breaks chain of custody). ECM did the work; Weston signs off. Hover the button to see exactly what approve does — audit-trail entry, Marie notified, SLA starts.<span class="tour-why"><strong>Why:</strong> Competing buttons would undermine the claim that ECM did the work. One primary action keeps the workflow defensible. The hover tooltip shows consequences without cluttering the card.</span>',
+        body: 'When the check passes, this is the primary action. There\'s no Edit query (Weston doesn\'t write SQL), no Upload your own (it breaks chain of custody). ECM did the work; Weston signs off. Hover the button to see what Approve actually does.<span class="tour-why"><strong>Why:</strong> Competing buttons would dilute the claim that ECM did the work. The hover tooltip surfaces consequences without cluttering the card.</span>',
         selector: '.slack-evidence-card .actions',
       },
       {
         title: 'Add a note, or defer',
-        body: 'Behind <strong>More options</strong> are three secondary paths. <strong>+ Add a note</strong> captures context the data doesn\'t carry on its own — vendor confirmation, verbal authorization. <strong>Defer</strong> handles legitimate delays with a reason and a new due date. <strong>Send back to ECM</strong> handles a bad draft, covered next.<span class="tour-why"><strong>Why:</strong> SOX evidence often needs explanatory notes the data doesn\'t carry. Not every filing is ready on time. Both paths leave audit-trail entries, so the reason survives review.</span>',
+        body: 'Behind <strong>More options</strong> are three secondary paths. <strong>+ Add a note</strong> captures context the data doesn\'t show, like a vendor confirmation or a verbal authorization. <strong>Defer</strong> pushes the due date with a logged reason. <strong>Send back to ECM</strong> is covered next.<span class="tour-why"><strong>Why:</strong> SOX evidence often needs context the data doesn\'t carry. Not every filing is ready on time. Both paths leave audit-trail entries.</span>',
         selector: '.slack-evidence-card .card-sec-row',
         before: function () { try { toggleMoreOptions(true); } catch (e) {} },
       },
       {
         title: 'Send back when the AI is wrong',
-        body: 'When ECM gets the draft wrong, this is the path. Maybe the reporting period is wrong, or the scope, or there are missing accounts, or the verdict isn\'t right. Say what\'s wrong with the preset checkboxes plus free text. ECM logs the send-back and redrafts. The card flips to a yellow <strong>Sent back to ECM</strong> state so it\'s clear nothing was filed.<span class="tour-why"><strong>Why:</strong> AI doesn\'t always get it right. Without a structured send-back, owners file evidence they don\'t agree with or argue with the AI in side channels auditors never see. The send-back keeps the disagreement in the audit trail where it belongs.</span>',
+        body: 'If ECM gets the draft wrong, this is the path. Wrong reporting period, missing accounts, wrong verdict: pick from the presets and add free text. ECM logs the send-back and redrafts. The card turns yellow with a <strong>Sent back to ECM</strong> state so it\'s clear nothing was filed.<span class="tour-why"><strong>Why:</strong> AI gets things wrong sometimes. Without a structured send-back, owners either file evidence they don\'t agree with or argue with the AI in side channels auditors never see. The send-back keeps the disagreement in the audit trail.</span>',
         selector: '#sendback-panel',
         before: function () {
           try { toggleMoreOptions(true); } catch (e) {}
@@ -1989,7 +1989,7 @@
       },
       {
         title: 'The cautious path',
-        body: '<strong>Review the evidence</strong> opens the full draft inline: all 22 access records plus the drafted attestation email. The two flagged rows are called out with plain-English explanations. Each artifact name links out to its record in Optro. From there Weston can approve, or route the decision to Marie when he\'s uncertain — flagging doesn\'t file the evidence, it hands the call to her.<span class="tour-why"><strong>Why:</strong> Every AI system needs an error-recovery path. Routing to Marie keeps segregation of duties intact and gives the uncertain owner an honest escape hatch.</span>',
+        body: '<strong>Review the evidence</strong> opens the full draft inline: all 22 access records and the drafted attestation email. The two flagged rows are called out with plain-English explanations. Each filename links out to its record in Optro. Weston can approve from here, or hand the call to Marie if he\'s uncertain.<span class="tour-why"><strong>Why:</strong> An AI workflow needs a real error-recovery path. Routing to Marie respects segregation of duties and gives an uncertain owner a way out that doesn\'t require him to attest.</span>',
         selector: '.slack-evidence-card .review-evidence-link',
         before: function () {
           var p = document.getElementById('row-review-panel');
@@ -2001,8 +2001,21 @@
         },
       },
       {
+        title: 'When Weston isn\'t the right signer',
+        body: 'Clicking <strong>Flag for Marie\'s review</strong> doesn\'t file anything. The card turns amber: <strong>Routed to Marie for her decision</strong>. Weston didn\'t attest, and the audit trail records that he didn\'t. Marie now decides whether to approve or send it back.<span class="tour-why"><strong>Why:</strong> An uncertain owner shouldn\'t be pushed into attesting. Routing the decision up the chain keeps the audit trail accurate about who actually made the call.</span>',
+        selector: '.slack-evidence-card .resolved-status',
+        before: function () {
+          var card = document.querySelector('.slack-evidence-card');
+          if (card) card.classList.add('is-pending-marie');
+        },
+        after: function () {
+          var card = document.querySelector('.slack-evidence-card');
+          if (card) card.classList.remove('is-pending-marie');
+        },
+      },
+      {
         title: 'The card becomes the receipt',
-        body: 'After Approve, the same card transitions in place. The title changes from <strong>Access list draft</strong> to <strong>Filed access list</strong>, and a green row at the bottom shows who filed and when. The title stays a link to the Optro record, so the card itself is the citation auditors can follow.<span class="tour-why"><strong>Why:</strong> Convey the consequence of the action. The card transitions in place so filed is visible at a glance, and there\'s only one canonical record.</span>',
+        body: 'After Approve, the same card updates in place. The title shifts from <strong>Access list draft</strong> to <strong>Filed access list</strong>, and a green row appears showing who filed and when. The title still links to the Optro record, so the card itself is the citation.<span class="tour-why"><strong>Why:</strong> The card updates in place so filed reads at a glance. One card, one canonical record.</span>',
         selector: '.slack-evidence-card',
         before: function () {
           var card = document.querySelector('.slack-evidence-card');
@@ -2014,12 +2027,12 @@
       },
       {
         title: 'What happens next',
-        body: 'The bot\'s next message doesn\'t repeat the confirmation. It tells Weston what comes next: Marie has two business days, and Slack will DM him if she comes back with questions. Each chip shows how Marie was notified, with a green check confirming delivery. <strong>+ Add channel</strong> adds Email, Microsoft Teams, a Calendar block, a ServiceNow ticket, or a Jira issue — useful when the review needs to land in her actual work queue, not just her chat.<span class="tour-why"><strong>Why:</strong> Post-action messages should move the user forward, not echo the card. The delivery check makes notification state visible without forcing a click.</span>',
+        body: 'The bot\'s next message moves Weston forward instead of restating what just happened. Marie has two business days, and Slack will DM him if she has questions. Each chip shows how she was notified, with a green check for delivered. <strong>+ Add channel</strong> sends the review via Email, Teams, a Calendar block, a ServiceNow ticket, or a Jira issue. Useful when Marie needs it in her actual work queue, not just her chat.<span class="tour-why"><strong>Why:</strong> A post-action message should help Weston decide what\'s next, not echo the card. The delivery check makes notification state visible at a glance.</span>',
         selector: '#filed-msg .notify-row',
       },
       {
         title: "Marie's review, visible",
-        body: 'Once filed, Weston can see Marie\'s review status without joining her thread. The <strong>peek at what Marie sees →</strong> link previews her review surface. She sees the same artifact, a short AI summary, and the accept-or-send-back controls she\'ll use.<span class="tour-why"><strong>Why:</strong> Marie reviews around 50 controls a quarter. She needs a centralized queue, not 50 multi-person DMs. Separate threads also let her write private review notes the owner shouldn\'t see. The status chip closes the visibility gap.</span>',
+        body: 'Once filed, Weston can see where Marie is in her review without joining her thread. <strong>peek at what Marie sees →</strong> previews her surface: the same artifact, a short AI summary, and her accept/send-back controls.<span class="tour-why"><strong>Why:</strong> Marie reviews around 50 controls a quarter. She needs a queue of her own, not 50 multi-person DMs. Separate threads also let her keep private review notes the owner shouldn\'t see. The status row gives Weston visibility without joining her work.</span>',
         selector: '#marie-status',
         before: function () {
           var p = document.getElementById('peek-panel');
@@ -2032,7 +2045,7 @@
       },
             {
         title: "What's next",
-        body: '<strong>What\'s next →</strong> opens Weston\'s upcoming SOX queue inline. Each item expands to show the control, the last filing, and a Start review action.<span class="tour-why"><strong>Why:</strong> After a filing, the most useful next move is forward, not retrospective. The queue gives Weston his next task without leaving the thread.</span>',
+        body: '<strong>What\'s next →</strong> opens Weston\'s upcoming SOX queue inline. Each item expands to show the control, the last filing, the reviewer, and a Start review action.<span class="tour-why"><strong>Why:</strong> After a filing, the useful next move is forward. The queue gives Weston his next task without leaving the thread.</span>',
         selector: '#queue-panel',
         before: function () {
           ['receipt-panel', 'peek-panel'].forEach(function (id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
@@ -2046,7 +2059,7 @@
       },
       {
         title: 'Filing details, opened',
-        body: '<strong>View filing details</strong> opens the labeled audit-trail entry inline. It lists the artifact, the classifier verdict, who reviews it, the SLA, the filed timestamp, the model signature, and the tamper seal. Any note Weston attached lives here too.<span class="tour-why"><strong>Why:</strong> Separate forward intent (the queue) from backward intent (the audit trail). Two distinct views, no mixed-intent UI. This panel is what the external auditor sees during Q3 testing.</span>',
+        body: '<strong>View filing details</strong> opens the audit-trail entry inline. It lists the artifact, the verdict, who reviews it, the SLA, when it was filed, the model signature, and the tamper seal. Any note Weston attached shows up here too.<span class="tour-why"><strong>Why:</strong> Forward intent (the queue) and backward intent (the audit trail) shouldn\'t share a UI. This panel is what the external auditor sees during Q3 testing.</span>',
         selector: '#receipt-panel',
         before: function () {
           ['queue-panel', 'peek-panel'].forEach(function (id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
@@ -2060,7 +2073,7 @@
       },
       {
         title: "That's the tour",
-        body: 'Optro Evidence judges filings the way an auditor would. Click around to explore the inline panels.',
+        body: 'Optro Evidence judges filings the way an auditor would. Click around to explore the rest.',
       },
     ],
   };
