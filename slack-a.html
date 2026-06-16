@@ -347,74 +347,31 @@
     font-weight: 700;
     letter-spacing: 0.02em;
   }
-  /* Evidence block: single clickable affordance that names the artifacts AND opens the review */
-  .slack-evidence-card .evidence-block {
-    appearance: none;
-    width: 100%;
+  /* Review the evidence: single text link, left-aligned under the card meta */
+  .slack-evidence-card .review-evidence-link {
+    appearance: none; background: none; border: 0; padding: 0;
     margin-top: 10px;
-    padding: 10px 12px;
-    background: var(--luna-white);
-    border: 1px solid var(--luna-gray-200);
-    border-radius: 6px;
-    font: inherit;
-    color: var(--luna-gray-800);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-align: left;
-    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
-  }
-  .slack-evidence-card .evidence-block:hover,
-  .slack-evidence-card .evidence-block:focus-visible {
-    border-color: var(--luna-teal-400);
-    background: var(--luna-teal-50);
-    outline: none;
-  }
-  .slack-evidence-card .evidence-block .ev-label {
-    font-size: 10.5px; font-weight: 700;
-    letter-spacing: 0.04em; text-transform: uppercase;
-    color: var(--luna-gray-500);
-    flex-shrink: 0;
-    line-height: 1.2;
-  }
-  .slack-evidence-card .evidence-block .ev-files {
-    display: flex; align-items: center; gap: 6px;
-    flex-wrap: wrap;
-    flex: 1;
-    min-width: 0;
-  }
-  .slack-evidence-card .evidence-block .ev-plus {
-    color: var(--luna-gray-400);
-    font-size: 12px;
-  }
-  .slack-evidence-card .evidence-block .ev-action {
-    flex-shrink: 0;
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 11.5px; font-weight: 600;
+    font: inherit; font-size: 12px; font-weight: 600;
     color: var(--luna-teal-500);
-    margin-left: auto;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 4px;
+    transition: color 0.15s;
   }
-  .slack-evidence-card .evidence-block .ev-arrow {
+  .slack-evidence-card .review-evidence-link:hover {
+    color: var(--luna-teal-700);
+    text-decoration: underline; text-underline-offset: 2px;
+  }
+  .slack-evidence-card .review-evidence-link .rev-arrow {
     width: 12px; height: 12px;
     transition: transform 0.15s;
   }
-  .slack-evidence-card .evidence-block:hover .ev-arrow,
-  .slack-evidence-card .evidence-block:focus-visible .ev-arrow {
+  .slack-evidence-card .review-evidence-link:hover .rev-arrow {
     transform: translateX(2px);
   }
-  /* Post-state: still a citation, no longer the primary click target */
-  .slack-evidence-card.is-resolved .evidence-block,
-  .slack-evidence-card.is-deferred .evidence-block,
-  .slack-evidence-card.is-needs-redraft .evidence-block,
-  .slack-evidence-card.is-pending-marie .evidence-block {
-    cursor: default;
-    pointer-events: none;
-  }
-  .slack-evidence-card.is-resolved .evidence-block .ev-action,
-  .slack-evidence-card.is-deferred .evidence-block .ev-action,
-  .slack-evidence-card.is-needs-redraft .evidence-block .ev-action,
-  .slack-evidence-card.is-pending-marie .evidence-block .ev-action { display: none; }
+  .slack-evidence-card.is-resolved .review-evidence-link,
+  .slack-evidence-card.is-deferred .review-evidence-link,
+  .slack-evidence-card.is-needs-redraft .review-evidence-link,
+  .slack-evidence-card.is-pending-marie .review-evidence-link { display: none; }
 
   .slack-evidence-card .actions { display: flex; gap: 6px; margin-top: 8px; }
   .slack-evidence-card .approve-consequences {
@@ -724,6 +681,24 @@
   }
   .slack-inline-panel .rr-section-label-spaced { margin-top: 14px; }
   .slack-inline-panel .rr-section-label .ai-citation { text-transform: none; letter-spacing: 0; font-weight: 600; }
+  .slack-inline-panel .rr-artifact-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .slack-inline-panel .rr-artifact-link:hover .ai-citation {
+    background: var(--luna-teal-100);
+    box-shadow: 0 0 0 1px var(--luna-teal-300);
+  }
+  .slack-inline-panel .rr-artifact-arrow {
+    width: 11px; height: 11px;
+    color: var(--luna-gray-500);
+    flex-shrink: 0;
+    transition: color 0.15s;
+  }
+  .slack-inline-panel .rr-artifact-link:hover .rr-artifact-arrow {
+    color: var(--luna-teal-600);
+  }
   .slack-inline-panel .row-warn .row-flag,
   .slack-inline-panel .q2-flag {
     font-size: 9.5px;
@@ -1499,18 +1474,7 @@
                     </span>
                   </span>
                 </div>
-                <button type="button" class="evidence-block" onclick="toggleRowReview(); return false;" aria-label="Review the evidence">
-                  <div class="ev-label">
-                    <span class="state-pre">Evidence to file</span>
-                    <span class="state-post">Filed evidence</span>
-                  </div>
-                  <div class="ev-files">
-                    <span class="ai-citation">snow-query-AR-prod-db.csv</span>
-                    <span class="ev-plus">+</span>
-                    <span class="ai-citation">DBA attestation email</span>
-                  </div>
-                  <span class="ev-action">Review<svg class="ev-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
-                </button>
+                <button type="button" class="review-evidence-link" onclick="toggleRowReview(); return false;">Review the evidence<svg class="rev-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
                 <div class="actions">
                   <button class="primary" onclick="runFlow(); return false;">Approve &amp; file</button>
                 </div>
@@ -1588,7 +1552,7 @@
                 <div class="slack-inline-panel" id="row-review-panel" style="display:none;">
                   <div class="panel-label">Evidence preview</div>
                   <p class="row-review-intro">Full draft of what would be filed. ECM flagged <strong>2 items</strong> for your attention.</p>
-                  <div class="rr-section-label">Access list · <span class="ai-citation">snow-query-AR-prod-db.csv</span></div>
+                  <div class="rr-section-label">Access list · <a class="rr-artifact-link" href="chain-b.html" target="_blank" rel="noopener" title="Open this artifact in Optro"><span class="ai-citation">snow-query-AR-prod-db.csv</span><svg class="rr-artifact-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a></div>
                   <div class="csv-preview">
                     <table>
                       <thead><tr><th>user</th><th>role</th><th>last_login</th><th>attested</th></tr></thead>
@@ -1606,7 +1570,7 @@
                       </tbody>
                     </table>
                   </div>
-                  <div class="rr-section-label rr-section-label-spaced">Attestation · <span class="ai-citation">DBA attestation email</span></div>
+                  <div class="rr-section-label rr-section-label-spaced">Attestation · <a class="rr-artifact-link" href="chain-a.html" target="_blank" rel="noopener" title="Open this artifact in Optro"><span class="ai-citation">DBA attestation email</span><svg class="rr-artifact-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a></div>
                   <div class="email-preview">
                     <div class="em-row"><span class="em-k">From</span><span class="em-v">Weston Prohaska &lt;weston@helios.com&gt;</span></div>
                     <div class="em-row"><span class="em-k">To</span><span class="em-v">Marie Curie &lt;mcurie@helios.com&gt;</span></div>
@@ -1976,7 +1940,7 @@
       {
         title: 'The cautious path',
         body: 'If anything feels off, <strong>Review the evidence</strong> opens all 22 records inline alongside the email draft. The two flagged rows are called out with their explanations. From there Weston can approve as-is, or send it to Marie with a flag attached.<span class="tour-why"><strong>Why:</strong> Every AI system needs an error-recovery path. Flag-for-Marie routes the dispute to the reviewer and keeps segregation of duties intact.</span>',
-        selector: '.slack-evidence-card .evidence-block',
+        selector: '.slack-evidence-card .review-evidence-link',
         before: function () {
           var p = document.getElementById('row-review-panel');
           if (p) p.style.display = 'block';
