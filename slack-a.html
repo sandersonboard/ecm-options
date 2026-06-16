@@ -15,7 +15,8 @@
     border: 1px solid var(--luna-gray-300);
     border-left: 3px solid var(--luna-blue-500);
     border-radius: 4px;
-    max-width: 460px;
+    max-width: 520px;
+    box-sizing: border-box;
   }
   .slack-evidence-card .head { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
   .slack-evidence-card .meta { font-size: 12px; color: var(--luna-gray-600); margin-bottom: 8px; }
@@ -666,6 +667,12 @@
     border: 1px solid var(--luna-gray-200);
     border-radius: 6px;
     font-size: 12px;
+    max-width: 520px;
+    box-sizing: border-box;
+  }
+  /* Top-level panels (siblings of the evidence card) share its blue accent so they read as the same app speaking */
+  .body > .slack-inline-panel {
+    border-left: 3px solid var(--luna-blue-500);
   }
   .slack-inline-panel .panel-label {
     font-size: 10px; font-weight: 700;
