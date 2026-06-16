@@ -116,11 +116,14 @@
     transform: rotate(45deg);
   }
   .slack-evidence-card .conf-row .conf-why-wrap:hover .conf-tooltip,
-  .slack-evidence-card .conf-row .conf-why-wrap:focus-within .conf-tooltip {
+  .slack-evidence-card .conf-row .conf-why-wrap:focus-within .conf-tooltip,
+  .slack-evidence-card .conf-row .conf-why-wrap.is-open .conf-tooltip {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+    pointer-events: auto;
   }
+  .slack-evidence-card .conf-row .conf-why-wrap.is-open .conf-why { background: var(--luna-teal-500); }
   /* Take-the-guided-tour entry button */
   .tour-start-btn {
     display: inline-flex; align-items: center; gap: 6px;
@@ -357,6 +360,32 @@
   }
 
   .slack-evidence-card .actions { display: flex; gap: 6px; margin-top: 8px; }
+  .slack-evidence-card .approve-consequences {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--luna-gray-500);
+    line-height: 1.4;
+  }
+  .slack-evidence-card.is-resolved .approve-consequences,
+  .slack-evidence-card.is-deferred .approve-consequences,
+  .slack-evidence-card.is-needs-redraft .approve-consequences { display: none; }
+  .slack-evidence-card .review-evidence-link {
+    appearance: none; background: none; border: 0; padding: 0;
+    font: inherit; font-size: 11.5px;
+    color: var(--luna-teal-500);
+    cursor: pointer;
+    text-decoration: underline; text-underline-offset: 2px;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.15s, color 0.15s;
+    margin-left: 8px;
+  }
+  .slack-evidence-card .review-evidence-link:hover {
+    color: var(--luna-teal-700);
+    text-decoration-color: currentColor;
+  }
+  .slack-evidence-card.is-resolved .review-evidence-link,
+  .slack-evidence-card.is-deferred .review-evidence-link,
+  .slack-evidence-card.is-needs-redraft .review-evidence-link { display: none; }
   .slack-evidence-card .card-sec-row {
     display: flex; align-items: center; flex-wrap: wrap;
     gap: 8px;
@@ -1092,6 +1121,19 @@
     border-color: var(--luna-teal-300, #c9ecee);
     color: var(--luna-teal-700);
   }
+  .channel-chip.is-active::after {
+    content: '✓';
+    display: inline-grid;
+    place-items: center;
+    width: 12px; height: 12px;
+    background: var(--luna-green-500);
+    color: #fff;
+    border-radius: 50%;
+    margin-left: 2px;
+    font-size: 8.5px;
+    font-weight: 700;
+    line-height: 1;
+  }
   .channel-chip .ch-ic { width: 11px; height: 11px; stroke: currentColor; }
   .channel-chip.is-add {
     background: transparent;
@@ -1381,7 +1423,7 @@
                     <strong>Adequate to file</strong>
                   </span>
                   <span class="conf-why-wrap" tabindex="0">
-                    <button class="conf-why" type="button" aria-label="What ECM evaluated">?</button>
+                    <button class="conf-why" type="button" aria-label="What ECM evaluated" aria-expanded="false" onclick="toggleConfWhy(this); return false;">?</button>
                     <span class="conf-tooltip" role="tooltip">
                       <strong>What ECM evaluated</strong>
                       <span class="tt-rule">✓ All 22 accounts have a documented business need</span>
@@ -1399,9 +1441,13 @@
                   <button class="artifact-chip" onclick="toggleArtifact('csv'); return false;"><span class="ai-citation">snow-query-AR-prod-db.csv</span></button>
                   <span class="artifact-and">and</span>
                   <button class="artifact-chip" onclick="toggleArtifact('email'); return false;"><span class="ai-citation">DBA attestation email</span></button>
+                  <button type="button" class="review-evidence-link" onclick="toggleRowReview(); return false;">Review the evidence →</button>
                 </div>
                 <div class="actions">
                   <button class="primary" onclick="runFlow(); return false;">Approve &amp; file</button>
+                </div>
+                <div class="approve-consequences" id="approve-consequences">
+                  On approve: audit-trail entry written · Marie notified · 2-business-day SLA starts.
                 </div>
                 <button class="more-options-toggle" id="more-options-toggle" type="button" onclick="toggleMoreOptions(); return false;" aria-expanded="false" aria-controls="card-sec-row">More options<svg class="mo-chev" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
                 <div class="card-sec-row" id="card-sec-row" hidden>
@@ -1410,8 +1456,6 @@
                   <button class="card-sec-link" type="button" onclick="toggleDeferPanel(); return false;">Defer</button>
                   <span class="card-sec-sep">·</span>
                   <button class="card-sec-link" type="button" onclick="toggleSendBackPanel(); return false;">Send back to ECM</button>
-                  <span class="card-sec-sep">·</span>
-                  <button class="card-sec-link" type="button" onclick="toggleRowReview(); return false;">Review the evidence →</button>
                 </div>
 
                 <div class="note-attached" id="note-attached" hidden>
@@ -2193,6 +2237,22 @@
   // Backward-compat: header button still works
   function startTour() { if (window.Tour) window.Tour.start(); }
 
+
+  function toggleConfWhy(btn) {
+    var wrap = btn.closest('.conf-why-wrap');
+    if (!wrap) return;
+    var isOpen = wrap.classList.toggle('is-open');
+    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('.conf-why-wrap.is-open').forEach(function (w) {
+      if (!w.contains(e.target)) {
+        w.classList.remove('is-open');
+        var b = w.querySelector('.conf-why');
+        if (b) b.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
 
   function toggleMoreOptions(force) {
     var btn = document.getElementById('more-options-toggle');
