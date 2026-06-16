@@ -178,6 +178,99 @@
     border-radius: 10px;
     letter-spacing: 0.03em;
   }
+  .artifact-chip {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+  }
+  .artifact-chip .ai-citation { transition: background 0.15s, box-shadow 0.15s; cursor: pointer; }
+  .artifact-chip:hover .ai-citation { background: var(--luna-teal-100); box-shadow: 0 0 0 1px var(--luna-teal-300); }
+  .slack-inline-panel.artifact-preview .panel-label {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+    font-size: 12px; font-weight: 600; color: var(--luna-gray-800);
+    text-transform: none; letter-spacing: 0;
+  }
+  .slack-inline-panel.artifact-preview .ai-chip { font-size: 10px; }
+  .csv-preview {
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+  .csv-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+  }
+  .csv-preview th, .csv-preview td {
+    padding: 5px 9px;
+    text-align: left;
+    border-bottom: 1px solid var(--luna-gray-100);
+  }
+  .csv-preview th {
+    background: var(--luna-gray-50);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--luna-gray-600);
+  }
+  .csv-preview tr.row-warn { background: var(--luna-orange-50); }
+  .csv-preview tr.row-more td { font-style: italic; color: var(--luna-gray-500); }
+  .email-preview {
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 4px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: var(--luna-gray-800);
+  }
+  .email-preview .em-row { display: flex; gap: 8px; margin-bottom: 3px; font-size: 11.5px; }
+  .email-preview .em-k { color: var(--luna-gray-500); min-width: 56px; font-weight: 600; }
+  .email-preview .em-v { color: var(--luna-gray-800); }
+  .email-preview .em-body { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--luna-gray-200); line-height: 1.5; }
+  .email-preview .em-body p { margin: 0 0 8px; font-size: 12px; }
+  .email-preview .em-body ul { margin: 6px 0 8px 18px; padding: 0; font-size: 12px; }
+  .email-preview .em-body code { background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-size: 10.5px; }
+  .slack-inline-panel .receipt-grid {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 4px 14px;
+    margin: 2px 0 8px;
+  }
+  .slack-inline-panel .receipt-grid .r-k {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--luna-gray-500);
+    padding-top: 3px;
+  }
+  .slack-inline-panel .receipt-grid .r-v {
+    font-size: 12px;
+    color: var(--luna-gray-800);
+    line-height: 1.45;
+  }
+  .slack-inline-panel .receipt-note {
+    font-size: 11px;
+    color: var(--luna-gray-600);
+    line-height: 1.5;
+    margin: 8px 0 0;
+    padding: 8px 10px;
+    background: var(--luna-white);
+    border-left: 2px solid var(--luna-teal-300);
+    border-radius: 0 4px 4px 0;
+  }
+  .panel-actions .open-external {
+    padding: 5px 10px; font-size: 12px; font-weight: 600;
+    border-radius: 4px;
+    background: var(--luna-white);
+    color: var(--luna-teal-500);
+    border: 1px solid var(--luna-teal-500);
+    text-decoration: none;
+    margin-right: auto;
+  }
+  .panel-actions .open-external:hover { background: var(--luna-teal-50); }
 </style>
 </head>
 <body>
@@ -264,8 +357,10 @@
                   <strong>85%</strong>
                 </div>
                 <div style="font-size:12px;color:var(--luna-gray-700);">
-                  Suggested artifact: <span class="ai-citation">snow-query-AR-prod-db.csv</span> +
-                  <span class="ai-citation">DBA attestation email</span>. Same shape as Q2.
+                  Suggested artifact:
+                  <button class="artifact-chip" onclick="toggleArtifact('csv'); return false;"><span class="ai-citation">snow-query-AR-prod-db.csv</span></button> +
+                  <button class="artifact-chip" onclick="toggleArtifact('email'); return false;"><span class="ai-citation">DBA attestation email</span></button>.
+                  Same shape as Q2.
                 </div>
                 <div class="actions">
                   <button class="primary" onclick="runFlow(); return false;">✓ Approve &amp; file</button>
@@ -300,6 +395,63 @@ ORDER BY user;</textarea>
                   <div class="panel-actions">
                     <button class="primary" id="file-now-btn" disabled style="opacity:0.5;cursor:not-allowed;" onclick="closePanelsThenRun(); return false;">File now</button>
                     <button onclick="toggleFilePicker(); return false;">Cancel</button>
+                  </div>
+                </div>
+
+                <div class="slack-inline-panel artifact-preview" id="artifact-csv" style="display:none;">
+                  <div class="panel-label">
+                    <span class="ai-chip">Optro ECM</span>
+                    snow-query-AR-prod-db.csv · ServiceNow export · 22 rows
+                  </div>
+                  <div class="csv-preview">
+                    <table>
+                      <thead><tr><th>user</th><th>role</th><th>last_login</th><th>attested</th></tr></thead>
+                      <tbody>
+                        <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-09-25</td><td>✓</td></tr>
+                        <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-09-22</td><td>✓</td></tr>
+                        <tr class="row-warn"><td>contractor-svc-09</td><td>dba-admin</td><td>2026-04-12</td><td>—</td></tr>
+                        <tr><td>k.singh@helios.com</td><td>dba-read</td><td>2026-09-19</td><td>✓</td></tr>
+                        <tr class="row-warn"><td>r.taylor@helios.com</td><td><strong>dba-admin</strong></td><td>2026-09-11</td><td>✓</td></tr>
+                        <tr><td>n.lee@helios.com</td><td>dba-read</td><td>2026-09-23</td><td>✓</td></tr>
+                        <tr><td>app-svc-prod</td><td>app-svc</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                        <tr><td>backups-svc</td><td>backups</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                        <tr><td>etl-svc</td><td>etl</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                        <tr class="row-more"><td colspan="4">… 13 more rows</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="panel-actions">
+                    <a class="open-external" href="chain-b.html" target="_blank" rel="noopener">Open in full ↗</a>
+                    <button onclick="toggleArtifact('csv'); return false;">Close</button>
+                  </div>
+                </div>
+
+                <div class="slack-inline-panel artifact-preview" id="artifact-email" style="display:none;">
+                  <div class="panel-label">
+                    <span class="ai-chip">Optro ECM</span>
+                    DBA attestation email · drafted from Q2 template
+                  </div>
+                  <div class="email-preview">
+                    <div class="em-row"><span class="em-k">From</span><span class="em-v">Weston Prohaska &lt;weston@helios.com&gt;</span></div>
+                    <div class="em-row"><span class="em-k">To</span><span class="em-v">Marie Curie &lt;mcurie@helios.com&gt;</span></div>
+                    <div class="em-row"><span class="em-k">Subject</span><span class="em-v">Q3 FY26 access review attestation — prod-db-01 (control 4.2.1)</span></div>
+                    <div class="em-row"><span class="em-k">Sent</span><span class="em-v">Friday Sep 25 · 3:11 PM PT</span></div>
+                    <div class="em-body">
+                      <p>Marie,</p>
+                      <p>Attaching the Q3 access review for <strong>prod-db-01</strong> (control 4.2.1). 22 active accounts reviewed against the ServiceNow export attached as <code>snow-query-AR-prod-db.csv</code>.</p>
+                      <p><strong>Findings carried into Q3:</strong></p>
+                      <ul>
+                        <li><code>contractor-svc-09</code> still <code>dba-admin</code>; ticket HEL-3471 still open. Same status as Q2.</li>
+                        <li><code>r.taylor@helios.com</code> escalated from <code>dba-read</code> to <code>dba-admin</code> on Sep 11 — please flag if you don't see an approval ticket.</li>
+                        <li><code>n.lee@helios.com</code> added Sep 23 as <code>dba-read</code> per onboarding (OPS-2208).</li>
+                      </ul>
+                      <p>All 19 service accounts (app-svc-prod, backups-svc, etl-svc, …) match Q2 verbatim.</p>
+                      <p>— Weston</p>
+                    </div>
+                  </div>
+                  <div class="panel-actions">
+                    <a class="open-external" href="chain-a.html" target="_blank" rel="noopener">Open in full ↗</a>
+                    <button onclick="toggleArtifact('email'); return false;">Close</button>
                   </div>
                 </div>
               </div>
@@ -344,13 +496,32 @@ ORDER BY user;</textarea>
                 <span class="luna-badge is-green" style="margin-left:6px;">Filed</span>
               </p>
               <div class="filed-receipt-line">
-                filed: <strong>AR-Q3FY26-prod-db.png</strong> → control 4.2.1 · classifier 93% · routed=Marie · sla=2bd · chain=block #4,180,221
+                filed: <strong>AR-Q3FY26-prod-db.png</strong> → control 4.2.1 · classifier 93% · routed=Marie · sla=2bd · signed #4,180,221
               </div>
-              <p style="margin-top:8px;font-size:13px;">Want me to wrist-tap you if Marie bounces back, or @-mention you in <code style="font-size:11px;background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;">#sox-q3-close</code>?</p>
+              <p style="margin-top:8px;font-size:13px;">I'll DM you here if Marie has questions or sends it back.</p>
               <div style="display:flex;gap:6px;margin-top:6px;">
                 <button onclick="resetFlow(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-teal-500);background:var(--luna-teal-500);color:var(--luna-white);cursor:pointer;">↻ Run another</button>
-                <button style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">Wrist-tap on bounce</button>
-                <a href="chain-a.html" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);text-decoration:none;">View chain receipt ↗</a>
+                <button onclick="toggleReceipt(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">View filing details</button>
+              </div>
+
+              <div class="slack-inline-panel" id="receipt-panel" style="display:none;margin-top:10px;">
+                <div class="panel-label">Filing details · AR-Q3FY26-prod-db</div>
+                <div class="receipt-grid">
+                  <span class="r-k">Artifact</span><span class="r-v">AR-Q3FY26-prod-db.png · 1.2 MB</span>
+                  <span class="r-k">Filed by</span><span class="r-v">Weston Prohaska · @weston</span>
+                  <span class="r-k">Control</span><span class="r-v">4.2.1 — quarterly user-access review · prod-db-01</span>
+                  <span class="r-k">Classifier</span><span class="r-v">93% match to Q2 attestation pattern</span>
+                  <span class="r-k">Routed to</span><span class="r-v">Marie Curie · Internal Audit</span>
+                  <span class="r-k">Review SLA</span><span class="r-v">2 business days</span>
+                  <span class="r-k">Filed at</span><span class="r-v">Friday Sep 25 · 3:11 PM PT</span>
+                  <span class="r-k">Signed by</span><span class="r-v">Optro ECM · model card v2026.06</span>
+                  <span class="r-k">Tamper seal</span><span class="r-v">signed-block #4,180,221 · sha 0x7f3e&hellip;a3e</span>
+                </div>
+                <p class="receipt-note">This is the audit-trail entry the external auditor will see during the Q3 testing window. Each row is signed and cannot be edited after filing.</p>
+                <div class="panel-actions">
+                  <a class="open-external" href="chain-a.html" target="_blank" rel="noopener">Open full audit trail ↗</a>
+                  <button onclick="toggleReceipt(); return false;">Close</button>
+                </div>
               </div>
             </div>
           </div>
@@ -361,7 +532,7 @@ ORDER BY user;</textarea>
     </div>
 
     <p class="surface-caption">
-      Bot DM → Weston replies → filed evidence with a chain receipt, all in one Slack thread.
+      Bot DM → Weston replies → filed evidence with a signed audit trail, all in one Slack thread.
       The one-tap <strong>Approve &amp; file</strong> path is gated to high-confidence pattern matches against Weston's prior approvals —
       anything novel (new account, new finding, new attester) would force an expand-and-review step before the file button becomes available.
       So one-tap doesn't mean one-thought; it means a routine pattern Weston has already attested to before.
@@ -453,6 +624,30 @@ ORDER BY user;</textarea>
     runFlow();
   }
 
+  function toggleArtifact(which) {
+    const ids = ['artifact-csv', 'artifact-email'];
+    const target = which === 'csv' ? 'artifact-csv' : 'artifact-email';
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (id === target) {
+        const willShow = el.style.display === 'none' || !el.style.display;
+        el.style.display = willShow ? 'block' : 'none';
+        if (willShow) el.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+      } else {
+        el.style.display = 'none';
+      }
+    });
+  }
+
+  function toggleReceipt() {
+    const panel = document.getElementById('receipt-panel');
+    if (!panel) return;
+    const willShow = panel.style.display === 'none' || !panel.style.display;
+    panel.style.display = willShow ? 'block' : 'none';
+    if (willShow) panel.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
   function resetFlow() {
     flowStarted = false;
     hide(document.getElementById('weston-reply'));
@@ -463,10 +658,10 @@ ORDER BY user;</textarea>
     if (card) card.classList.remove('is-resolved');
 
     // Close any open inline panels
-    const ed = document.getElementById('query-editor-panel');
-    const fp = document.getElementById('file-picker-panel');
-    if (ed) ed.style.display = 'none';
-    if (fp) fp.style.display = 'none';
+    ['query-editor-panel', 'file-picker-panel', 'artifact-csv', 'artifact-email', 'receipt-panel'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
 
     // Reset the file-picker preview state
     const prev = document.getElementById('upload-preview');
