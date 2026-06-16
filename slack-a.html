@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615s" />
-<link rel="stylesheet" href="styles.css?v=20260615s" />
+<link rel="stylesheet" href="tokens.css?v=20260615t" />
+<link rel="stylesheet" href="styles.css?v=20260615t" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -106,6 +106,33 @@
     visibility: visible;
     transform: translateY(0);
   }
+  /* Q2 reference inline link inside the bot's intro prose */
+  .prior-link {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    color: var(--luna-teal-500);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .prior-link:hover { color: var(--luna-teal-700); }
+
+  .slack-inline-panel .prior-ref-note,
+  .slack-inline-panel .prior-ref-meta {
+    font-size: 11.5px;
+    color: var(--luna-gray-600);
+    line-height: 1.5;
+    margin: 0 0 8px;
+  }
+  .slack-inline-panel .prior-ref-meta {
+    margin: 8px 0 0;
+    font-style: italic;
+    color: var(--luna-gray-500);
+  }
+
   /* Pre/post-fil state swaps */
   .slack-evidence-card .state-post { display: none; }
   .slack-evidence-card.is-resolved .state-pre { display: none; }
@@ -702,7 +729,33 @@
                 <span class="bot-tag">APP</span>
                 <span class="ts">Friday · 2:48 PM</span>
               </div>
-              <p>Hi Weston. Your quarterly access check for <strong><span class="ai-citation">prod-db-01</span></strong> is due Monday. I drafted the list from last quarter. Review and approve, or edit if anything changed.</p>
+              <p>Hi Weston. Your quarterly access check for <strong><span class="ai-citation">prod-db-01</span></strong> is due Monday. I drafted the list from <button type="button" class="prior-link" onclick="toggleQ2Ref(); return false;">your Q2 filing →</button>. Review and approve.</p>
+
+              <div class="slack-inline-panel" id="q2-ref" style="display:none;">
+                <div class="panel-label">
+                  <span class="ai-chip">Reference</span>
+                  Q2 FY26 filing · what you filed Jun 17, 2026
+                </div>
+                <p class="prior-ref-note">Read-only. This is the artifact Marie signed off as adequate last quarter.</p>
+                <div class="csv-preview">
+                  <table>
+                    <thead><tr><th>user</th><th>role</th><th>last_login</th><th>attested</th></tr></thead>
+                    <tbody>
+                      <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-06-25</td><td>✓</td></tr>
+                      <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-06-22</td><td>✓</td></tr>
+                      <tr><td>contractor-svc-09</td><td>dba-admin</td><td>2026-04-12</td><td>— (open, HEL-3471)</td></tr>
+                      <tr><td>k.singh@helios.com</td><td>dba-read</td><td>2026-06-19</td><td>✓</td></tr>
+                      <tr><td>r.taylor@helios.com</td><td>dba-read</td><td>2026-06-11</td><td>✓</td></tr>
+                      <tr><td>app-svc-prod</td><td>app-svc</td><td>2026-06-25</td><td>✓ (auto)</td></tr>
+                      <tr><td>backups-svc</td><td>backups</td><td>2026-06-25</td><td>✓ (auto)</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p class="prior-ref-meta">21 accounts · filed by you · signed adequate by Marie Curie · Jun 17 2026 · 3:42 PM PT</p>
+                <div class="panel-actions">
+                  <button onclick="toggleQ2Ref(); return false;">Close</button>
+                </div>
+              </div>
 
               <div class="slack-evidence-card">
                 <div class="head">
@@ -844,12 +897,7 @@
                 <span class="bot-tag">APP</span>
                 <span class="ts">Friday · 3:11 PM</span>
               </div>
-              <p>
-                <span class="success-check">✓</span> Tagged
-                <span class="ai-citation">control 4.2.1</span> ·
-                <span class="ai-citation">Q3FY26</span>, routed to Marie.
-              </p>
-              <p style="margin-top:8px;font-size:13px;">I'll ping you here if Marie has questions.</p>
+              <p>Marie has <strong>2 business days</strong> to review. I'll DM you if she comes back with questions.</p>
 
               <div class="notify-row">
                 <span class="notify-label">Notified Marie via</span>
@@ -1058,6 +1106,15 @@
     if (willShow) p.scrollIntoView({behavior: 'smooth', block: 'center'});
   }
 
+  function toggleQ2Ref() {
+    if (flowStarted) return;
+    const p = document.getElementById('q2-ref');
+    if (!p) return;
+    const willShow = p.style.display === 'none' || !p.style.display;
+    p.style.display = willShow ? 'block' : 'none';
+    if (willShow) p.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
   function reveal(el) {
     if (!el) return;
     el.classList.remove('is-hidden');
@@ -1182,7 +1239,7 @@ hide(document.getElementById('filed-msg'));
     if (card) card.classList.remove('is-resolved');
 
     // Close any open inline panels
-    ['row-review-panel', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel'].forEach(id => {
+    ['row-review-panel', 'q2-ref', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
