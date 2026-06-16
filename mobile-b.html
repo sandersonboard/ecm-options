@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Mobile · Take B — Pocket triage · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615e" />
-<link rel="stylesheet" href="styles.css?v=20260615e" />
+<link rel="stylesheet" href="tokens.css?v=20260615f" />
+<link rel="stylesheet" href="styles.css?v=20260615f" />
 <style>
   .device-stage { display: flex; gap: 60px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
   .stage-side {
@@ -29,8 +29,8 @@
   }
   .stage-side .step-detail .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 4px; }
   .stage-side .step-detail p { font-size: 13px; color: var(--luna-gray-800); margin: 0; line-height: 1.5; }
-  .stage-side .step-detail.is-purple { border-left-color: var(--luna-purple-500); background: var(--luna-purple-50); }
-  .stage-side .step-detail.is-purple .lbl { color: var(--luna-purple-700); }
+  .stage-side .step-detail.is-lime { border-left-color: var(--luna-lime-500); background: var(--luna-lime-50); }
+  .stage-side .step-detail.is-lime .lbl { color: var(--luna-lime-700); }
 
   .triage-app { height: calc(100% - 36px); display: flex; flex-direction: column; background: var(--luna-gray-50); }
   .triage-header { padding: 12px 16px 8px; background: var(--luna-white); border-bottom: 1px solid var(--luna-gray-200); }
@@ -41,12 +41,12 @@
   .triage-tabs .tab.is-active { color: var(--luna-teal-500); border-bottom-color: var(--luna-teal-500); }
   .triage-ai-strip {
     margin: 10px 12px; padding: 10px 12px;
-    background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50));
-    border: 1px solid var(--luna-purple-100);
+    background: linear-gradient(135deg, var(--luna-lime-50), var(--luna-blue-50));
+    border: 1px solid var(--luna-lime-100);
     border-radius: 8px;
     font-size: 12px; line-height: 1.5; color: var(--luna-gray-800);
   }
-  .triage-ai-strip .head { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--luna-purple-700); margin-bottom: 4px; }
+  .triage-ai-strip .head { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--luna-lime-700); margin-bottom: 4px; }
   .triage-list { flex: 1; overflow-y: auto; padding: 0 12px 12px; }
   .triage-group-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); padding: 12px 4px 4px; }
   .triage-card { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 10px; padding: 12px; margin-bottom: 8px; position: relative; cursor: pointer; transition: transform 0.12s; }
@@ -67,7 +67,7 @@
   .triage-card .when { font-size: 11px; color: var(--luna-gray-500); margin-left: auto; }
   .triage-card .title { font-size: 14px; font-weight: 600; color: var(--luna-gray-900); margin-bottom: 4px; line-height: 1.3; }
   .triage-card .ai-line { font-size: 12px; color: var(--luna-gray-700); line-height: 1.4; display: flex; gap: 6px; align-items: flex-start; margin-bottom: 6px; }
-  .triage-card .ai-line::before { content: "✦"; color: var(--luna-purple-500); flex-shrink: 0; font-weight: 700; }
+  .triage-card .ai-line::before { content: "✦"; color: var(--luna-lime-500); flex-shrink: 0; font-weight: 700; }
   .triage-card .bottom-row { display: flex; gap: 4px; align-items: center; }
   .triage-card .pill { padding: 2px 8px; font-size: 10px; font-weight: 700; border-radius: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
   .triage-card .pill.is-do { background: var(--luna-teal-500); color: var(--luna-white); }
@@ -106,16 +106,16 @@
   .triage-detail .meta { font-size: 12px; color: var(--luna-gray-600); margin-bottom: 16px; }
   .triage-detail .ai-card {
     padding: 12px;
-    background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50));
-    border: 1px solid var(--luna-purple-100);
-    border-left: 3px solid var(--luna-purple-500);
+    background: linear-gradient(135deg, var(--luna-lime-50), var(--luna-blue-50));
+    border: 1px solid var(--luna-lime-100);
+    border-left: 3px solid var(--luna-lime-500);
     border-radius: 8px;
     font-size: 13px;
     color: var(--luna-gray-800);
     line-height: 1.5;
     margin-bottom: 14px;
   }
-  .triage-detail .ai-card .head { font-size: 11px; font-weight: 700; color: var(--luna-purple-700); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .triage-detail .ai-card .head { font-size: 11px; font-weight: 700; color: var(--luna-lime-700); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
   .triage-detail .preview-thumb {
     height: 110px;
     background: linear-gradient(135deg,transparent 49%,var(--luna-gray-200) 50%,transparent 51%),linear-gradient(45deg,transparent 49%,var(--luna-gray-200) 50%,transparent 51%);
@@ -211,7 +211,7 @@
             <div class="lbl">AI moment</div>
             <p>Triage is the work. AI hides the 39 routine controls that look healthy and surfaces only the 2 with actual signal. Less list = less fatigue.</p>
           </div>
-          <div class="step-detail is-purple">
+          <div class="step-detail is-lime">
             <div class="lbl">Try it</div>
             <p>Tap the <strong>Q3 AR · prod-db-01</strong> card to open its detail.</p>
           </div>
@@ -297,7 +297,7 @@
             <div class="lbl">AI moment</div>
             <p>Pre-flight checks happen before Weston sees the screen — AR pulled, contractor row status verified, query syntax confirmed clean, finding note auto-composed.</p>
           </div>
-          <div class="step-detail is-purple">
+          <div class="step-detail is-lime">
             <div class="lbl">Try it</div>
             <p>Tap <strong>✓ File &amp; route</strong> to advance.</p>
           </div>

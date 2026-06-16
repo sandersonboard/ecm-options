@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>AI governance · Take C — Policy-as-code · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615e" />
-<link rel="stylesheet" href="styles.css?v=20260615e" />
+<link rel="stylesheet" href="tokens.css?v=20260615f" />
+<link rel="stylesheet" href="styles.css?v=20260615f" />
 <style>
   .cap-stage { max-width: 1100px; margin: 0 auto; }
   .cap-panel { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); overflow: hidden; box-shadow: var(--luna-shadow-100); margin-bottom: 16px; }
@@ -18,7 +18,7 @@
   .code-pane { background: #fafaf8; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; line-height: 1.65; padding: 18px 24px; color: var(--luna-gray-800); overflow-x: auto; }
   .code-pane .ln { display: inline-block; width: 28px; color: var(--luna-gray-400); margin-right: 14px; text-align: right; user-select: none; }
   .code-pane .com { color: var(--luna-gray-500); font-style: italic; }
-  .code-pane .kw { color: var(--luna-purple-700); font-weight: 600; }
+  .code-pane .kw { color: var(--luna-lime-700); font-weight: 600; }
   .code-pane .str { color: var(--luna-green-700); }
   .code-pane .ref { color: var(--luna-teal-700); }
   .code-pane .num { color: var(--luna-orange-700); }
@@ -60,9 +60,9 @@
   .diff-body .code-pane { padding: 12px 14px; }
 
   /* Merged state */
-  .merged-banner { padding: 18px 24px; background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50)); border-bottom: 1px solid var(--luna-purple-100); display: flex; align-items: center; gap: 14px; }
-  .merged-banner .ic { width: 40px; height: 40px; border-radius: 50%; background: var(--luna-purple-700); color: var(--luna-white); display: grid; place-items: center; font-size: 18px; flex-shrink: 0; }
-  .merged-banner h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--luna-purple-700); }
+  .merged-banner { padding: 18px 24px; background: linear-gradient(135deg, var(--luna-lime-50), var(--luna-blue-50)); border-bottom: 1px solid var(--luna-lime-100); display: flex; align-items: center; gap: 14px; }
+  .merged-banner .ic { width: 40px; height: 40px; border-radius: 50%; background: var(--luna-lime-700); color: var(--luna-white); display: grid; place-items: center; font-size: 18px; flex-shrink: 0; }
+  .merged-banner h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--luna-lime-700); }
   .merged-banner .sub { font-size: 12.5px; color: var(--luna-gray-700); margin-top: 2px; }
 
   .deploy-timeline { padding: 18px 28px; }
@@ -165,8 +165,8 @@
         </div>
       </div>
 
-      <div style="padding: 14px 18px; background: var(--luna-purple-50); border: 1px solid var(--luna-purple-100); border-radius: 6px; font-size: 13px; color: var(--luna-gray-800); line-height: 1.55; margin-bottom: 16px;">
-        <strong style="color: var(--luna-purple-700);">What you're looking at.</strong>
+      <div style="padding: 14px 18px; background: var(--luna-lime-50); border: 1px solid var(--luna-lime-100); border-radius: 6px; font-size: 13px; color: var(--luna-gray-800); line-height: 1.55; margin-bottom: 16px;">
+        <strong style="color: var(--luna-lime-700);">What you're looking at.</strong>
         ECM's behavior on IT.AC.1.C01 is fully specified in this file. There are no hidden rules, no opaque thresholds, no model weights doing un-documented work. When the external auditor asks "why did ECM accept this?", the answer is the file. When something changes, the file changes — and the change has signatures attached.
       </div>
 
@@ -194,7 +194,7 @@
 
             <h4 style="margin-top:14px;">Required reviewers</h4>
             <div class="pr-reviewers">
-              <div class="pr-reviewer-row"><div class="av" style="background:var(--luna-purple-100);color:var(--luna-purple-700);">DC</div><div class="name">Marie Curie · IA</div><div class="status is-approved">✓ approved</div></div>
+              <div class="pr-reviewer-row"><div class="av" style="background:var(--luna-lime-100);color:var(--luna-lime-700);">DC</div><div class="name">Marie Curie · IA</div><div class="status is-approved">✓ approved</div></div>
               <div class="pr-reviewer-row"><div class="av" style="background:var(--luna-green-100);color:var(--luna-green-700);">MP</div><div class="name">M. Patel · CFO</div><div class="status is-approved">✓ approved</div></div>
               <div class="pr-reviewer-row"><div class="av" style="background:var(--luna-orange-100, #ffedd5);color:var(--luna-orange-700);">JV</div><div class="name">J. Vargas · A.C.</div><div class="status is-approved">✓ approved</div></div>
               <div class="pr-reviewer-row"><div class="av" style="background:var(--luna-gray-200);color:var(--luna-gray-600);">EA</div><div class="name">Deloitte (advisory)</div><div class="status is-pending">○ advisory only</div></div>

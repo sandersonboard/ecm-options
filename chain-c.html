@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Blockchain · Take C — Audit committee dashboard · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615e" />
-<link rel="stylesheet" href="styles.css?v=20260615e" />
+<link rel="stylesheet" href="tokens.css?v=20260615f" />
+<link rel="stylesheet" href="styles.css?v=20260615f" />
 <style>
   .ac-dash { max-width: 1200px; margin: 0 auto; background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); box-shadow: var(--luna-shadow-200); overflow: hidden; position: relative; }
   .ac-head { background: linear-gradient(135deg, var(--luna-gray-900), #0a3655); color: var(--luna-white); padding: 32px 40px; }
@@ -22,14 +22,14 @@
   .ac-head .kpi .delta.is-down { color: #ffa94d; }
 
   .ac-body { padding: 32px 40px; }
-  .ai-prep { padding: 20px 24px; background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50)); border: 1px solid var(--luna-purple-100); border-radius: var(--luna-radius-md); margin-bottom: 28px; }
+  .ai-prep { padding: 20px 24px; background: linear-gradient(135deg, var(--luna-lime-50), var(--luna-blue-50)); border: 1px solid var(--luna-lime-100); border-radius: var(--luna-radius-md); margin-bottom: 28px; }
   .ai-prep .head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .ai-prep h3 { font-size: 14px; font-weight: 700; color: var(--luna-purple-700); margin: 0; }
+  .ai-prep h3 { font-size: 14px; font-weight: 700; color: var(--luna-lime-700); margin: 0; }
   .ai-prep p { font-size: 14px; color: var(--luna-gray-800); line-height: 1.65; margin: 0 0 8px; }
   .ai-prep p strong { color: var(--luna-gray-900); }
   .ai-prep ul { margin: 6px 0 0; padding-left: 18px; font-size: 13px; color: var(--luna-gray-800); }
   .ai-prep ul li { margin-bottom: 4px; line-height: 1.5; cursor: pointer; }
-  .ai-prep ul li:hover { color: var(--luna-purple-700); text-decoration: underline; }
+  .ai-prep ul li:hover { color: var(--luna-lime-700); text-decoration: underline; }
 
   .ac-section { margin-bottom: 32px; }
   .ac-section h2 { font-size: 18px; font-weight: 700; margin: 0 0 14px; color: var(--luna-gray-900); letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; }
@@ -42,15 +42,15 @@
   .chain-event .when { font-size: 11px; color: var(--luna-gray-600); text-align: right; padding-top: 6px; font-family: ui-monospace, monospace; }
   .chain-event .dot-marker { width: 14px; height: 14px; background: var(--luna-teal-500); border-radius: 50%; margin: 8px 0 0 9px; box-shadow: 0 0 0 4px var(--luna-white), 0 0 0 5px var(--luna-gray-200); position: relative; z-index: 1; }
   .chain-event .dot-marker.is-finding { background: var(--luna-orange-500); }
-  .chain-event .dot-marker.is-block { background: var(--luna-purple-500); }
+  .chain-event .dot-marker.is-block { background: var(--luna-lime-500); }
   .chain-event .dot-marker.is-good { background: var(--luna-green-500); }
   .chain-event .body { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 6px; padding: 10px 14px; transition: box-shadow 0.12s, border-color 0.12s; }
   .chain-event .body .title { font-size: 13px; font-weight: 600; color: var(--luna-gray-900); }
   .chain-event .body .meta { font-size: 12px; color: var(--luna-gray-600); margin-top: 2px; }
   .chain-event .body.is-finding { border-left: 3px solid var(--luna-orange-500); background: var(--luna-orange-50); }
   .chain-event .body.is-good { border-left: 3px solid var(--luna-green-500); }
-  .chain-event .body.is-block { border-left: 3px solid var(--luna-purple-500); background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50)); }
-  .chain-event .body .hash { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-purple-700); background: rgba(105,49,227,0.08); padding: 1px 6px; border-radius: 3px; margin-left: 4px; }
+  .chain-event .body.is-block { border-left: 3px solid var(--luna-lime-500); background: linear-gradient(135deg, var(--luna-lime-50), var(--luna-blue-50)); }
+  .chain-event .body .hash { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-lime-700); background: rgba(105,49,227,0.08); padding: 1px 6px; border-radius: 3px; margin-left: 4px; }
 
   .footer-strip { background: var(--luna-gray-50); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--luna-gray-600); border-top: 1px solid var(--luna-gray-200); }
   .footer-strip .verify { padding: 6px 10px; background: var(--luna-green-50); color: var(--luna-green-700); border: 1px solid var(--luna-green-100); border-radius: 6px; font-weight: 600; font-size: 12px; }
@@ -78,8 +78,8 @@
   .modal-body .row { display: grid; grid-template-columns: 130px 1fr; gap: 6px 12px; padding: 8px 0; border-bottom: 1px solid var(--luna-gray-100); font-size: 13px; }
   .modal-body .row .k { color: var(--luna-gray-600); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; padding-top: 2px; }
   .modal-body .row .v { color: var(--luna-gray-900); }
-  .modal-body .row .v.hash { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-purple-700); word-break: break-all; }
-  .modal-body .ai-narration { margin-top: 12px; padding: 12px; background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50)); border-radius: 6px; font-size: 13px; line-height: 1.55; }
+  .modal-body .row .v.hash { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-lime-700); word-break: break-all; }
+  .modal-body .ai-narration { margin-top: 12px; padding: 12px; background: linear-gradient(135deg, var(--luna-lime-50), var(--luna-blue-50)); border-radius: 6px; font-size: 13px; line-height: 1.55; }
   .modal-foot { padding: 14px 22px; background: var(--luna-gray-50); border-top: 1px solid var(--luna-gray-200); display: flex; gap: 8px; justify-content: flex-end; }
 
   /* Share modal */
@@ -115,7 +115,7 @@
     </div>
     <div class="right-meta">
       <span class="luna-badge is-teal">Persona · PMO + Committee</span>
-      <span class="luna-badge is-purple">Noun · Evidence</span>
+      <span class="luna-badge is-lime">Noun · Evidence</span>
     </div>
   </div>
 
@@ -219,7 +219,7 @@
 
         <div class="footer-strip">
           <span class="verify">✓ All 218 evidence packets independently verifiable</span>
-          <span>Latest root <code style="font-family:ui-monospace,monospace;font-size:11px;background:var(--luna-purple-50);color:var(--luna-purple-700);padding:1px 5px;border-radius:3px;">0x91a3·c4ed·7b22·4f08·…</code> · <a href="chain-a.html">view receipt ↗</a></span>
+          <span>Latest root <code style="font-family:ui-monospace,monospace;font-size:11px;background:var(--luna-lime-50);color:var(--luna-lime-700);padding:1px 5px;border-radius:3px;">0x91a3·c4ed·7b22·4f08·…</code> · <a href="chain-a.html">view receipt ↗</a></span>
         </div>
       </div>
       <p class="surface-caption"><strong>State 1.</strong> The dashboard. The KPIs at the top, AI's 3-minute meeting prep below, the chain visualized as a timeline. Tap any chain event or finding to drill in.</p>
@@ -258,7 +258,7 @@
             <div class="row"><div class="k">Reviewer</div><div class="v">Marie Curie · Internal Audit</div></div>
 
             <div class="ai-narration">
-              <strong style="color:var(--luna-purple-700);">For the committee:</strong>
+              <strong style="color:var(--luna-lime-700);">For the committee:</strong>
               This is a <strong>control-design</strong> finding, not a <strong>control-operation</strong> finding —
               4.2.1 (the review control) <em>caught</em> the issue. The gap is upstream in
               <span class="ai-citation">5.1.2 (change approval)</span>. Carlos's root-cause analysis (due 10-22) will determine whether to remediate 5.1.2 design or expand its testing for Q4.
@@ -310,7 +310,7 @@
               <label><input type="checkbox" /> Allow Deloitte verifier (external auditor only)</label>
               <label><input type="checkbox" /> Slack the link to #board-audit-committee</label>
             </div>
-            <div style="margin-top:14px;padding:12px;background:linear-gradient(135deg,var(--luna-purple-50),var(--luna-blue-50));border-radius:6px;font-size:12px;color:var(--luna-gray-800);line-height:1.55;">
+            <div style="margin-top:14px;padding:12px;background:linear-gradient(135deg,var(--luna-lime-50),var(--luna-blue-50));border-radius:6px;font-size:12px;color:var(--luna-gray-800);line-height:1.55;">
               <span class="ai-chip">Optro ECM</span>
               <strong>Reading order for the committee:</strong>
               Meeting prep → timeline → r.taylor finding modal.

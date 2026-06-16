@@ -126,7 +126,7 @@
   background: var(--luna-gray-100);
   background-image:
     radial-gradient(circle at 20% 30%, var(--luna-teal-50), transparent 40%),
-    radial-gradient(circle at 80% 70%, var(--luna-purple-50), transparent 40%);
+    radial-gradient(circle at 80% 70%, var(--luna-lime-50), transparent 40%);
   border-radius: var(--luna-radius-lg);
   padding: 80px 24px;
   overflow: hidden;
@@ -204,7 +204,7 @@
 .slack-msg .head .name { font-weight: 700; color: var(--luna-gray-900); font-size: 14px; }
 .slack-msg .head .ts { font-size: 12px; color: var(--luna-gray-500); }
 .slack-msg .head .bot-tag {
-  background: var(--luna-purple-100); color: var(--luna-purple-700);
+  background: var(--luna-lime-100); color: var(--luna-lime-700);
   font-size: 10px; padding: 1px 6px; border-radius: 3px; font-weight: 700; letter-spacing: 0.03em;
 }
 .slack-msg p { margin: 4px 0; font-size: 14px; line-height: 1.5; color: var(--luna-gray-800); }
@@ -244,7 +244,7 @@
 .chain-receipt .receipt-row.is-last { border-bottom: none; }
 .chain-receipt .receipt-row .k { color: var(--luna-gray-600); text-transform: uppercase; font-size: 10px; letter-spacing: 0.04em; padding-top: 4px; font-weight: 700; font-family: var(--luna-fontFamily); }
 .chain-receipt .receipt-row .v { color: var(--luna-gray-900); word-break: break-all; }
-.chain-receipt .receipt-row .v.hash { font-size: 12px; color: var(--luna-purple-700); }
+.chain-receipt .receipt-row .v.hash { font-size: 12px; color: var(--luna-lime-700); }
 .chain-receipt .chain-step {
   margin: 12px 0;
   padding: 12px 14px;

@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>iPad · Take A — Pencil + findings · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615e" />
-<link rel="stylesheet" href="styles.css?v=20260615e" />
+<link rel="stylesheet" href="tokens.css?v=20260615f" />
+<link rel="stylesheet" href="styles.css?v=20260615f" />
 <style>
   .ipad-app { display: grid; grid-template-columns: 1fr 280px; gap: 12px; padding: 12px; background: var(--luna-gray-100); height: 100%; font-size: 13px; }
   .ipad-toolbar { grid-column: 1 / -1; background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; }
@@ -30,8 +30,8 @@
   .doc-attestation { padding: 10px 12px; background: var(--luna-gray-50); border: 1px dashed var(--luna-gray-300); border-radius: 4px; font-size: 11px; color: var(--luna-gray-700); }
   .ipad-side { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 8px; padding: 14px; overflow: auto; display: flex; flex-direction: column; gap: 12px; }
   .ipad-side h3 { margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); display: flex; align-items: center; gap: 6px; }
-  .ai-finding { padding: 10px 12px; background: linear-gradient(135deg, var(--luna-purple-50), var(--luna-blue-50)); border: 1px solid var(--luna-purple-100); border-left: 3px solid var(--luna-purple-500); border-radius: 4px; }
-  .ai-finding .head { font-size: 12px; font-weight: 600; color: var(--luna-purple-700); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .ai-finding { padding: 10px 12px; background: linear-gradient(135deg, var(--luna-lime-50), var(--luna-blue-50)); border: 1px solid var(--luna-lime-100); border-left: 3px solid var(--luna-lime-500); border-radius: 4px; }
+  .ai-finding .head { font-size: 12px; font-weight: 600; color: var(--luna-lime-700); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
   .ai-finding .body { font-size: 12px; color: var(--luna-gray-800); line-height: 1.5; }
   .ai-finding.is-warn { background: linear-gradient(135deg, var(--luna-orange-50), var(--luna-yellow-50)); border-color: var(--luna-orange-100); border-left-color: var(--luna-orange-500); }
   .ai-finding.is-warn .head { color: var(--luna-orange-700); }
@@ -41,9 +41,9 @@
   .verdict-card .label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 6px; }
   .verdict-card .options { display: flex; flex-direction: column; gap: 6px; }
   .verdict-card .opt { padding: 8px 10px; background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 4px; font-size: 12px; color: var(--luna-gray-700); display: flex; align-items: center; gap: 8px; cursor: pointer; }
-  .verdict-card .opt.is-suggested { border-color: var(--luna-purple-300); background: var(--luna-purple-50); color: var(--luna-purple-700); font-weight: 600; }
+  .verdict-card .opt.is-suggested { border-color: var(--luna-lime-300); background: var(--luna-lime-50); color: var(--luna-lime-700); font-weight: 600; }
   .verdict-card .opt .check { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--luna-gray-300); flex-shrink: 0; }
-  .verdict-card .opt.is-suggested .check { border-color: var(--luna-purple-500); background: radial-gradient(circle, var(--luna-purple-500) 40%, var(--luna-white) 50%); }
+  .verdict-card .opt.is-suggested .check { border-color: var(--luna-lime-500); background: radial-gradient(circle, var(--luna-lime-500) 40%, var(--luna-white) 50%); }
   .conf-mini { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--luna-gray-600); margin-top: 6px; }
 
   .signed-banner {
@@ -71,7 +71,7 @@
     </div>
     <div class="right-meta">
       <span class="luna-badge is-teal">Persona · Reviewer</span>
-      <span class="luna-badge is-purple">Noun · Evidence</span>
+      <span class="luna-badge is-lime">Noun · Evidence</span>
     </div>
   </div>
 
