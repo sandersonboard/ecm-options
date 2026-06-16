@@ -448,9 +448,14 @@
     position: relative;
     top: -1px;
   }
-  /* What's-next queue panel */
+  /* What's-next queue panel — expandable items + show-more */
   .slack-inline-panel .queue-list { display: flex; flex-direction: column; gap: 6px; }
+  .slack-inline-panel .q-wrap { display: flex; flex-direction: column; }
+  .slack-inline-panel .q-wrap.is-extra { display: none; }
+  .slack-inline-panel .q-wrap.is-extra.is-shown { display: flex; }
   .slack-inline-panel .queue-item {
+    appearance: none;
+    width: 100%;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -458,21 +463,25 @@
     background: var(--luna-white);
     border: 1px solid var(--luna-gray-200);
     border-radius: 6px;
-    text-decoration: none;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
     color: inherit;
-    transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    transition: background 0.15s, border-color 0.15s;
   }
   .slack-inline-panel .queue-item:hover {
     background: var(--luna-gray-50);
     border-color: var(--luna-gray-300);
-    text-decoration: none;
-    transform: translateX(2px);
+  }
+  .slack-inline-panel .q-wrap.is-expanded .queue-item {
+    border-radius: 6px 6px 0 0;
+    border-bottom-color: var(--luna-gray-100);
   }
   .slack-inline-panel .q-due {
     flex-shrink: 0;
-    width: 38px;
+    min-width: 38px;
     text-align: center;
-    padding: 4px 0;
+    padding: 4px 6px;
     background: var(--luna-blue-50);
     color: var(--luna-blue-700);
     border-radius: 4px;
@@ -494,13 +503,50 @@
     margin-top: 1px;
     line-height: 1.3;
   }
-  .slack-inline-panel .q-arrow {
+  .slack-inline-panel .q-chevron {
+    width: 12px; height: 12px;
     color: var(--luna-gray-400);
-    font-size: 14px;
     flex-shrink: 0;
+    transition: transform 0.2s, color 0.15s;
   }
-  .slack-inline-panel .queue-item:hover .q-arrow {
-    color: var(--luna-teal-500);
+  .slack-inline-panel .queue-item:hover .q-chevron { color: var(--luna-teal-500); }
+  .slack-inline-panel .q-wrap.is-expanded .q-chevron { transform: rotate(180deg); }
+  .slack-inline-panel .q-detail {
+    display: none;
+    padding: 10px 14px 12px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-top: 0;
+    border-radius: 0 0 6px 6px;
+    font-size: 12px;
+  }
+  .slack-inline-panel .q-wrap.is-expanded .q-detail { display: block; }
+  .slack-inline-panel .q-detail p { margin: 0 0 8px; color: var(--luna-gray-800); line-height: 1.5; }
+  .slack-inline-panel .qd-meta { display: flex; flex-direction: column; gap: 3px; font-size: 11.5px; color: var(--luna-gray-600); margin-bottom: 10px; }
+  .slack-inline-panel .qd-meta strong { color: var(--luna-gray-800); font-weight: 600; }
+  .slack-inline-panel .qd-actions { display: flex; gap: 6px; }
+  .slack-inline-panel .qd-actions a,
+  .slack-inline-panel .qd-actions button {
+    padding: 5px 10px;
+    font-size: 11.5px;
+    font-weight: 600;
+    border-radius: 4px;
+    border: 1px solid var(--luna-gray-300);
+    background: var(--luna-white);
+    color: var(--luna-gray-800);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .slack-inline-panel .qd-actions a:first-child {
+    background: var(--luna-teal-500);
+    color: var(--luna-white);
+    border-color: var(--luna-teal-500);
+  }
+  .slack-inline-panel .qd-actions a:first-child:hover { background: var(--luna-teal-600); border-color: var(--luna-teal-600); }
+  .slack-inline-panel .qd-actions .qd-defer:hover {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-400);
   }
 </style>
 </head>
@@ -768,28 +814,117 @@ ORDER BY user;</textarea>
               </div>
 
               <div class="slack-inline-panel" id="queue-panel" style="display:none;margin-top:10px;">
-                <div class="panel-label">Up next on your SOX queue · 2 due in the next 2 weeks</div>
+                <div class="panel-label">Up next on your SOX queue · <span id="queue-count">2</span> due in the next <span id="queue-window">2 weeks</span></div>
                 <div class="queue-list">
-                  <a class="queue-item" href="ipad-b.html" target="_blank" rel="noopener">
-                    <span class="q-due">Thu</span>
-                    <div class="q-text">
-                      <div class="q-title">Q3 segregation-of-duties review</div>
-                      <div class="q-meta">SOX control 5.1.1 · prod-payroll-svc · reviewed by Marie Curie</div>
+                  <div class="q-wrap" id="qw-q1">
+                    <button type="button" class="queue-item" onclick="toggleQueueItem('q1'); return false;">
+                      <span class="q-due">Thu</span>
+                      <div class="q-text">
+                        <div class="q-title">Q3 segregation-of-duties review</div>
+                        <div class="q-meta">SOX control 5.1.1 · prod-payroll-svc · reviewed by Marie Curie</div>
+                      </div>
+                      <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="q-detail" id="qd-q1">
+                      <p>Confirm no single user has both 'create' and 'approve' rights on payroll service accounts.</p>
+                      <div class="qd-meta">
+                        <span><strong>Last filed:</strong> Jun 14 (Q2) by you · 92% match to Q1 pattern</span>
+                        <span><strong>Reviewer SLA:</strong> 2 business days</span>
+                      </div>
+                      <div class="qd-actions">
+                        <a href="ipad-b.html" target="_blank" rel="noopener">Start review →</a>
+                        <button type="button" class="qd-defer">Defer 1 week</button>
+                      </div>
                     </div>
-                    <span class="q-arrow">→</span>
-                  </a>
-                  <a class="queue-item" href="ipad-b.html" target="_blank" rel="noopener">
-                    <span class="q-due">Mon</span>
-                    <div class="q-text">
-                      <div class="q-title">Q3 deployment review</div>
-                      <div class="q-meta">SOX control 4.2.2 · helios-deploy-pipeline · reviewed by Ada Lovelace</div>
+                  </div>
+                  <div class="q-wrap" id="qw-q2">
+                    <button type="button" class="queue-item" onclick="toggleQueueItem('q2'); return false;">
+                      <span class="q-due">Mon</span>
+                      <div class="q-text">
+                        <div class="q-title">Q3 deployment review</div>
+                        <div class="q-meta">SOX control 4.2.2 · helios-deploy-pipeline · reviewed by Ada Lovelace</div>
+                      </div>
+                      <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="q-detail" id="qd-q2">
+                      <p>Confirm every prod deployment in the quarter was tied to an approved change ticket.</p>
+                      <div class="qd-meta">
+                        <span><strong>Last filed:</strong> Jun 12 (Q2) by you · 88% match to Q1 pattern</span>
+                        <span><strong>Reviewer SLA:</strong> 2 business days</span>
+                      </div>
+                      <div class="qd-actions">
+                        <a href="ipad-b.html" target="_blank" rel="noopener">Start review →</a>
+                        <button type="button" class="qd-defer">Defer 1 week</button>
+                      </div>
                     </div>
-                    <span class="q-arrow">→</span>
-                  </a>
+                  </div>
+                  <div class="q-wrap is-extra" id="qw-q3">
+                    <button type="button" class="queue-item" onclick="toggleQueueItem('q3'); return false;">
+                      <span class="q-due">Sep 30</span>
+                      <div class="q-text">
+                        <div class="q-title">Q3 break-glass access review</div>
+                        <div class="q-meta">SOX control 4.2.5 · prod-db-01 · reviewed by Marie Curie</div>
+                      </div>
+                      <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="q-detail" id="qd-q3">
+                      <p>Confirm every emergency-access elevation was reviewed and rolled back within the SLA.</p>
+                      <div class="qd-meta">
+                        <span><strong>Last filed:</strong> Jun 18 (Q2) by you · no findings carried over</span>
+                        <span><strong>Reviewer SLA:</strong> 2 business days</span>
+                      </div>
+                      <div class="qd-actions">
+                        <a href="ipad-b.html" target="_blank" rel="noopener">Start review →</a>
+                        <button type="button" class="qd-defer">Defer 1 week</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="q-wrap is-extra" id="qw-q4">
+                    <button type="button" class="queue-item" onclick="toggleQueueItem('q4'); return false;">
+                      <span class="q-due">Oct 2</span>
+                      <div class="q-text">
+                        <div class="q-title">Q3 backup-restore verification</div>
+                        <div class="q-meta">SOX control 4.3.1 · prod-db-01 · reviewed by Ada Lovelace</div>
+                      </div>
+                      <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="q-detail" id="qd-q4">
+                      <p>Confirm Q3 nightly backups completed and a sample restore was run successfully.</p>
+                      <div class="qd-meta">
+                        <span><strong>Last filed:</strong> Jun 22 (Q2) by you · clean</span>
+                        <span><strong>Reviewer SLA:</strong> 2 business days</span>
+                      </div>
+                      <div class="qd-actions">
+                        <a href="ipad-b.html" target="_blank" rel="noopener">Start review →</a>
+                        <button type="button" class="qd-defer">Defer 1 week</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="q-wrap is-extra" id="qw-q5">
+                    <button type="button" class="queue-item" onclick="toggleQueueItem('q5'); return false;">
+                      <span class="q-due">Oct 5</span>
+                      <div class="q-text">
+                        <div class="q-title">Q3 schema-change approval</div>
+                        <div class="q-meta">SOX control 4.4.2 · prod-db-01 · reviewed by Marie Curie</div>
+                      </div>
+                      <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="q-detail" id="qd-q5">
+                      <p>Confirm every schema change was approved in a PR before being applied to prod.</p>
+                      <div class="qd-meta">
+                        <span><strong>Last filed:</strong> Jun 25 (Q2) by you · 1 carryover (HEL-3402)</span>
+                        <span><strong>Reviewer SLA:</strong> 2 business days</span>
+                      </div>
+                      <div class="qd-actions">
+                        <a href="ipad-b.html" target="_blank" rel="noopener">Start review →</a>
+                        <button type="button" class="qd-defer">Defer 1 week</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div class="panel-actions">
-                  <a class="open-external" href="ipad-b.html" target="_blank" rel="noopener">Open full queue ↗</a>
-                  <button onclick="toggleQueue(); return false;">Close</button>
+                  <button type="button" id="more-queue-btn" onclick="toggleMoreQueue(); return false;">Show 3 more ↓</button>
+                  <button type="button" onclick="toggleQueue(); return false;">Close</button>
                 </div>
               </div>
 
@@ -947,6 +1082,31 @@ ORDER BY user;</textarea>
     const willShow = panel.style.display === 'none' || !panel.style.display;
     panel.style.display = willShow ? 'block' : 'none';
     if (willShow) panel.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
+  function toggleQueueItem(id) {
+    const wrap = document.getElementById('qw-' + id);
+    if (!wrap) return;
+    wrap.classList.toggle('is-expanded');
+  }
+
+  function toggleMoreQueue() {
+    const extras = document.querySelectorAll('.q-wrap.is-extra');
+    const btn = document.getElementById('more-queue-btn');
+    const count = document.getElementById('queue-count');
+    const win = document.getElementById('queue-window');
+    if (!extras.length || !btn) return;
+    const showing = extras[0].classList.contains('is-shown');
+    extras.forEach(e => e.classList.toggle('is-shown', !showing));
+    if (showing) {
+      btn.textContent = 'Show 3 more ↓';
+      if (count) count.textContent = '2';
+      if (win) win.textContent = '2 weeks';
+    } else {
+      btn.textContent = 'Show fewer ↑';
+      if (count) count.textContent = '5';
+      if (win) win.textContent = '30 days';
+    }
   }
 
   function resetFlow() {
