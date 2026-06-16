@@ -743,7 +743,7 @@
     margin-left: 4px;
   }
 
-  /* Flagged-for-Marie: routed to her for the decision; not approved by Weston */
+  /* Flagged-for-Marie: routed to her for the decision; not approved by Jennifer */
   .slack-evidence-card.is-pending-marie {
     background: #fffbeb;
     border-color: #fde68a;
@@ -1558,7 +1558,7 @@
                 <span class="bot-tag">APP</span>
                 <span class="ts">Friday · 2:48 PM</span>
               </div>
-              <p>Hi Weston. Your quarterly access check is due Monday. <strong>94 of 100 rows haven't changed</strong> since <button type="button" class="prior-link" onclick="toggleQ2Ref(); return false;">your Q2 filing →</button>. Here are the <strong>6 that did</strong>.</p>
+              <p>Hi Jennifer. Your quarterly access check is due Monday. <strong>94 of 100 rows haven't changed</strong> since <button type="button" class="prior-link" onclick="toggleQ2Ref(); return false;">your Q2 filing →</button>. Here are the <strong>6 that did</strong>.</p>
 
               <div class="slack-inline-panel" id="q2-ref" style="display:none;">
                 <div class="panel-label">
@@ -1732,7 +1732,7 @@
 
                 <div class="resolved-status">
                   <span class="check">✓</span>
-                  <span class="msg">Approved &amp; filed by Weston <span class="meta">· Sep 25 · 3:11 PM PT</span></span>
+                  <span class="msg">Approved &amp; filed by Jennifer <span class="meta">· Sep 25 · 3:11 PM PT</span></span>
                 </div>
               </div>
             </div>
@@ -1821,10 +1821,10 @@
                     <span class="ai-chip">For Marie</span>
                     Review request · AR-Q3FY26-prod-db
                   </div>
-                  <div class="marie-view-meta">Submitted by Weston · 3:11 PM PT · SLA: 2 business days</div>
+                  <div class="marie-view-meta">Submitted by Jennifer · 3:11 PM PT · SLA: 2 business days</div>
                   <div class="marie-view-summary">
                     <div class="marie-summary-label">AI summary for reviewer</div>
-                    <p>22 accounts. Pattern matches Q2 closely. <strong>1 unexplained drift</strong> needs your attention. r.taylor escalated from dba-read to dba-admin on Sep 11. Weston linked approval ticket HEL-3482. One carryover (contractor-svc-09, HEL-3471) is unchanged from your Q2 sign-off.</p>
+                    <p>22 accounts. Pattern matches Q2 closely. <strong>1 unexplained drift</strong> needs your attention. r.taylor escalated from dba-read to dba-admin on Sep 11. Jennifer linked approval ticket HEL-3482. One carryover (contractor-svc-09, HEL-3471) is unchanged from your Q2 sign-off.</p>
                   </div>
                   <div class="marie-view-actions">
                     <button class="primary" type="button" disabled>Accept</button>
@@ -1961,7 +1961,7 @@
                 <div class="panel-label">Filing details · AR-Q3FY26-prod-db</div>
                 <div class="receipt-grid">
                   <span class="r-k">Artifact</span><span class="r-v">AR-Q3FY26-prod-db.png · 1.2 MB</span>
-                  <span class="r-k">Filed by</span><span class="r-v">Weston Prohaska · @weston</span>
+                  <span class="r-k">Filed by</span><span class="r-v">Jennifer Ng · @weston</span>
                   <span class="r-k">Control</span><span class="r-v">4.2.1<a class="optro-link" href="ipad-b.html" target="_blank" rel="noopener" title="Open control 4.2.1 in Optro" aria-label="Open in new tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a> · quarterly user-access review · prod-db-01</span>
                   <span class="r-k">Classifier</span><span class="r-v">93% match to Q2 sign-off pattern</span>
                   <span class="r-k">Routed to</span><span class="r-v">Marie Curie · Internal Audit</span>
@@ -2007,7 +2007,7 @@
       },
       {
         title: 'Compare with last quarter',
-        body: 'The Q2 filing link is right where Weston is already reading. No portal hop.<span class="tour-why"><strong>Why:</strong> The delta only makes sense against what came before. Make the prior easy to glance at.</span>',
+        body: 'The Q2 filing link is right where Jennifer is already reading. No portal hop.<span class="tour-why"><strong>Why:</strong> The delta only makes sense against what came before. Make the prior easy to glance at.</span>',
         selector: '.prior-link',
       },
       {
@@ -2022,7 +2022,7 @@
       },
       {
         title: 'Confirm the deltas',
-        body: 'One primary action. Hover to see what happens: deltas plus the 94 unchanged rows are filed together, audit-trail entry written, Marie notified, SLA starts.<span class="tour-why"><strong>Why:</strong> A reuse-aware workflow still files a complete roster. Marie sees the full 100 rows in her view, even though Weston only reviewed 6.</span>',
+        body: 'One primary action. Hover to see what happens: deltas plus the 94 unchanged rows are filed together, audit-trail entry written, Marie notified, SLA starts.<span class="tour-why"><strong>Why:</strong> A reuse-aware workflow still files a complete roster. Marie sees the full 100 rows in her view, even though Jennifer only reviewed 6.</span>',
         selector: '.slack-evidence-card .approve-wrap',
       },
       {
@@ -2052,12 +2052,12 @@
       },
       {
         title: 'What happens next',
-        body: 'After filing, the bot tells Weston what\'s next. Marie has two business days, and Slack will DM him if she has questions. Each chip shows how she was notified, with a green check for delivered. <strong>+ Add channel</strong> sends the review via Email, Teams, a Calendar block, a ServiceNow ticket, or a Jira issue.<span class="tour-why"><strong>Why:</strong> A post-action message should help Weston decide what\'s next, not echo the card. The delivery check makes notification state visible at a glance.</span>',
+        body: 'After filing, the bot tells Jennifer what\'s next. Marie has two business days, and Slack will DM him if she has questions. Each chip shows how she was notified, with a green check for delivered. <strong>+ Add channel</strong> sends the review via Email, Teams, a Calendar block, a ServiceNow ticket, or a Jira issue.<span class="tour-why"><strong>Why:</strong> A post-action message should help Jennifer decide what\'s next, not echo the card. The delivery check makes notification state visible at a glance.</span>',
         selector: '#filed-msg .notify-row',
       },
       {
         title: "Marie's review, visible",
-        body: 'Once filed, Weston can see where Marie is in her review without joining her thread. <strong>peek at what Marie sees →</strong> previews her surface: the same artifact, a short AI summary, and her accept/send-back controls.<span class="tour-why"><strong>Why:</strong> Marie reviews around 50 controls a quarter. She needs a queue of her own, not 50 multi-person DMs. Separate threads also let her keep private review notes the owner shouldn\'t see. The status row gives Weston visibility without joining her work.</span>',
+        body: 'Once filed, Jennifer can see where Marie is in her review without joining her thread. <strong>peek at what Marie sees →</strong> previews her surface: the same artifact, a short AI summary, and her accept/send-back controls.<span class="tour-why"><strong>Why:</strong> Marie reviews around 50 controls a quarter. She needs a queue of her own, not 50 multi-person DMs. Separate threads also let her keep private review notes the owner shouldn\'t see. The status row gives Jennifer visibility without joining her work.</span>',
         selector: '#marie-status',
         before: function () {
           var p = document.getElementById('peek-panel');
@@ -2070,7 +2070,7 @@
       },
             {
         title: "What's next",
-        body: '<strong>What\'s next →</strong> opens Weston\'s upcoming SOX queue inline. Each item expands to show the control, the last filing, the reviewer, and a Start review action.<span class="tour-why"><strong>Why:</strong> After a filing, the useful next move is forward. The queue gives Weston his next task without leaving the thread.</span>',
+        body: '<strong>What\'s next →</strong> opens Jennifer\'s upcoming SOX queue inline. Each item expands to show the control, the last filing, the reviewer, and a Start review action.<span class="tour-why"><strong>Why:</strong> After a filing, the useful next move is forward. The queue gives Jennifer his next task without leaving the thread.</span>',
         selector: '#queue-panel',
         before: function () {
           ['receipt-panel', 'peek-panel'].forEach(function (id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
@@ -2084,7 +2084,7 @@
       },
       {
         title: 'Filing details, opened',
-        body: '<strong>View filing details</strong> opens the audit-trail entry inline. It lists the artifact, the verdict, who reviews it, the SLA, when it was filed, the model signature, and the tamper seal. Any note Weston attached shows up here too.<span class="tour-why"><strong>Why:</strong> Forward intent (the queue) and backward intent (the audit trail) shouldn\'t share a UI. This panel is what the external auditor sees during Q3 testing.</span>',
+        body: '<strong>View filing details</strong> opens the audit-trail entry inline. It lists the artifact, the verdict, who reviews it, the SLA, when it was filed, the model signature, and the tamper seal. Any note Jennifer attached shows up here too.<span class="tour-why"><strong>Why:</strong> Forward intent (the queue) and backward intent (the audit trail) shouldn\'t share a UI. This panel is what the external auditor sees during Q3 testing.</span>',
         selector: '#receipt-panel',
         before: function () {
           ['queue-panel', 'peek-panel'].forEach(function (id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
@@ -2548,7 +2548,7 @@
           p.style.paddingTop = '8px';
           p.style.borderTop = '1px solid var(--luna-gray-200)';
           p.style.fontStyle = 'italic';
-          p.innerHTML = '<strong>Note from Weston:</strong> ' + noteText;
+          p.innerHTML = '<strong>Note from Jennifer:</strong> ' + noteText;
           summary.appendChild(p);
         }
       }
