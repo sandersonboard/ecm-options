@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615p" />
-<link rel="stylesheet" href="styles.css?v=20260615p" />
+<link rel="stylesheet" href="tokens.css?v=20260615q" />
+<link rel="stylesheet" href="styles.css?v=20260615q" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -699,12 +699,12 @@
                   <button class="primary" onclick="runFlow(); return false;">✓ Approve &amp; file</button>
                 </div>
                 <button class="row-review-link" type="button" onclick="toggleRowReview(); return false;">
-                  Something looks off? Review row-by-row →
+                  Review the evidence →
                 </button>
 
                 <div class="slack-inline-panel" id="row-review-panel" style="display:none;">
-                  <div class="panel-label">Review row-by-row</div>
-                  <p class="row-review-intro">All 22 rows in the suggested artifact. ECM flagged <strong>2 rows</strong> for your attention.</p>
+                  <div class="panel-label">Evidence preview</div>
+                  <p class="row-review-intro">Full draft of what would be filed. ECM flagged <strong>2 items</strong> for your attention.</p>
                   <div class="csv-preview">
                     <table>
                       <thead><tr><th>user</th><th>role</th><th>last_login</th><th>attested</th></tr></thead>
@@ -722,7 +722,7 @@
                       </tbody>
                     </table>
                   </div>
-                  <p class="row-review-note">The 2 flagged rows are explained: one is a carryover Marie already signed off on last quarter, the other has a linked approval ticket. Both will be visible in Marie's review.</p>
+                  <p class="row-review-note">Both flagged items are explained: one is a carryover Marie already signed off on last quarter, the other has a linked approval ticket. Both will be visible in Marie's review.</p>
                   <div class="panel-actions">
                     <button class="primary" onclick="runFlow(); toggleRowReview(); return false;">Looks good — Approve &amp; file</button>
                     <button onclick="toggleRowReview(); return false;">Close</button>
