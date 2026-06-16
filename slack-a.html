@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615r" />
-<link rel="stylesheet" href="styles.css?v=20260615r" />
+<link rel="stylesheet" href="tokens.css?v=20260615s" />
+<link rel="stylesheet" href="styles.css?v=20260615s" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -106,6 +106,27 @@
     visibility: visible;
     transform: translateY(0);
   }
+  /* Pre/post-fil state swaps */
+  .slack-evidence-card .state-post { display: none; }
+  .slack-evidence-card.is-resolved .state-pre { display: none; }
+  .slack-evidence-card.is-resolved .state-post { display: inline; }
+  .slack-evidence-card.is-resolved .row-review-link { display: none; }
+  .slack-evidence-card.is-resolved {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-200);
+  }
+  .slack-evidence-card .artifact-line {
+    font-size: 12px;
+    color: var(--luna-gray-700);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .slack-evidence-card .artifact-and {
+    color: var(--luna-gray-500);
+  }
+
   .slack-evidence-card .actions { display: flex; gap: 6px; margin-top: 8px; }
   .slack-evidence-card .row-review-link {
     appearance: none;
@@ -686,7 +707,8 @@
               <div class="slack-evidence-card">
                 <div class="head">
                   <span class="ai-chip">Optro ECM</span>
-                  Access list draft · prod-db-01
+                  <span class="state-pre">Access list draft · prod-db-01</span>
+                  <span class="state-post">Filed access list · prod-db-01</span>
                 </div>
                 <div class="meta">Access review · SOX control 4.2.1 · quarterly · Reviewer: Marie Curie</div>
                 <div class="conf-row">
@@ -707,9 +729,11 @@
                     </span>
                   </span>
                 </div>
-                <div style="font-size:12px;color:var(--luna-gray-700);">
-                  Suggested artifact:
-                  <button class="artifact-chip" onclick="toggleArtifact('csv'); return false;"><span class="ai-citation">snow-query-AR-prod-db.csv</span></button> +
+                <div class="artifact-line">
+                  <span class="state-pre">Suggested artifact:</span>
+                  <span class="state-post">Filed artifact:</span>
+                  <button class="artifact-chip" onclick="toggleArtifact('csv'); return false;"><span class="ai-citation">snow-query-AR-prod-db.csv</span></button>
+                  <span class="artifact-and">and</span>
                   <button class="artifact-chip" onclick="toggleArtifact('email'); return false;"><span class="ai-citation">DBA attestation email</span></button>
                 </div>
                 <div class="actions">
