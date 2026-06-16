@@ -157,8 +157,10 @@
   overflow: hidden;
   display: grid;
   grid-template-columns: 240px 1fr;
-  min-height: 580px;
+  height: 640px;
 }
+.slack-sidebar { overflow-y: auto; }
+.slack-main { min-height: 0; }
 .slack-sidebar {
   background: #19171d;
   color: #d1d2d3;

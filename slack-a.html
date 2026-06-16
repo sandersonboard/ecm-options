@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615o" />
-<link rel="stylesheet" href="styles.css?v=20260615o" />
+<link rel="stylesheet" href="tokens.css?v=20260615p" />
+<link rel="stylesheet" href="styles.css?v=20260615p" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -92,6 +92,43 @@
     transform: translateY(0);
   }
   .slack-evidence-card .actions { display: flex; gap: 6px; margin-top: 8px; }
+  .slack-evidence-card .row-review-link {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 6px 0 0;
+    margin-top: 2px;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--luna-gray-600);
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.15s;
+  }
+  .slack-evidence-card .row-review-link:hover {
+    color: var(--luna-teal-500);
+    text-decoration: underline;
+  }
+  .slack-inline-panel .row-review-intro,
+  .slack-inline-panel .row-review-note {
+    font-size: 12px;
+    color: var(--luna-gray-700);
+    line-height: 1.5;
+    margin: 0 0 8px;
+  }
+  .slack-inline-panel .row-review-note { margin-top: 8px; margin-bottom: 0; font-style: italic; color: var(--luna-gray-600); }
+  .slack-inline-panel .row-warn .row-flag {
+    font-size: 9.5px;
+    margin-left: 6px;
+    padding: 1px 6px;
+    background: #fff8eb;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+  }
   .slack-evidence-card .actions button {
     padding: 6px 12px; font-size: 12px; font-weight: 600;
     border-radius: 5px; border: 1px solid var(--luna-gray-300);
@@ -660,37 +697,35 @@
                 </div>
                 <div class="actions">
                   <button class="primary" onclick="runFlow(); return false;">✓ Approve &amp; file</button>
-                  <button onclick="toggleQueryEditor(); return false;">Edit query</button>
-                  <button onclick="toggleFilePicker(); return false;">Upload your own</button>
                 </div>
+                <button class="row-review-link" type="button" onclick="toggleRowReview(); return false;">
+                  Something looks off? Review row-by-row →
+                </button>
 
-                <div class="slack-inline-panel" id="query-editor-panel" style="display:none;">
-                  <div class="panel-label">ServiceNow query · prefilled from Q2</div>
-                  <textarea spellcheck="false" id="query-editor-text">SELECT user, role, last_login, attested
-FROM access_audit
-WHERE system = 'prod-db-01'
-  AND fiscal_quarter = 'Q3FY26'
-ORDER BY user;</textarea>
-                  <div style="font-size:11px;color:var(--luna-gray-500);margin-top:6px;">Optro will re-run the query and update the suggested artifact.</div>
+                <div class="slack-inline-panel" id="row-review-panel" style="display:none;">
+                  <div class="panel-label">Review row-by-row</div>
+                  <p class="row-review-intro">All 22 rows in the suggested artifact. ECM flagged <strong>2 rows</strong> for your attention.</p>
+                  <div class="csv-preview">
+                    <table>
+                      <thead><tr><th>user</th><th>role</th><th>last_login</th><th>attested</th></tr></thead>
+                      <tbody>
+                        <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-09-25</td><td>✓</td></tr>
+                        <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-09-22</td><td>✓</td></tr>
+                        <tr class="row-warn"><td>contractor-svc-09</td><td>dba-admin</td><td>2026-04-12</td><td>— <span class="row-flag">carryover, HEL-3471</span></td></tr>
+                        <tr><td>k.singh@helios.com</td><td>dba-read</td><td>2026-09-19</td><td>✓</td></tr>
+                        <tr class="row-warn"><td>r.taylor@helios.com</td><td><strong>dba-admin</strong></td><td>2026-09-11</td><td>✓ <span class="row-flag">escalated from dba-read, approval HEL-3482</span></td></tr>
+                        <tr><td>n.lee@helios.com</td><td>dba-read</td><td>2026-09-23</td><td>✓</td></tr>
+                        <tr><td>app-svc-prod</td><td>app-svc</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                        <tr><td>backups-svc</td><td>backups</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                        <tr><td>etl-svc</td><td>etl</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                        <tr class="row-more"><td colspan="4">… 13 more rows, all routine</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p class="row-review-note">The 2 flagged rows are explained: one is a carryover Marie already signed off on last quarter, the other has a linked approval ticket. Both will be visible in Marie's review.</p>
                   <div class="panel-actions">
-                    <button class="primary" onclick="closePanelsThenRun(); return false;">Save &amp; file</button>
-                    <button onclick="toggleQueryEditor(); return false;">Cancel</button>
-                  </div>
-                </div>
-
-                <div class="slack-inline-panel" id="file-picker-panel" style="display:none;">
-                  <div class="panel-label">Upload your own evidence</div>
-                  <div class="slack-dropzone" id="dropzone-area" onclick="fakeUpload(); return false;">
-                    Drop a file, or <span class="picker-link">click to browse</span>
-                  </div>
-                  <div class="slack-upload-preview" id="upload-preview">
-                    <span class="check">✓</span>
-                    <span class="fname">AR-Q3FY26-prod-db.csv</span>
-                    <span class="size">42 KB · just now</span>
-                  </div>
-                  <div class="panel-actions">
-                    <button class="primary" id="file-now-btn" disabled style="opacity:0.5;cursor:not-allowed;" onclick="closePanelsThenRun(); return false;">File now</button>
-                    <button onclick="toggleFilePicker(); return false;">Cancel</button>
+                    <button class="primary" onclick="runFlow(); toggleRowReview(); return false;">Looks good — Approve &amp; file</button>
+                    <button onclick="toggleRowReview(); return false;">Close</button>
                   </div>
                 </div>
 
@@ -973,43 +1008,13 @@ ORDER BY user;</textarea>
 <script>
   let flowStarted = false;
 
-  function toggleQueryEditor() {
+  function toggleRowReview() {
     if (flowStarted) return;
-    const ed = document.getElementById('query-editor-panel');
-    const fp = document.getElementById('file-picker-panel');
-    if (!ed) return;
-    const willShow = ed.style.display === 'none' || !ed.style.display;
-    ed.style.display = willShow ? 'block' : 'none';
-    if (fp) fp.style.display = 'none';
-    if (willShow) {
-      const ta = document.getElementById('query-editor-text');
-      if (ta) ta.focus();
-    }
-  }
-  function toggleFilePicker() {
-    if (flowStarted) return;
-    const fp = document.getElementById('file-picker-panel');
-    const ed = document.getElementById('query-editor-panel');
-    if (!fp) return;
-    const willShow = fp.style.display === 'none' || !fp.style.display;
-    fp.style.display = willShow ? 'block' : 'none';
-    if (ed) ed.style.display = 'none';
-  }
-  function fakeUpload() {
-    const prev = document.getElementById('upload-preview');
-    const btn = document.getElementById('file-now-btn');
-    const dz = document.getElementById('dropzone-area');
-    if (prev) prev.classList.add('is-shown');
-    if (btn) {
-      btn.disabled = false;
-      btn.style.opacity = '1';
-      btn.style.cursor = 'pointer';
-    }
-    if (dz) {
-      dz.style.borderColor = 'var(--luna-green-500)';
-      dz.style.background = 'var(--luna-green-50)';
-      dz.innerHTML = '✓ File selected. Ready to file.';
-    }
+    const p = document.getElementById('row-review-panel');
+    if (!p) return;
+    const willShow = p.style.display === 'none' || !p.style.display;
+    p.style.display = willShow ? 'block' : 'none';
+    if (willShow) p.scrollIntoView({behavior: 'smooth', block: 'center'});
   }
 
   function reveal(el) {
@@ -1032,14 +1037,6 @@ ORDER BY user;</textarea>
     if (card) card.classList.add('is-resolved');
     // Bot's filed confirmation lands shortly after the click
     setTimeout(() => reveal(document.getElementById('filed-msg')), 600);
-  }
-
-  function closePanelsThenRun() {
-    const ed = document.getElementById('query-editor-panel');
-    const fp = document.getElementById('file-picker-panel');
-    if (ed) ed.style.display = 'none';
-    if (fp) fp.style.display = 'none';
-    runFlow();
   }
 
   function toggleArtifact(which) {
@@ -1144,7 +1141,7 @@ hide(document.getElementById('filed-msg'));
     if (card) card.classList.remove('is-resolved');
 
     // Close any open inline panels
-    ['query-editor-panel', 'file-picker-panel', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel'].forEach(id => {
+    ['row-review-panel', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
