@@ -375,149 +375,82 @@
   .slack-evidence-card.is-needs-redraft .review-evidence-link,
   .slack-evidence-card.is-pending-marie .review-evidence-link { display: none; }
 
-  /* Delta-first UI (slack-d) — quiet, single column, no heavy chrome */
-  .slack-evidence-card .delta-bar {
-    margin: 14px 0 14px;
-  }
-  .slack-evidence-card .delta-bar .db-track {
-    display: flex;
-    height: 6px;
-    border-radius: 3px;
-    overflow: hidden;
-    background: var(--luna-gray-100);
-  }
-  .slack-evidence-card .delta-bar .db-fill-unchanged {
-    background: var(--luna-gray-300);
-  }
-  .slack-evidence-card .delta-bar .db-fill-changed {
-    background: #f59e0b;
-  }
-  .slack-evidence-card .delta-bar .db-legend {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    margin-top: 8px;
-    font-size: 12px;
-    color: var(--luna-gray-700);
-  }
-  .slack-evidence-card .delta-bar .db-leg-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .slack-evidence-card .delta-bar .db-leg-item strong {
+  /* Delta-first UI (slack-d) — prose-driven, single accent color, no widgets */
+  .slack-evidence-card .delta-section-label {
+    font-size: 10.5px;
     font-weight: 700;
-    color: var(--luna-gray-900);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--luna-gray-500);
+    margin: 12px 0 6px;
   }
-  .slack-evidence-card .delta-bar .db-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .slack-evidence-card .delta-bar .db-dot-unchanged { background: var(--luna-gray-300); }
-  .slack-evidence-card .delta-bar .db-dot-changed   { background: #f59e0b; }
-
   .slack-evidence-card .delta-list {
     list-style: none;
     margin: 0 0 14px;
     padding: 0;
-    border-top: 1px solid var(--luna-gray-100);
   }
   .slack-evidence-card .delta-list .dl-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.5fr) auto;
-    align-items: center;
-    gap: 12px;
     padding: 9px 0;
-    border-bottom: 1px solid var(--luna-gray-100);
+    border-top: 1px solid var(--luna-gray-100);
     font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--luna-gray-800);
   }
-  .slack-evidence-card .delta-list .dl-user {
-    color: var(--luna-gray-900);
+  .slack-evidence-card .delta-list .dl-row:last-child {
+    border-bottom: 1px solid var(--luna-gray-100);
+  }
+  .slack-evidence-card .delta-list .dl-row .dl-user {
     font-family: ui-monospace, "SF Mono", monospace;
     font-size: 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .slack-evidence-card .delta-list .dl-change {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-  }
-  .slack-evidence-card .delta-list .dl-pill {
-    display: inline-flex;
-    align-items: center;
-    padding: 1px 7px;
-    border-radius: 3px;
-    font-size: 11.5px;
+    color: var(--luna-gray-900);
     font-weight: 600;
+  }
+  .slack-evidence-card .delta-list .dl-row code {
     font-family: ui-monospace, "SF Mono", monospace;
-    line-height: 1.5;
-    flex-shrink: 0;
-  }
-  .slack-evidence-card .delta-list .dl-pill.is-add {
-    background: #ecfdf5;
-    color: #047857;
-  }
-  .slack-evidence-card .delta-list .dl-pill.is-remove {
-    background: #fef2f2;
-    color: #b91c1c;
-  }
-  .slack-evidence-card .delta-list .dl-pill.is-carry {
-    background: #fffbeb;
-    color: #92400e;
-  }
-  .slack-evidence-card .delta-list .dl-context {
-    color: var(--luna-gray-500);
     font-size: 11.5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    padding: 1px 5px;
+    background: var(--luna-gray-100);
+    border-radius: 3px;
+    color: var(--luna-gray-800);
   }
-  .slack-evidence-card .delta-list .dl-ticket {
+  .slack-evidence-card .delta-list .dl-row .dl-ticket {
     color: var(--luna-teal-600);
-    font-size: 11.5px;
-    font-weight: 500;
     text-decoration: none;
-    cursor: pointer;
-    flex-shrink: 0;
-    font-family: ui-monospace, "SF Mono", monospace;
+    font-weight: 500;
+    margin-left: 4px;
   }
-  .slack-evidence-card .delta-list .dl-ticket:hover {
+  .slack-evidence-card .delta-list .dl-row .dl-ticket:hover {
     color: var(--luna-teal-700);
     text-decoration: underline;
     text-underline-offset: 2px;
   }
-
-  .slack-evidence-card .show-all-toggle {
-    appearance: none;
-    background: none;
-    border: 0;
-    padding: 10px 0 0;
-    font: inherit;
+  .slack-evidence-card .delta-footnote {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 10px;
     font-size: 11.5px;
-    font-weight: 500;
+  }
+  .slack-evidence-card .delta-footnote .df-link {
+    appearance: none; background: none; border: 0; padding: 0;
+    font: inherit; font-size: 11.5px;
     color: var(--luna-gray-500);
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: color 0.15s;
+    text-decoration: underline; text-underline-offset: 2px;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.15s, color 0.15s;
   }
-  .slack-evidence-card .show-all-toggle .sa-chev {
-    width: 10px; height: 10px;
-    stroke: currentColor;
-    transition: transform 0.2s;
-    flex-shrink: 0;
+  .slack-evidence-card .delta-footnote .df-link:hover {
+    color: var(--luna-gray-900);
+    text-decoration-color: currentColor;
   }
-  .slack-evidence-card .show-all-toggle.is-open .sa-chev { transform: rotate(180deg); }
-  .slack-evidence-card .show-all-toggle:hover { color: var(--luna-gray-900); }
+  .slack-evidence-card.is-resolved .delta-footnote,
+  .slack-evidence-card.is-deferred .delta-footnote,
+  .slack-evidence-card.is-needs-redraft .delta-footnote { display: none; }
+
   .slack-evidence-card .show-all-panel[hidden] { display: none; }
   .slack-evidence-card .show-all-panel {
-    margin-top: 10px;
+    margin-top: 12px;
     padding: 12px 0 0;
     border-top: 1px solid var(--luna-gray-100);
   }
@@ -527,10 +460,6 @@
     color: var(--luna-gray-500);
     line-height: 1.45;
   }
-  .slack-evidence-card.is-resolved .show-all-toggle,
-  .slack-evidence-card.is-deferred .show-all-toggle,
-  .slack-evidence-card.is-needs-redraft .show-all-toggle,
-  .slack-evidence-card.is-pending-marie .show-all-toggle,
   .slack-evidence-card.is-resolved .show-all-panel,
   .slack-evidence-card.is-deferred .show-all-panel,
   .slack-evidence-card.is-needs-redraft .show-all-panel,
@@ -1662,57 +1591,13 @@
                   <a class="record-title-link state-pre" href="chain-a.html" target="_blank" rel="noopener" title="Open draft record in Optro">Access list deltas · prod-db-01<svg class="record-title-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
                   <a class="record-title-link state-post" href="chain-a.html" target="_blank" rel="noopener" title="Open filed record in Optro">Filed access list · prod-db-01<svg class="record-title-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
                 </div>
-                <div class="meta">Compliance Assessment · SOC 2 CC6.1 · quarterly · Reviewer: Marie Curie</div>
-
-                <div class="delta-bar" aria-label="100 rows, 94 unchanged, 6 changed">
-                  <div class="db-track">
-                    <div class="db-fill-unchanged" style="width:94%"></div>
-                    <div class="db-fill-changed" style="width:6%"></div>
-                  </div>
-                  <div class="db-legend">
-                    <span class="db-leg-item"><span class="db-dot db-dot-unchanged"></span><strong>94</strong> unchanged since Q2</span>
-                    <span class="db-leg-item"><span class="db-dot db-dot-changed"></span><strong>6</strong> changes need review</span>
-                  </div>
-                </div>
-
-                <ul class="delta-list">
-                  <li class="dl-row">
-                    <span class="dl-user">r.taylor@helios.com</span>
-                    <span class="dl-change"><span class="dl-pill is-add">+ dba-admin</span><span class="dl-context">was dba-read</span></span>
-                    <a class="dl-ticket" title="Opens this ticket in the Optro platform">HEL-3482 ↗</a>
-                  </li>
-                  <li class="dl-row">
-                    <span class="dl-user">contractor-svc-09</span>
-                    <span class="dl-change"><span class="dl-pill is-carry">carryover</span><span class="dl-context">dba-admin · open since Q2</span></span>
-                    <a class="dl-ticket" title="Opens this ticket in the Optro platform">HEL-3471 ↗</a>
-                  </li>
-                  <li class="dl-row">
-                    <span class="dl-user">n.lee@helios.com</span>
-                    <span class="dl-change"><span class="dl-pill is-add">+ dba-read</span><span class="dl-context">new hire</span></span>
-                    <a class="dl-ticket" title="Opens this ticket in the Optro platform">OPS-2208 ↗</a>
-                  </li>
-                  <li class="dl-row">
-                    <span class="dl-user">s.park@helios.com</span>
-                    <span class="dl-change"><span class="dl-pill is-remove">− dba-admin</span><span class="dl-context">revoked Aug 8</span></span>
-                    <a class="dl-ticket" title="Opens this ticket in the Optro platform">OPS-2199 ↗</a>
-                  </li>
-                  <li class="dl-row">
-                    <span class="dl-user">deploy-svc</span>
-                    <span class="dl-change"><span class="dl-pill is-add">+ deploy</span><span class="dl-context">new service account</span></span>
-                    <a class="dl-ticket" title="Opens this ticket in the Optro platform">OPS-2211 ↗</a>
-                  </li>
-                  <li class="dl-row">
-                    <span class="dl-user">etl-old</span>
-                    <span class="dl-change"><span class="dl-pill is-remove">− etl</span><span class="dl-context">decommissioned</span></span>
-                    <a class="dl-ticket" title="Opens this ticket in the Optro platform">OPS-2188 ↗</a>
-                  </li>
-                </ul>
+                <div class="meta">Compliance Assessment · SOC 2 CC6.1 · quarterly</div>
 
                 <div class="conf-row">
                   <span>Sufficiency check:</span>
                   <span class="suff-verdict">
                     <span class="suff-check" aria-hidden="true">✓</span>
-                    <strong>All 6 deltas have explanations</strong>
+                    <strong>All 6 changes have explanations</strong>
                   </span>
                   <span class="conf-why-wrap" tabindex="0">
                     <button class="conf-why" type="button" aria-label="What ECM evaluated" aria-expanded="false" onclick="toggleConfWhy(this); return false;">?</button>
@@ -1728,6 +1613,16 @@
                   </span>
                 </div>
 
+                <div class="delta-section-label">6 changes since Q2 filing</div>
+                <ul class="delta-list">
+                  <li class="dl-row"><span class="dl-user">r.taylor@helios.com</span> granted <code>dba-admin</code>, previously <code>dba-read</code>. <a class="dl-ticket" title="Opens this ticket in the Optro platform">HEL-3482 ↗</a></li>
+                  <li class="dl-row"><span class="dl-user">contractor-svc-09</span> still <code>dba-admin</code>, open from last quarter. <a class="dl-ticket" title="Opens this ticket in the Optro platform">HEL-3471 ↗</a></li>
+                  <li class="dl-row"><span class="dl-user">n.lee@helios.com</span> granted <code>dba-read</code>, new hire. <a class="dl-ticket" title="Opens this ticket in the Optro platform">OPS-2208 ↗</a></li>
+                  <li class="dl-row"><span class="dl-user">s.park@helios.com</span> revoked <code>dba-admin</code>, Aug 8. <a class="dl-ticket" title="Opens this ticket in the Optro platform">OPS-2199 ↗</a></li>
+                  <li class="dl-row"><span class="dl-user">deploy-svc</span> granted <code>deploy</code>, new service account. <a class="dl-ticket" title="Opens this ticket in the Optro platform">OPS-2211 ↗</a></li>
+                  <li class="dl-row"><span class="dl-user">etl-old</span> revoked <code>etl</code>, decommissioned. <a class="dl-ticket" title="Opens this ticket in the Optro platform">OPS-2188 ↗</a></li>
+                </ul>
+
                 <div class="actions">
                   <span class="approve-wrap">
                     <button class="primary" onclick="runFlow(); return false;" aria-describedby="approve-tip">Confirm the deltas</button>
@@ -1740,7 +1635,9 @@
                   </span>
                 </div>
 
-                <button class="show-all-toggle" id="show-all-toggle" type="button" onclick="toggleShowAll(); return false;" aria-expanded="false">Show all 100 rows<svg class="sa-chev" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                <div class="delta-footnote">
+                  <button type="button" class="df-link" id="show-all-toggle" onclick="toggleShowAll(); return false;" aria-expanded="false">Show all 100 rows</button>
+                </div>
                 <div class="show-all-panel" id="show-all-panel" hidden>
                   <p class="show-all-note">All 100 rows in the Q3 roster. The 6 changed rows are highlighted; the rest match your Q2 filing exactly.</p>
                   <div class="csv-preview">
@@ -2109,24 +2006,19 @@
         selector: '.page-header .subtitle',
       },
       {
-        title: 'The hero stat carries the wedge',
-        body: 'Before any list, Weston sees the numbers. <strong>94 unchanged · 6 changes need review.</strong> The work shrinks from re-validating a hundred rows to checking six.<span class="tour-why"><strong>Why:</strong> Recognition over recall. The split is the design, not a hidden tooltip.</span>',
-        selector: '.slack-evidence-card .delta-hero',
-      },
-      {
         title: 'Compare with last quarter',
         body: 'The Q2 filing link is right where Weston is already reading. No portal hop.<span class="tour-why"><strong>Why:</strong> The delta only makes sense against what came before. Make the prior easy to glance at.</span>',
         selector: '.prior-link',
       },
       {
-        title: 'Six rows, in plain English',
-        body: 'Each change is named with what kind (+, −, carryover), what it was before, and the ticket that approved it. No code-review jargon: ordinary words for an auditor or a manager.<span class="tour-why"><strong>Why:</strong> An auditor needs the why on every change. Inline beats a separate review panel.</span>',
-        selector: '.slack-evidence-card .delta-table',
+        title: 'The verdict, before the list',
+        body: 'ECM\'s sufficiency check sits at the top of the card. <strong>Adequate</strong> when every change has an explanation — an approval ticket, a termination, an onboarding record. Hover the (?) for the full rule list.<span class="tour-why"><strong>Why:</strong> The verdict is the most decision-relevant element. It should lead, not follow the evidence.</span>',
+        selector: '.slack-evidence-card .conf-row',
       },
       {
-        title: 'Sufficiency, focused on the deltas',
-        body: 'The verdict checks the six changes, not the whole filing. Every escalation has an approval ticket, every revocation has a record, every new account has an onboarding ticket. Hover the (?) to see the full rule list.<span class="tour-why"><strong>Why:</strong> The AI judges what changed. The 94 unchanged rows don\'t need re-judgment — they were already adequate when Marie signed off in June.</span>',
-        selector: '.slack-evidence-card .suff-verdict',
+        title: 'Six changes, in plain English',
+        body: 'Each change reads as a sentence. Who, what changed, the prior state, the approving ticket. No color-coded pills. The verbs (granted, revoked, carryover) do the recognition work.<span class="tour-why"><strong>Why:</strong> Auditors scan prose, not chips. Plain language is the most accessible visualization.</span>',
+        selector: '.slack-evidence-card .delta-list',
       },
       {
         title: 'Confirm the deltas',
@@ -2136,7 +2028,7 @@
       {
         title: 'The cautious can still see all 100',
         body: 'Show all 100 rows expands the full Q3 roster with the 6 changes highlighted. The 94 match the Q2 filing byte-for-byte.<span class="tour-why"><strong>Why:</strong> Some reviewers will want to verify the delta detector didn\'t miss anything. The recoverability path stays visible without cluttering the default.</span>',
-        selector: '.slack-evidence-card .show-all-toggle',
+        selector: '.slack-evidence-card #show-all-toggle',
         before: function () { try { toggleShowAll(); } catch (e) {} },
         after: function () { try { toggleShowAll(); } catch (e) {} },
       },
@@ -2468,12 +2360,12 @@
     var open = panel.hasAttribute('hidden');
     if (open) {
       panel.removeAttribute('hidden');
-      btn.classList.add('is-open');
       btn.setAttribute('aria-expanded', 'true');
+      btn.textContent = 'Hide all 100 rows';
     } else {
       panel.setAttribute('hidden', '');
-      btn.classList.remove('is-open');
       btn.setAttribute('aria-expanded', 'false');
+      btn.textContent = 'Show all 100 rows';
     }
   }
 
