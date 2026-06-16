@@ -143,8 +143,9 @@
   /* === Floating-card tour (reference pattern: draggable card + pulsing highlight) === */
   .tour-card {
     position: fixed;
-    left: 24px; bottom: 76px;
+    left: 24px; bottom: 24px;
     width: 22rem; max-width: calc(100vw - 48px);
+    z-index: 1500;
     background: var(--luna-white);
     border: 1px solid var(--luna-gray-200);
     border-radius: 10px;
@@ -238,6 +239,7 @@
   }
 
   /* Floating "Product tour" relauncher pill (bottom-right) */
+  body.tour-active .tour-restart { display: none; }
   .tour-restart {
     position: fixed; bottom: 24px; left: 24px;
     display: inline-flex; align-items: center; gap: 8px;
@@ -2235,6 +2237,7 @@
     function start() {
       if (!window.TOUR || !Array.isArray(window.TOUR.steps) || !window.TOUR.steps.length) return;
       active = true; stepIdx = 0; render();
+      document.body.classList.add('tour-active');
       document.addEventListener('keydown', onKey, true);
     }
     function next() {
@@ -2254,6 +2257,7 @@
     function end() {
       active = false; clearHighlight();
       if (cardEl) { cardEl.remove(); cardEl = null; }
+      document.body.classList.remove('tour-active');
       try { sessionStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
       document.removeEventListener('keydown', onKey, true);
     }
