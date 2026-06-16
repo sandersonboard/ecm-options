@@ -1934,7 +1934,7 @@
     steps: [
       {
         title: 'Why this lives in Slack',
-        body: 'Evidence collection should meet the user where they already work, not pull them into another portal.',
+        body: 'Evidence collection meets the user where they already work.',
       },
       {
         title: 'Compare with last quarter',
@@ -1956,7 +1956,7 @@
       },
       {
         title: 'Adequate to file',
-        body: '<strong>Adequate to file</strong> is a yes-or-no answer, not a percentage. Auditors decide in pass or fail. A confidence bar would imply precision the verdict doesn\'t actually have.<span class="tour-why"><strong>Why:</strong> Match the visualization to the data. Sufficiency is categorical; a percentage bar would fake precision.</span>',
+        body: '<strong>Adequate to file</strong> is a yes-or-no answer, not a percentage.<span class="tour-why"><strong>Why:</strong> Match the visualization to the data. Sufficiency is categorical; a percentage bar would fake precision auditors don\'t want.</span>',
         selector: '.slack-evidence-card .suff-verdict',
       },
       {
@@ -1966,7 +1966,7 @@
       },
       {
         title: 'One click when the check passes',
-        body: 'When the check passes, this is the primary action. There\'s no Edit query (Weston doesn\'t write SQL), no Upload your own (it breaks chain of custody). ECM did the work; Weston signs off. Hover the button to see what Approve actually does.<span class="tour-why"><strong>Why:</strong> Competing buttons would dilute the claim that ECM did the work. The hover tooltip surfaces consequences without cluttering the card.</span>',
+        body: 'When the check passes, this is the primary action. Hover the button to see what Approve actually does.<span class="tour-why"><strong>Why:</strong> No Edit query, no Upload your own. Competing buttons would dilute the claim that ECM did the work. The hover tooltip surfaces consequences without cluttering the card.</span>',
         selector: '.slack-evidence-card .actions',
       },
       {
@@ -2029,7 +2029,7 @@
       },
       {
         title: 'What happens next',
-        body: 'The bot\'s next message moves Weston forward instead of restating what just happened. Marie has two business days, and Slack will DM him if she has questions. Each chip shows how she was notified, with a green check for delivered. <strong>+ Add channel</strong> sends the review via Email, Teams, a Calendar block, a ServiceNow ticket, or a Jira issue. Useful when Marie needs it in her actual work queue, not just her chat.<span class="tour-why"><strong>Why:</strong> A post-action message should help Weston decide what\'s next, not echo the card. The delivery check makes notification state visible at a glance.</span>',
+        body: 'After filing, the bot tells Weston what\'s next. Marie has two business days, and Slack will DM him if she has questions. Each chip shows how she was notified, with a green check for delivered. <strong>+ Add channel</strong> sends the review via Email, Teams, a Calendar block, a ServiceNow ticket, or a Jira issue.<span class="tour-why"><strong>Why:</strong> A post-action message should help Weston decide what\'s next, not echo the card. The delivery check makes notification state visible at a glance.</span>',
         selector: '#filed-msg .notify-row',
       },
       {
