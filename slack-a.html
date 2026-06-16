@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260616f" />
-<link rel="stylesheet" href="styles.css?v=20260616f" />
+<link rel="stylesheet" href="tokens.css?v=20260616g" />
+<link rel="stylesheet" href="styles.css?v=20260616g" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -320,23 +320,135 @@
   }
 
   .slack-evidence-card .actions { display: flex; gap: 6px; margin-top: 8px; }
-  .slack-evidence-card .row-review-link {
+  .slack-evidence-card .card-sec-row {
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .slack-evidence-card .card-sec-link {
     appearance: none;
     background: none;
     border: 0;
-    padding: 6px 0 0;
-    margin-top: 2px;
+    padding: 0;
     font: inherit;
     font-size: 11.5px;
     font-weight: 500;
     color: var(--luna-gray-600);
     cursor: pointer;
-    text-align: left;
     transition: color 0.15s;
   }
-  .slack-evidence-card .row-review-link:hover {
+  .slack-evidence-card .card-sec-link:hover {
     color: var(--luna-teal-500);
     text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .slack-evidence-card .card-sec-sep {
+    color: var(--luna-gray-400);
+    font-size: 11.5px;
+    user-select: none;
+  }
+
+  /* Note-attached chip */
+  .slack-evidence-card .note-attached {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: var(--luna-blue-50, #f2f8ff);
+    border: 1px solid var(--luna-blue-300, #93c5fd);
+    border-radius: 6px;
+    font-size: 11.5px;
+    color: var(--luna-gray-700);
+  }
+  .slack-evidence-card .note-attached-ic { font-size: 13px; line-height: 1; }
+  .slack-evidence-card .note-attached-text { flex: 1; min-width: 0; }
+  .slack-evidence-card .note-attached-text #note-preview {
+    color: var(--luna-gray-900); font-style: italic;
+  }
+  .slack-evidence-card .note-edit {
+    background: none; border: 0; padding: 0;
+    font: inherit; font-size: 11px;
+    color: var(--luna-blue-700); cursor: pointer;
+    text-decoration: underline; text-underline-offset: 2px;
+  }
+  .slack-evidence-card .note-edit:hover { color: var(--luna-blue-700); }
+  .slack-evidence-card.is-resolved .note-attached {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-200);
+  }
+
+  /* Defer panel */
+  .slack-inline-panel .defer-help,
+  .slack-inline-panel .note-help {
+    font-size: 11.5px;
+    color: var(--luna-gray-600);
+    line-height: 1.5;
+    margin: 6px 0 10px;
+    font-style: italic;
+  }
+  .slack-inline-panel .defer-field-label {
+    display: block;
+    font-size: 10px; font-weight: 700;
+    color: var(--luna-gray-500);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin: 8px 0 4px;
+  }
+  .slack-inline-panel .defer-select {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid var(--luna-gray-300);
+    border-radius: 5px;
+    background: var(--luna-white);
+    font: inherit;
+    font-size: 12.5px;
+    color: var(--luna-gray-900);
+    cursor: pointer;
+  }
+  .slack-inline-panel .defer-options {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-top: 2px;
+  }
+  .slack-inline-panel .defer-pick {
+    padding: 5px 11px;
+    font-size: 12px; font-weight: 500;
+    border-radius: 5px;
+    border: 1px solid var(--luna-gray-300);
+    background: var(--luna-white); color: var(--luna-gray-800);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .slack-inline-panel .defer-pick:hover {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-400);
+  }
+  .slack-inline-panel .defer-pick.is-selected {
+    background: var(--luna-teal-50);
+    border-color: var(--luna-teal-500);
+    color: var(--luna-teal-700);
+    font-weight: 600;
+  }
+
+  /* Deferred card state */
+  .slack-evidence-card.is-deferred {
+    background: var(--luna-blue-50, #f2f8ff);
+    border-color: var(--luna-blue-300, #93c5fd);
+  }
+  .slack-evidence-card.is-deferred .actions,
+  .slack-evidence-card.is-deferred .card-sec-row,
+  .slack-evidence-card.is-deferred #note-panel,
+  .slack-evidence-card.is-deferred #defer-panel,
+  .slack-evidence-card.is-deferred #row-review-panel { display: none !important; }
+  .slack-evidence-card.is-deferred .resolved-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--luna-gray-200);
+    font-size: 12px;
+    color: var(--luna-blue-700, #0e48a1);
+  }
+  .slack-evidence-card.is-deferred .resolved-status .check {
+    background: var(--luna-blue-500, #3172e3);
   }
   .slack-inline-panel .row-review-intro,
   .slack-inline-panel .row-review-note {
@@ -1079,9 +1191,53 @@
                 <div class="actions">
                   <button class="primary" onclick="runFlow(); return false;">Approve &amp; file</button>
                 </div>
-                <button class="row-review-link" type="button" onclick="toggleRowReview(); return false;">
-                  Review the evidence →
-                </button>
+                <div class="card-sec-row">
+                  <button class="card-sec-link" type="button" onclick="toggleNotePanel(); return false;">+ Add a note</button>
+                  <span class="card-sec-sep">·</span>
+                  <button class="card-sec-link" type="button" onclick="toggleDeferPanel(); return false;">Defer</button>
+                  <span class="card-sec-sep">·</span>
+                  <button class="card-sec-link" type="button" onclick="toggleRowReview(); return false;">Review the evidence →</button>
+                </div>
+
+                <div class="note-attached" id="note-attached" hidden>
+                  <span class="note-attached-ic" aria-hidden="true">📝</span>
+                  <span class="note-attached-text">Note attached: <span id="note-preview">…</span></span>
+                  <button type="button" class="note-edit" onclick="toggleNotePanel(); return false;">edit</button>
+                </div>
+
+                <div class="slack-inline-panel" id="note-panel" style="display:none;">
+                  <div class="panel-label">Add a note for the auditor</div>
+                  <textarea id="note-text" placeholder="Context that should travel with this filing. Example: contractor-svc-09 is on severance through Q3, see #procurement-q3-close."></textarea>
+                  <p class="note-help">The note attaches to the audit-trail entry and shows up in Marie's review surface.</p>
+                  <div class="panel-actions">
+                    <button class="primary" type="button" onclick="saveNote(); return false;">Save note</button>
+                    <button type="button" onclick="toggleNotePanel(); return false;">Cancel</button>
+                  </div>
+                </div>
+
+                <div class="slack-inline-panel" id="defer-panel" style="display:none;">
+                  <div class="panel-label">Defer this filing</div>
+                  <p class="defer-help">Use this if you genuinely can't file by Monday. A defer creates an audit-trail entry with your reason and a new due date. Marie and the PMO will see it.</p>
+                  <label class="defer-field-label">Reason</label>
+                  <select id="defer-reason" class="defer-select">
+                    <option value="">Pick one…</option>
+                    <option>Waiting on vendor response</option>
+                    <option>Source system unavailable</option>
+                    <option>Out of office</option>
+                    <option>Need PMO clarification on scope</option>
+                    <option>Other (write below)</option>
+                  </select>
+                  <label class="defer-field-label">New due date</label>
+                  <div class="defer-options">
+                    <button type="button" class="defer-pick" data-defer="1 week">1 week (Oct 2)</button>
+                    <button type="button" class="defer-pick" data-defer="2 weeks">2 weeks (Oct 9)</button>
+                    <button type="button" class="defer-pick" data-defer="next quarter">Next quarter close</button>
+                  </div>
+                  <div class="panel-actions">
+                    <button class="primary" type="button" onclick="confirmDefer(); return false;">Confirm defer</button>
+                    <button type="button" onclick="toggleDeferPanel(); return false;">Cancel</button>
+                  </div>
+                </div>
 
                 <div class="slack-inline-panel" id="row-review-panel" style="display:none;">
                   <div class="panel-label">Evidence preview</div>
@@ -1455,7 +1611,7 @@
       },
       {
         title: 'One tap when the check passes',
-        body: 'When sufficiency is adequate, this is the only button. No edit-query for someone who doesn\'t write SQL, no upload-your-own that breaks chain of custody. ECM did the work; Weston signs off.<span class="tour-why"><strong>Why:</strong> GRC plus UX. Competing edit and upload buttons would undermine the AI-does-the-work claim. One primary action keeps the workflow defensible.</span>',
+        body: 'When sufficiency is adequate, this is the only button. No edit-query for someone who doesn\'t write SQL, no upload-your-own that breaks chain of custody. ECM did the work; Weston signs off.<span class="tour-why"><strong>Why:</strong> Competing edit and upload buttons would undermine the AI-does-the-work claim. One primary action keeps the workflow defensible.</span>',
         selector: '.slack-evidence-card .actions',
       },
       {
@@ -1490,7 +1646,7 @@
       },
       {
         title: "Marie's review, visible",
-        body: 'Once filed, Weston sees Marie\'s review status without joining her thread. Click <strong>peek at what Marie sees →</strong> for a preview of her review surface. Same artifact, AI-pre-chewed summary, accept and send-back controls.<span class="tour-why"><strong>Why:</strong> GRC plus scale. Marie reviews around 50 controls a quarter and needs a centralized queue, not 50 multi-person DMs. Separate threads preserve her independence and let her write private review notes. The status chip closes the visibility gap.</span>',
+        body: 'Once filed, Weston sees Marie\'s review status without joining her thread. Click <strong>peek at what Marie sees →</strong> for a preview of her review surface. Same artifact, AI-pre-chewed summary, accept and send-back controls.<span class="tour-why"><strong>Why:</strong> Marie reviews around 50 controls a quarter and needs a centralized queue, not 50 multi-person DMs. Separate threads preserve her independence and let her write private review notes. The status chip closes the visibility gap.</span>',
         selector: '#marie-status',
         before: function () {
           var p = document.getElementById('peek-panel');
@@ -1502,9 +1658,32 @@
         },
       },
             {
-        title: 'Move on, or look back',
-        body: '<strong>What\'s next →</strong> opens his upcoming SOX queue. <strong>View filing details</strong> shows the formal audit-trail entry. Two distinct views, kept apart on purpose.<span class="tour-why"><strong>Why:</strong> separate forward intent (queue) from backward intent (audit trail). Two distinct buttons, no mixed-intent UI.</span>',
-        selector: '#filed-msg',
+        title: "What's next",
+        body: '<strong>What\'s next →</strong> opens his upcoming SOX queue inline. Each item expands to show the control, last filing, and a Start review action.<span class="tour-why"><strong>Why:</strong> after a filing, the most useful next move is forward, not retrospective. The queue gives him concrete next work without leaving the thread.</span>',
+        selector: '#queue-panel',
+        before: function () {
+          ['receipt-panel', 'peek-panel'].forEach(function (id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
+          var p = document.getElementById('queue-panel');
+          if (p) p.style.display = 'block';
+        },
+        after: function () {
+          var p = document.getElementById('queue-panel');
+          if (p) p.style.display = 'none';
+        },
+      },
+      {
+        title: 'Filing details, opened',
+        body: '<strong>View filing details</strong> opens the labeled audit-trail entry inline. Artifact, classifier, routed-to, SLA, filed-at, signed-by, tamper seal. The note Weston attached lives here too.<span class="tour-why"><strong>Why:</strong> separate forward intent (the queue) from backward intent (the audit trail). Two distinct views, no mixed-intent UI. This is what the external auditor sees during Q3 testing.</span>',
+        selector: '#receipt-panel',
+        before: function () {
+          ['queue-panel', 'peek-panel'].forEach(function (id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
+          var p = document.getElementById('receipt-panel');
+          if (p) p.style.display = 'block';
+        },
+        after: function () {
+          var p = document.getElementById('receipt-panel');
+          if (p) p.style.display = 'none';
+        },
       },
       {
         title: "That's the tour",
@@ -1729,6 +1908,82 @@
   function startTour() { if (window.Tour) window.Tour.start(); }
 
 
+  function toggleNotePanel() {
+    if (flowStarted) return;
+    var p = document.getElementById('note-panel');
+    if (!p) return;
+    ['defer-panel', 'row-review-panel'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    var willShow = p.style.display === 'none' || !p.style.display;
+    p.style.display = willShow ? 'block' : 'none';
+    if (willShow) {
+      var ta = document.getElementById('note-text');
+      if (ta) ta.focus();
+      p.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
+  }
+
+  function saveNote() {
+    var ta = document.getElementById('note-text');
+    if (!ta) return;
+    var val = ta.value.trim();
+    var att = document.getElementById('note-attached');
+    var prev = document.getElementById('note-preview');
+    if (val && att && prev) {
+      prev.textContent = val.length > 60 ? val.slice(0, 60) + '…' : val;
+      att.hidden = false;
+    }
+    var p = document.getElementById('note-panel');
+    if (p) p.style.display = 'none';
+  }
+
+  function toggleDeferPanel() {
+    if (flowStarted) return;
+    var p = document.getElementById('defer-panel');
+    if (!p) return;
+    ['note-panel', 'row-review-panel'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    var willShow = p.style.display === 'none' || !p.style.display;
+    p.style.display = willShow ? 'block' : 'none';
+    if (willShow) p.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
+  // Wire up defer-pick buttons (selection state)
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.defer-pick');
+    if (!btn) return;
+    document.querySelectorAll('.defer-pick').forEach(function (b) {
+      b.classList.toggle('is-selected', b === btn);
+    });
+  });
+
+  function confirmDefer() {
+    var reason = document.getElementById('defer-reason');
+    var sel = document.querySelector('.defer-pick.is-selected');
+    var reasonVal = reason && reason.value ? reason.value : '';
+    var newDate = sel ? sel.dataset.defer : '1 week';
+
+    flowStarted = true;
+    var card = document.querySelector('.slack-evidence-card');
+    if (card) {
+      card.classList.add('is-deferred');
+      // Inject a deferred status row by reusing .resolved-status
+      var status = card.querySelector('.resolved-status');
+      if (status) {
+        var dueLabel = (sel && sel.textContent) ? sel.textContent.replace(/^\d+ \w+\s*/, '') : newDate;
+        status.innerHTML = '<span class="check">⏸</span>' +
+                           '<span class="msg">Deferred ' + (newDate ? newDate : '') +
+                           (reasonVal ? ' <span class="meta">· ' + reasonVal + '</span>' : '') + '</span>';
+      }
+    }
+    var p = document.getElementById('defer-panel');
+    if (p) p.style.display = 'none';
+  }
+
   function toggleRowReview() {
     if (flowStarted) return;
     const p = document.getElementById('row-review-panel');
@@ -1772,6 +2027,38 @@
   function runFlow() {
     if (flowStarted) return;
     flowStarted = true;
+    // If a note was attached, surface it in the filing-details + Marie's peek view
+    try {
+      var noteEl = document.getElementById('note-text');
+      var att = document.getElementById('note-attached');
+      if (noteEl && att && !att.hidden && noteEl.value.trim()) {
+        var noteText = noteEl.value.trim();
+        // Add a "Note from filer" row to the filing-details grid
+        var receipt = document.querySelector('#receipt-panel .receipt-grid');
+        if (receipt && !receipt.querySelector('[data-note-row]')) {
+          var k = document.createElement('span');
+          k.className = 'r-k'; k.setAttribute('data-note-row', '');
+          k.textContent = 'Note from filer';
+          var v = document.createElement('span');
+          v.className = 'r-v'; v.setAttribute('data-note-row', '');
+          v.textContent = noteText;
+          receipt.appendChild(k); receipt.appendChild(v);
+        }
+        // Add to Marie's peek view summary
+        var summary = document.querySelector('#peek-panel .marie-view-summary');
+        if (summary && !summary.querySelector('.peek-note-from-filer')) {
+          var p = document.createElement('p');
+          p.className = 'peek-note-from-filer';
+          p.style.marginTop = '8px';
+          p.style.paddingTop = '8px';
+          p.style.borderTop = '1px solid var(--luna-gray-200)';
+          p.style.fontStyle = 'italic';
+          p.innerHTML = '<strong>Note from Weston:</strong> ' + noteText;
+          summary.appendChild(p);
+        }
+      }
+    } catch (e) {}
+
     // Update the card in place (action buttons hide; ✓ status row appears)
     const card = document.querySelector('.slack-evidence-card');
     if (card) card.classList.add('is-resolved');
@@ -1894,7 +2181,7 @@ hide(document.getElementById('filed-msg'));
     if (card) card.classList.remove('is-resolved');
 
     // Close any open inline panels
-    ['row-review-panel', 'q2-ref', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel', 'peek-panel'].forEach(id => {
+    ['row-review-panel', 'q2-ref', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel', 'peek-panel', 'note-panel', 'defer-panel'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
