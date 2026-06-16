@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260616b" />
-<link rel="stylesheet" href="styles.css?v=20260616b" />
+<link rel="stylesheet" href="tokens.css?v=20260616c" />
+<link rel="stylesheet" href="styles.css?v=20260616c" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -346,7 +346,8 @@
     margin: 0 0 8px;
   }
   .slack-inline-panel .row-review-note { margin-top: 8px; margin-bottom: 0; font-style: italic; color: var(--luna-gray-600); }
-  .slack-inline-panel .row-warn .row-flag {
+  .slack-inline-panel .row-warn .row-flag,
+  .slack-inline-panel .q2-flag {
     font-size: 9.5px;
     margin-left: 6px;
     padding: 1px 6px;
@@ -357,6 +358,7 @@
     font-family: ui-sans-serif, system-ui, sans-serif;
     font-weight: 600;
   }
+  .slack-inline-panel .csv-preview tr.q2-changed-row { background: #fffbeb; }
   .slack-evidence-card .actions button {
     padding: 6px 12px; font-size: 12px; font-weight: 600;
     border-radius: 5px; border: 1px solid var(--luna-gray-300);
@@ -424,12 +426,14 @@
     border-color: var(--luna-teal-500);
     box-shadow: 0 0 0 2px var(--luna-teal-100);
   }
-  .slack-inline-panel .panel-actions { display: flex; gap: 6px; margin-top: 8px; }
+  .slack-inline-panel .panel-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .slack-inline-panel .panel-actions button {
-    padding: 5px 10px; font-size: 12px; font-weight: 600;
+    padding: 4px 11px; font-size: 12.5px; font-weight: 500;
     border-radius: 4px; cursor: pointer;
     border: 1px solid var(--luna-gray-300);
     background: var(--luna-white); color: var(--luna-gray-800);
+    white-space: nowrap;
+    line-height: 1.5;
   }
   .slack-inline-panel .panel-actions button.primary {
     background: var(--luna-teal-500); color: var(--luna-white); border-color: var(--luna-teal-500);
@@ -822,6 +826,119 @@
     font-size: 11px; color: var(--luna-gray-600);
     margin-top: 2px; line-height: 1.4;
   }
+
+  /* Marie's review status indicator + peek panel */
+  .marie-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 7px 10px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
+    font-size: 12px;
+    flex-wrap: wrap;
+  }
+  .marie-status-label {
+    font-size: 10.5px; font-weight: 700;
+    color: var(--luna-gray-500);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-right: 2px;
+  }
+  .marie-status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--luna-gray-400);
+    flex-shrink: 0;
+  }
+  .marie-status-dot[data-state="queued"]   { background: var(--luna-gray-400); }
+  .marie-status-dot[data-state="viewing"]  { background: #f59e0b; }
+  .marie-status-dot[data-state="approved"] { background: var(--luna-green-500); }
+  .marie-status-dot[data-state="bounced"]  { background: var(--luna-red-500); }
+  .marie-status-text { font-size: 11.5px; color: var(--luna-gray-700); }
+  .marie-peek {
+    appearance: none; background: none; border: 0; padding: 0;
+    font: inherit; font-size: 11.5px;
+    color: var(--luna-teal-500);
+    cursor: pointer;
+    text-decoration: underline; text-underline-offset: 2px;
+    margin-left: auto;
+  }
+  .marie-peek:hover { color: var(--luna-teal-700); }
+
+  .slack-inline-panel .peek-note {
+    font-size: 11.5px;
+    color: var(--luna-gray-600);
+    line-height: 1.5;
+    margin: 0 0 10px;
+    font-style: italic;
+  }
+  .marie-view {
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-left: 3px solid var(--luna-teal-500);
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+  .marie-view-head {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600; color: var(--luna-gray-900);
+    margin-bottom: 4px;
+  }
+  .marie-view-meta {
+    font-size: 11.5px; color: var(--luna-gray-600);
+    margin-bottom: 10px;
+  }
+  .marie-view-summary {
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    background: var(--luna-gray-50);
+    border-radius: 5px;
+  }
+  .marie-summary-label {
+    font-size: 10px; font-weight: 700;
+    color: var(--luna-gray-500);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .marie-view-summary p {
+    font-size: 12.5px; color: var(--luna-gray-800);
+    line-height: 1.5; margin: 0;
+  }
+  .marie-view-summary strong { color: #92400e; }
+  .marie-view-actions { display: flex; gap: 6px; }
+  .marie-view-actions button {
+    padding: 4px 11px;
+    font-size: 12.5px; font-weight: 500;
+    border-radius: 4px; cursor: pointer;
+    border: 1px solid var(--luna-gray-300);
+    background: var(--luna-white); color: var(--luna-gray-800);
+    white-space: nowrap;
+  }
+  .marie-view-actions button:disabled { opacity: 0.6; cursor: default; }
+  .marie-view-actions button.primary {
+    background: var(--luna-teal-500); color: var(--luna-white);
+    border-color: var(--luna-teal-500);
+  }
+
+  /* Tour: "Why:" rationale block inside step body */
+  .tour-card-text .tour-why {
+    display: block;
+    margin-top: 10px;
+    padding: 7px 10px;
+    background: var(--luna-gray-50);
+    border-left: 2px solid var(--luna-teal-500);
+    border-radius: 0 4px 4px 0;
+    font-size: 11.5px;
+    color: var(--luna-gray-700);
+    font-style: normal;
+    line-height: 1.45;
+  }
+  .tour-card-text .tour-why strong {
+    color: var(--luna-gray-900);
+    font-weight: 700;
+  }
 </style>
 </head>
 <body>
@@ -914,7 +1031,7 @@
                       <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-06-22</td><td>✓</td></tr>
                       <tr><td>contractor-svc-09</td><td>dba-admin</td><td>2026-04-12</td><td>— (open, HEL-3471)</td></tr>
                       <tr><td>k.singh@helios.com</td><td>dba-read</td><td>2026-06-19</td><td>✓</td></tr>
-                      <tr><td>r.taylor@helios.com</td><td>dba-read</td><td>2026-06-11</td><td>✓</td></tr>
+                      <tr class="q2-changed-row"><td>r.taylor@helios.com</td><td>dba-read</td><td>2026-06-11</td><td>✓ <span class="q2-flag">now dba-admin in Q3</span></td></tr>
                       <tr><td>app-svc-prod</td><td>app-svc</td><td>2026-06-25</td><td>✓ (auto)</td></tr>
                       <tr><td>backups-svc</td><td>backups</td><td>2026-06-25</td><td>✓ (auto)</td></tr>
                     </tbody>
@@ -1111,6 +1228,36 @@
                   <button type="button" onclick="toggleNotifyPanel(); return false;">Cancel</button>
                 </div>
               </div>
+                            <div class="marie-status" id="marie-status">
+                <span class="marie-status-label">Marie's review</span>
+                <span class="marie-status-dot" data-state="queued" aria-hidden="true"></span>
+                <span class="marie-status-text">queued · since 3:11 PM</span>
+                <button class="marie-peek" type="button" onclick="togglePeek(); return false;">peek at what Marie sees →</button>
+              </div>
+
+              <div class="slack-inline-panel" id="peek-panel" style="display:none;margin-top:10px;">
+                <div class="panel-label">What Marie sees in her DM</div>
+                <p class="peek-note">Read-only preview. Marie reviews in her own DM with the same artifact, an AI summary, and accept/send-back controls.</p>
+                <div class="marie-view">
+                  <div class="marie-view-head">
+                    <span class="ai-chip">For Marie</span>
+                    Review request · AR-Q3FY26-prod-db
+                  </div>
+                  <div class="marie-view-meta">Submitted by Weston · 3:11 PM PT · SLA: 2 business days</div>
+                  <div class="marie-view-summary">
+                    <div class="marie-summary-label">AI summary for reviewer</div>
+                    <p>22 accounts. Pattern matches Q2 closely. <strong>1 unexplained drift</strong> needs your attention. r.taylor escalated from dba-read to dba-admin on Sep 11. Weston linked approval ticket HEL-3482. One carryover (contractor-svc-09, HEL-3471) is unchanged from your Q2 sign-off.</p>
+                  </div>
+                  <div class="marie-view-actions">
+                    <button class="primary" type="button" disabled>Accept</button>
+                    <button type="button" disabled>Send back with note</button>
+                  </div>
+                </div>
+                <div class="panel-actions">
+                  <button type="button" onclick="togglePeek(); return false;">Close</button>
+                </div>
+              </div>
+
               <div style="display:flex;gap:6px;margin-top:6px;">
                 <button onclick="toggleQueue(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">What's next →</button>
                 <button onclick="toggleReceipt(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">View filing details</button>
@@ -1280,12 +1427,12 @@
       },
       {
         title: 'Compare with last quarter',
-        body: 'Most owners want to see what they filed last quarter before signing off on anything new. The <strong>your Q2 filing</strong> link inside the bot\'s message takes Weston there directly. No portal, no archive search.',
+        body: 'Most owners want to see what they filed last quarter before signing off on anything new. The <strong>your Q2 filing</strong> link inside the bot\'s message takes Weston there directly. No portal, no archive search.<span class="tour-why"><strong>Why:</strong> HCAI recognition over recall. Put the affordance where the user is already looking.</span>',
         selector: '.prior-link',
       },
       {
         title: 'Last quarter, opened in place',
-        body: 'Here\'s exactly what Marie signed off on in June. Weston can compare without leaving the thread. Notice <strong>r.taylor was dba-read</strong> back then. He\'s dba-admin in the Q3 draft. That change is what ECM flagged.',
+        body: 'Here\'s what Marie signed off on in June. The r.taylor row carries an annotation showing the Q3 change. He\'s escalated to dba-admin. That\'s what ECM flagged.<span class="tour-why"><strong>Why:</strong> in-place comparison beats opening a second window. The row-level annotation makes the change scannable at a glance.</span>',
         selector: '#q2-ref',
         before: function () {
           var p = document.getElementById('q2-ref');
@@ -1298,22 +1445,22 @@
       },
       {
         title: 'Adequate to file',
-        body: '<strong>Adequate to file</strong> is a yes-or-no answer, not a percentage. Auditors think pass or fail, so that\'s what ECM shows. No fake 94% bar that means nothing.',
+        body: '<strong>Adequate to file</strong> is a yes-or-no answer, not a percentage. Auditors think pass or fail, so that\'s what ECM shows. No fake 94% bar that means nothing.<span class="tour-why"><strong>Why:</strong> HCAI principle. Match the visualization to the underlying data type. Sufficiency is categorical, so a percentage bar would create false precision.</span>',
         selector: '.slack-evidence-card .suff-verdict',
       },
       {
         title: 'The rules behind the verdict',
-        body: 'Hover the <strong>(?)</strong> to see the rules ECM checked against. They\'re tied to control 4.2.1 specifically and signed by the audit committee. The model-card link names the model, its version, and how accurate it is.',
+        body: 'Hover the <strong>(?)</strong> to see the rules ECM checked against. They\'re tied to control 4.2.1 specifically and signed by the audit committee. The model-card link names the model, its version, and how accurate it is.<span class="tour-why"><strong>Why:</strong> PAIR principle. Show your work. Tooltip plus model card link let the user calibrate trust without forcing it.</span>',
         selector: '.slack-evidence-card .conf-why-wrap',
       },
       {
         title: 'One tap when the check passes',
-        body: 'When sufficiency is adequate, this is the only button. No edit-query for someone who doesn\'t write SQL, no upload-your-own that breaks chain of custody. ECM did the work; Weston signs off.',
+        body: 'When sufficiency is adequate, this is the only button. No edit-query for someone who doesn\'t write SQL, no upload-your-own that breaks chain of custody. ECM did the work; Weston signs off.<span class="tour-why"><strong>Why:</strong> GRC plus UX. Competing edit and upload buttons would undermine the AI-does-the-work claim. One primary action keeps the workflow defensible.</span>',
         selector: '.slack-evidence-card .actions',
       },
       {
         title: 'The cautious path',
-        body: 'If anything feels off, this opens all 22 records inline. The two flagged ones are called out. From there Weston can approve, or send it to Marie with a flag.',
+        body: 'If anything feels off, this opens all 22 records inline. The two flagged ones are called out. From there Weston can approve, or send it to Marie with a flag.<span class="tour-why"><strong>Why:</strong> HAX G17. Every AI system needs an error-recovery path. Flag-for-Marie is the dispute mechanism that preserves SoD.</span>',
         selector: '.slack-evidence-card .row-review-link',
         before: function () {
           var p = document.getElementById('row-review-panel');
@@ -1326,7 +1473,7 @@
       },
       {
         title: 'The card becomes the receipt',
-        body: 'After Approve, the same card transitions in place. Title shifts from <strong>Access list draft</strong> to <strong>Filed access list</strong>. The artifact label shifts to <strong>Filed artifact</strong>. The green row at the bottom shows who filed and when.',
+        body: 'After Approve, the same card transitions in place. Title shifts from <strong>Access list draft</strong> to <strong>Filed access list</strong>. The artifact label shifts to <strong>Filed artifact</strong>. The green row at the bottom shows who filed and when.<span class="tour-why"><strong>Why:</strong> HAX G16. Convey the consequence of the action. The card transitions in place so filed is visible at a glance, with one canonical record.</span>',
         selector: '.slack-evidence-card',
         before: function () {
           var card = document.querySelector('.slack-evidence-card');
@@ -1338,12 +1485,25 @@
       },
       {
         title: 'What happens next',
-        body: 'The bot\'s next message doesn\'t repeat the confirmation. It tells Weston what comes next. Marie has two business days. Slack will DM him if she has questions.',
+        body: 'The bot\'s next message doesn\'t repeat the confirmation. It tells Weston what comes next. Marie has two business days. Slack will DM him if she has questions.<span class="tour-why"><strong>Why:</strong> post-action messages should move the user forward, not echo the card. Avoid duplicate confirmation surfaces.</span>',
         selector: '#filed-msg .notify-row',
       },
       {
+        title: "Marie's review, visible",
+        body: 'Once filed, Weston sees Marie\'s review status without joining her thread. Click <strong>peek at what Marie sees →</strong> for a preview of her review surface. Same artifact, AI-pre-chewed summary, accept and send-back controls.<span class="tour-why"><strong>Why:</strong> GRC plus scale. Marie reviews around 50 controls a quarter and needs a centralized queue, not 50 multi-person DMs. Separate threads preserve her independence and let her write private review notes. The status chip closes the visibility gap.</span>',
+        selector: '#marie-status',
+        before: function () {
+          var p = document.getElementById('peek-panel');
+          if (p) p.style.display = 'block';
+        },
+        after: function () {
+          var p = document.getElementById('peek-panel');
+          if (p) p.style.display = 'none';
+        },
+      },
+            {
         title: 'Move on, or look back',
-        body: '<strong>What\'s next →</strong> opens his upcoming SOX queue. <strong>View filing details</strong> shows the formal audit-trail entry. Two distinct views, kept apart on purpose.',
+        body: '<strong>What\'s next →</strong> opens his upcoming SOX queue. <strong>View filing details</strong> shows the formal audit-trail entry. Two distinct views, kept apart on purpose.<span class="tour-why"><strong>Why:</strong> separate forward intent (queue) from backward intent (audit trail). Two distinct buttons, no mixed-intent UI.</span>',
         selector: '#filed-msg',
       },
       {
@@ -1678,6 +1838,19 @@
     toggleNotifyPanel();
   }
 
+  function togglePeek() {
+    if (typeof flowStarted !== 'undefined' && !flowStarted) return;
+    var p = document.getElementById('peek-panel');
+    if (!p) return;
+    ['receipt-panel', 'queue-panel'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    var willShow = p.style.display === 'none' || !p.style.display;
+    p.style.display = willShow ? 'block' : 'none';
+    if (willShow) p.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
   function toggleQueue() {
     const panel = document.getElementById('queue-panel');
     if (!panel) return;
@@ -1721,7 +1894,7 @@ hide(document.getElementById('filed-msg'));
     if (card) card.classList.remove('is-resolved');
 
     // Close any open inline panels
-    ['row-review-panel', 'q2-ref', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel'].forEach(id => {
+    ['row-review-panel', 'q2-ref', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel', 'peek-panel'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
