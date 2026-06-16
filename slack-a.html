@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260616a" />
-<link rel="stylesheet" href="styles.css?v=20260616a" />
+<link rel="stylesheet" href="tokens.css?v=20260616b" />
+<link rel="stylesheet" href="styles.css?v=20260616b" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -1276,26 +1276,11 @@
     steps: [
       {
         title: 'A quick tour',
-        body: 'How Optro ECM files SOX evidence in Slack. Twelve stops, about a minute.',
-      },
-      {
-        title: 'A regular Slack DM',
-        body: 'Weston gets the reminder the same way he gets any other Slack message. He can search it, share it, or forward it to an auditor without leaving Slack.',
-        selector: '.slack-evidence-card .head',
-      },
-      {
-        title: 'Adequate to file',
-        body: '<strong>Adequate to file</strong> is a yes-or-no answer, not a percentage. Auditors think pass or fail, so that\'s what ECM shows. No fake 94% bar that means nothing.',
-        selector: '.slack-evidence-card .suff-verdict',
-      },
-      {
-        title: 'The rules behind the verdict',
-        body: 'Hover the <strong>(?)</strong> to see the rules ECM checked against. They\'re tied to control 4.2.1 specifically and signed by the audit committee. The model-card link names the model, its version, and how accurate it is.',
-        selector: '.slack-evidence-card .conf-why-wrap',
+        body: 'How Optro ECM files SOX evidence in Slack. About a minute.',
       },
       {
         title: 'Compare with last quarter',
-        body: 'Most owners want to see what they filed last quarter before signing off on anything. The <strong>your Q2 filing</strong> link in the bot\'s intro takes Weston there directly. No portal, no archive search.',
+        body: 'Most owners want to see what they filed last quarter before signing off on anything new. The <strong>your Q2 filing</strong> link inside the bot\'s message takes Weston there directly. No portal, no archive search.',
         selector: '.prior-link',
       },
       {
@@ -1310,6 +1295,16 @@
           var p = document.getElementById('q2-ref');
           if (p) p.style.display = 'none';
         },
+      },
+      {
+        title: 'Adequate to file',
+        body: '<strong>Adequate to file</strong> is a yes-or-no answer, not a percentage. Auditors think pass or fail, so that\'s what ECM shows. No fake 94% bar that means nothing.',
+        selector: '.slack-evidence-card .suff-verdict',
+      },
+      {
+        title: 'The rules behind the verdict',
+        body: 'Hover the <strong>(?)</strong> to see the rules ECM checked against. They\'re tied to control 4.2.1 specifically and signed by the audit committee. The model-card link names the model, its version, and how accurate it is.',
+        selector: '.slack-evidence-card .conf-why-wrap',
       },
       {
         title: 'One tap when the check passes',
