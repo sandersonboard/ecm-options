@@ -2009,11 +2009,23 @@
         selector: '.slack-evidence-card .resolved-status',
         before: function () {
           var card = document.querySelector('.slack-evidence-card');
-          if (card) card.classList.add('is-pending-marie');
+          if (!card) return;
+          card.classList.add('is-pending-marie');
+          var msg = card.querySelector('.resolved-status .msg');
+          if (msg && !msg.dataset.origHtml) {
+            msg.dataset.origHtml = msg.innerHTML;
+            msg.innerHTML = 'Routed to Marie for her decision <span class="meta">· you didn’t attest</span>';
+          }
         },
         after: function () {
           var card = document.querySelector('.slack-evidence-card');
-          if (card) card.classList.remove('is-pending-marie');
+          if (!card) return;
+          card.classList.remove('is-pending-marie');
+          var msg = card.querySelector('.resolved-status .msg');
+          if (msg && msg.dataset.origHtml) {
+            msg.innerHTML = msg.dataset.origHtml;
+            delete msg.dataset.origHtml;
+          }
         },
       },
       {
