@@ -375,116 +375,128 @@
   .slack-evidence-card.is-needs-redraft .review-evidence-link,
   .slack-evidence-card.is-pending-marie .review-evidence-link { display: none; }
 
-  /* Delta-first UI (slack-d) */
-  .slack-evidence-card .delta-hero {
+  /* Delta-first UI (slack-d) — quiet, single column, no heavy chrome */
+  .slack-evidence-card .delta-bar {
+    margin: 14px 0 14px;
+  }
+  .slack-evidence-card .delta-bar .db-track {
     display: flex;
-    align-items: stretch;
-    margin: 12px 0 10px;
-    border: 1px solid var(--luna-gray-200);
-    border-radius: 6px;
+    height: 6px;
+    border-radius: 3px;
     overflow: hidden;
-    background: var(--luna-white);
+    background: var(--luna-gray-100);
   }
-  .slack-evidence-card .delta-hero .dh-unchanged,
-  .slack-evidence-card .delta-hero .dh-changed {
-    flex: 1;
-    padding: 10px 14px;
+  .slack-evidence-card .delta-bar .db-fill-unchanged {
+    background: var(--luna-gray-300);
+  }
+  .slack-evidence-card .delta-bar .db-fill-changed {
+    background: #f59e0b;
+  }
+  .slack-evidence-card .delta-bar .db-legend {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--luna-gray-700);
   }
-  .slack-evidence-card .delta-hero .dh-unchanged {
-    background: var(--luna-gray-50);
+  .slack-evidence-card .delta-bar .db-leg-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
-  .slack-evidence-card .delta-hero .dh-changed {
-    background: #fffbeb;
-  }
-  .slack-evidence-card .delta-hero .dh-divider {
-    width: 1px;
-    background: var(--luna-gray-200);
-  }
-  .slack-evidence-card .delta-hero .dh-stat {
-    font-size: 22px;
+  .slack-evidence-card .delta-bar .db-leg-item strong {
     font-weight: 700;
-    line-height: 1.1;
     color: var(--luna-gray-900);
   }
-  .slack-evidence-card .delta-hero .dh-changed .dh-stat { color: #92400e; }
-  .slack-evidence-card .delta-hero .dh-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--luna-gray-700);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+  .slack-evidence-card .delta-bar .db-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
   }
-  .slack-evidence-card .delta-hero .dh-sub {
-    font-size: 11px;
-    color: var(--luna-gray-500);
-    line-height: 1.3;
-    margin-top: 2px;
-  }
+  .slack-evidence-card .delta-bar .db-dot-unchanged { background: var(--luna-gray-300); }
+  .slack-evidence-card .delta-bar .db-dot-changed   { background: #f59e0b; }
 
-  .slack-evidence-card .delta-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 0 0 10px;
-    font-size: 11.5px;
+  .slack-evidence-card .delta-list {
+    list-style: none;
+    margin: 0 0 14px;
+    padding: 0;
+    border-top: 1px solid var(--luna-gray-100);
   }
-  .slack-evidence-card .delta-table th {
-    text-align: left;
-    padding: 5px 8px;
-    background: var(--luna-gray-50);
-    color: var(--luna-gray-600);
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border-bottom: 1px solid var(--luna-gray-200);
-  }
-  .slack-evidence-card .delta-table td {
-    padding: 6px 8px;
+  .slack-evidence-card .delta-list .dl-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.5fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 0;
     border-bottom: 1px solid var(--luna-gray-100);
-    color: var(--luna-gray-800);
-    vertical-align: middle;
+    font-size: 12.5px;
   }
-  .slack-evidence-card .delta-table tr:last-child td { border-bottom: 0; }
-  .slack-evidence-card .delta-table .delta-pill {
-    display: inline-block;
-    padding: 1px 6px;
-    border-radius: 10px;
-    font-size: 10.5px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    margin-right: 6px;
+  .slack-evidence-card .delta-list .dl-user {
+    color: var(--luna-gray-900);
+    font-family: ui-monospace, "SF Mono", monospace;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .slack-evidence-card .delta-table .delta-pill.is-add {
+  .slack-evidence-card .delta-list .dl-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .slack-evidence-card .delta-list .dl-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 11.5px;
+    font-weight: 600;
+    font-family: ui-monospace, "SF Mono", monospace;
+    line-height: 1.5;
+    flex-shrink: 0;
+  }
+  .slack-evidence-card .delta-list .dl-pill.is-add {
     background: #ecfdf5;
     color: #047857;
-    border: 1px solid #a7f3d0;
   }
-  .slack-evidence-card .delta-table .delta-pill.is-remove {
+  .slack-evidence-card .delta-list .dl-pill.is-remove {
     background: #fef2f2;
     color: #b91c1c;
-    border: 1px solid #fecaca;
   }
-  .slack-evidence-card .delta-table .delta-pill.is-carry {
+  .slack-evidence-card .delta-list .dl-pill.is-carry {
     background: #fffbeb;
     color: #92400e;
-    border: 1px solid #fde68a;
   }
-  .slack-evidence-card .delta-table .delta-was {
-    font-size: 10.5px;
+  .slack-evidence-card .delta-list .dl-context {
     color: var(--luna-gray-500);
+    font-size: 11.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .slack-evidence-card .delta-table .ai-citation {
-    font-size: 10.5px;
+  .slack-evidence-card .delta-list .dl-ticket {
+    color: var(--luna-teal-600);
+    font-size: 11.5px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-family: ui-monospace, "SF Mono", monospace;
+  }
+  .slack-evidence-card .delta-list .dl-ticket:hover {
+    color: var(--luna-teal-700);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   .slack-evidence-card .show-all-toggle {
     appearance: none;
     background: none;
     border: 0;
-    padding: 8px 0 0;
+    padding: 10px 0 0;
     font: inherit;
     font-size: 11.5px;
     font-weight: 500;
@@ -492,7 +504,7 @@
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     transition: color 0.15s;
   }
   .slack-evidence-card .show-all-toggle .sa-chev {
@@ -506,15 +518,13 @@
   .slack-evidence-card .show-all-panel[hidden] { display: none; }
   .slack-evidence-card .show-all-panel {
     margin-top: 10px;
-    padding: 10px 12px;
-    background: var(--luna-gray-50);
-    border: 1px solid var(--luna-gray-200);
-    border-radius: 6px;
+    padding: 12px 0 0;
+    border-top: 1px solid var(--luna-gray-100);
   }
   .slack-evidence-card .show-all-panel .show-all-note {
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     font-size: 11.5px;
-    color: var(--luna-gray-600);
+    color: var(--luna-gray-500);
     line-height: 1.45;
   }
   .slack-evidence-card.is-resolved .show-all-toggle,
@@ -1654,61 +1664,49 @@
                 </div>
                 <div class="meta">Compliance Assessment · SOC 2 CC6.1 · quarterly · Reviewer: Marie Curie</div>
 
-                <div class="delta-hero">
-                  <div class="dh-unchanged">
-                    <div class="dh-stat">94</div>
-                    <div class="dh-label">unchanged</div>
-                    <div class="dh-sub">since Q2 filing (Jun 17)</div>
+                <div class="delta-bar" aria-label="100 rows, 94 unchanged, 6 changed">
+                  <div class="db-track">
+                    <div class="db-fill-unchanged" style="width:94%"></div>
+                    <div class="db-fill-changed" style="width:6%"></div>
                   </div>
-                  <div class="dh-divider"></div>
-                  <div class="dh-changed">
-                    <div class="dh-stat">6</div>
-                    <div class="dh-label">need your review</div>
-                    <div class="dh-sub">HEL-3482, HEL-3471, OPS-2208 …</div>
+                  <div class="db-legend">
+                    <span class="db-leg-item"><span class="db-dot db-dot-unchanged"></span><strong>94</strong> unchanged since Q2</span>
+                    <span class="db-leg-item"><span class="db-dot db-dot-changed"></span><strong>6</strong> changes need review</span>
                   </div>
                 </div>
 
-                <table class="delta-table">
-                  <thead><tr><th>user</th><th>change</th><th>signed off</th><th>ticket</th></tr></thead>
-                  <tbody>
-                    <tr>
-                      <td>r.taylor@helios.com</td>
-                      <td><span class="delta-pill is-add">+ dba-admin</span> <span class="delta-was">was dba-read</span></td>
-                      <td>✓</td>
-                      <td><span class="ai-citation">HEL-3482</span></td>
-                    </tr>
-                    <tr>
-                      <td>contractor-svc-09</td>
-                      <td><span class="delta-pill is-carry">carryover</span> dba-admin</td>
-                      <td>—</td>
-                      <td><span class="ai-citation">HEL-3471</span></td>
-                    </tr>
-                    <tr>
-                      <td>n.lee@helios.com</td>
-                      <td><span class="delta-pill is-add">+ dba-read</span> <span class="delta-was">new hire</span></td>
-                      <td>✓</td>
-                      <td><span class="ai-citation">OPS-2208</span></td>
-                    </tr>
-                    <tr>
-                      <td>s.park@helios.com</td>
-                      <td><span class="delta-pill is-remove">− dba-admin</span> <span class="delta-was">revoked Aug 8</span></td>
-                      <td>✓</td>
-                      <td><span class="ai-citation">OPS-2199</span></td>
-                    </tr>
-                    <tr>
-                      <td>deploy-svc</td>
-                      <td><span class="delta-pill is-add">+ deploy</span> <span class="delta-was">new service account</span></td>
-                      <td>auto</td>
-                      <td><span class="ai-citation">OPS-2211</span></td>
-                    </tr>
-                    <tr>
-                      <td>etl-old</td>
-                      <td><span class="delta-pill is-remove">− etl</span> <span class="delta-was">decommissioned</span></td>
-                      <td>—</td>
-                      <td><span class="ai-citation">OPS-2188</span></td>
-                    </tr>
-                  </tbody>
-                </table>
+                <ul class="delta-list">
+                  <li class="dl-row">
+                    <span class="dl-user">r.taylor@helios.com</span>
+                    <span class="dl-change"><span class="dl-pill is-add">+ dba-admin</span><span class="dl-context">was dba-read</span></span>
+                    <a class="dl-ticket" title="Opens this ticket in the Optro platform">HEL-3482 ↗</a>
+                  </li>
+                  <li class="dl-row">
+                    <span class="dl-user">contractor-svc-09</span>
+                    <span class="dl-change"><span class="dl-pill is-carry">carryover</span><span class="dl-context">dba-admin · open since Q2</span></span>
+                    <a class="dl-ticket" title="Opens this ticket in the Optro platform">HEL-3471 ↗</a>
+                  </li>
+                  <li class="dl-row">
+                    <span class="dl-user">n.lee@helios.com</span>
+                    <span class="dl-change"><span class="dl-pill is-add">+ dba-read</span><span class="dl-context">new hire</span></span>
+                    <a class="dl-ticket" title="Opens this ticket in the Optro platform">OPS-2208 ↗</a>
+                  </li>
+                  <li class="dl-row">
+                    <span class="dl-user">s.park@helios.com</span>
+                    <span class="dl-change"><span class="dl-pill is-remove">− dba-admin</span><span class="dl-context">revoked Aug 8</span></span>
+                    <a class="dl-ticket" title="Opens this ticket in the Optro platform">OPS-2199 ↗</a>
+                  </li>
+                  <li class="dl-row">
+                    <span class="dl-user">deploy-svc</span>
+                    <span class="dl-change"><span class="dl-pill is-add">+ deploy</span><span class="dl-context">new service account</span></span>
+                    <a class="dl-ticket" title="Opens this ticket in the Optro platform">OPS-2211 ↗</a>
+                  </li>
+                  <li class="dl-row">
+                    <span class="dl-user">etl-old</span>
+                    <span class="dl-change"><span class="dl-pill is-remove">− etl</span><span class="dl-context">decommissioned</span></span>
+                    <a class="dl-ticket" title="Opens this ticket in the Optro platform">OPS-2188 ↗</a>
+                  </li>
+                </ul>
 
                 <div class="conf-row">
                   <span>Sufficiency check:</span>
