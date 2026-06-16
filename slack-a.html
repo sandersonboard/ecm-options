@@ -61,16 +61,15 @@
   .filed-receipt-line {
     margin-top: 8px;
     padding: 8px 10px;
-    background: var(--luna-green-50);
-    border: 1px solid var(--luna-green-100);
-    border-left: 3px solid var(--luna-green-500);
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
     border-radius: 4px;
-    font-size: 12px;
-    color: var(--luna-green-700);
+    font-size: 11.5px;
+    color: var(--luna-gray-700);
     font-family: ui-monospace, monospace;
     line-height: 1.5;
   }
-  .filed-receipt-line strong { color: var(--luna-green-700); font-weight: 600; }
+  .filed-receipt-line strong { color: var(--luna-gray-900); font-weight: 600; }
   .slack-inline-panel {
     margin-top: 8px;
     padding: 10px 12px;
@@ -164,19 +163,33 @@
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  .slack-evidence-card.is-resolved .actions button,
-  .slack-evidence-card.is-resolved .slack-inline-panel { pointer-events: none; opacity: 0.55; }
-  .slack-evidence-card.is-resolved::after {
-    content: "✓ Filed";
-    display: inline-block;
-    margin-top: 6px;
-    padding: 2px 8px;
-    font-size: 11px; font-weight: 700;
-    color: var(--luna-green-700);
-    background: var(--luna-green-50);
-    border: 1px solid var(--luna-green-100);
-    border-radius: 10px;
-    letter-spacing: 0.03em;
+  .slack-evidence-card.is-resolved .actions { display: none; }
+  .slack-evidence-card.is-resolved .slack-inline-panel { display: none !important; }
+  .slack-evidence-card .resolved-status { display: none; }
+  .slack-evidence-card.is-resolved .resolved-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--luna-gray-200);
+    font-size: 12px;
+    color: var(--luna-gray-700);
+  }
+  .slack-evidence-card .resolved-status .check {
+    width: 14px; height: 14px;
+    background: var(--luna-green-500);
+    color: #fff;
+    border-radius: 50%;
+    display: inline-grid;
+    place-items: center;
+    font-size: 9px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .slack-evidence-card .resolved-status .meta {
+    color: var(--luna-gray-500);
+    margin-left: 4px;
   }
   .artifact-chip {
     appearance: none;
@@ -454,6 +467,12 @@ ORDER BY user;</textarea>
                     <button onclick="toggleArtifact('email'); return false;">Close</button>
                   </div>
                 </div>
+
+                <div class="resolved-status">
+                  <span class="check">✓</span>
+                  <span>Approved &amp; filed by Weston</span>
+                  <span class="meta">· Sep 25 · 3:11 PM PT</span>
+                </div>
               </div>
             </div>
           </div>
@@ -500,7 +519,7 @@ ORDER BY user;</textarea>
               </div>
               <p style="margin-top:8px;font-size:13px;">I'll DM you here if Marie has questions or sends it back.</p>
               <div style="display:flex;gap:6px;margin-top:6px;">
-                <button onclick="resetFlow(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-teal-500);background:var(--luna-teal-500);color:var(--luna-white);cursor:pointer;">↻ Run another</button>
+                <button onclick="resetFlow(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">↻ Run another</button>
                 <button onclick="toggleReceipt(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">View filing details</button>
               </div>
 
