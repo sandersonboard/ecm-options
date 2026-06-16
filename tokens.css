@@ -193,6 +193,8 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 11px;
   font-weight: 600;
   color: var(--luna-blue-700);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .ai-chip::before {
   content: "";
