@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615v" />
-<link rel="stylesheet" href="styles.css?v=20260615v" />
+<link rel="stylesheet" href="tokens.css?v=20260615w" />
+<link rel="stylesheet" href="styles.css?v=20260615w" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -136,71 +136,128 @@
   .tour-start-btn:hover { background: var(--luna-teal-600); border-color: var(--luna-teal-600); }
   .tour-start-btn svg { width: 13px; height: 13px; }
 
-  /* Tour overlay */
-  #tour[hidden] { display: none; }
-  #tour { position: fixed; inset: 0; z-index: 9000; pointer-events: none; }
-  .tour-backdrop {
-    position: fixed; inset: 0;
-    background: rgba(10, 54, 85, 0.32);
-    pointer-events: auto;
-  }
-  .tour-spotlight {
-    position: absolute;
-    border: 2px solid var(--luna-teal-500);
-    border-radius: 8px;
-    box-shadow: 0 0 0 4px rgba(38, 108, 146, 0.25), 0 0 0 9999px rgba(10, 54, 85, 0.45);
-    pointer-events: none;
-    transition: top 0.3s ease, left 0.3s ease, width 0.3s ease, height 0.3s ease;
-    display: none;
-  }
-  .tour-spotlight.is-shown { display: block; }
-  .tour-pop {
-    position: absolute;
+  /* === Floating-card tour (reference pattern: draggable card + pulsing highlight) === */
+  .tour-card {
+    position: fixed;
+    left: 24px; bottom: 24px;
+    width: 22rem; max-width: calc(100vw - 48px);
     background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
     border-radius: 10px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-    padding: 18px 20px 16px;
-    width: 380px;
-    max-width: calc(100vw - 32px);
-    pointer-events: auto;
-    z-index: 9002;
-    transition: top 0.3s ease, left 0.3s ease;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18), 0 2px 6px rgba(15, 23, 42, 0.08);
+    color: var(--luna-gray-900);
+    z-index: 1000;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    opacity: 0; transform: translateY(6px);
+    transition: opacity 160ms ease, transform 160ms ease;
   }
-  .tour-pop.is-centered {
-    top: 50% !important; left: 50% !important;
-    transform: translate(-50%, -50%);
+  .tour-card.visible { opacity: 1; transform: translateY(0); }
+  .tour-card-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    background: var(--luna-gray-50);
+    border-bottom: 1px solid var(--luna-gray-200);
+    cursor: grab; user-select: none; touch-action: none;
   }
-  .tour-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .tour-step-count {
-    font-size: 10.5px; font-weight: 700;
-    color: var(--luna-teal-500);
-    text-transform: uppercase; letter-spacing: 0.06em;
+  .tour-card-header.grabbing { cursor: grabbing; }
+  .tour-card-avatar {
+    width: 2.25rem; height: 2.25rem; border-radius: 999px;
+    background: linear-gradient(135deg, #ebf3fc 0%, #c8dcf0 70%, #9dc4ef 100%);
+    border: 1px solid #9dc4ef;
+    font-size: 1.25rem; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
   }
-  .tour-skip {
-    background: none; border: 0;
-    color: var(--luna-gray-500);
-    font-size: 11.5px;
-    cursor: pointer; padding: 0;
+  .tour-card-who { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
+  .tour-card-who .name {
+    font-size: 13px; font-weight: 600; color: var(--luna-gray-900);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .tour-skip:hover { color: var(--luna-gray-900); text-decoration: underline; }
-  .tour-title { font-size: 17px; font-weight: 700; margin: 0 0 8px; color: var(--luna-gray-900); letter-spacing: -0.01em; }
-  .tour-body { font-size: 13.5px; color: var(--luna-gray-700); line-height: 1.55; margin: 0 0 14px; }
-  .tour-body strong { color: var(--luna-gray-900); }
-  .tour-actions { display: flex; justify-content: space-between; gap: 8px; }
-  .tour-btn {
-    padding: 7px 14px;
+  .tour-card-who .meta { font-size: 11px; color: var(--luna-gray-500); }
+  .tour-card-close {
+    background: transparent; border: 0; padding: 4px;
+    color: var(--luna-gray-500); font-size: 18px; line-height: 1; cursor: pointer;
+    border-radius: 4px;
+  }
+  .tour-card-close:hover { color: var(--luna-gray-900); background: var(--luna-gray-100); }
+  .tour-card-body {
+    padding: 14px 16px 8px;
+    font-size: 13px; line-height: 1.55; color: var(--luna-gray-800);
+    max-height: 22rem; overflow-y: auto;
+  }
+  .tour-card-title {
+    font-size: 15px; font-weight: 700; color: var(--luna-gray-900);
+    letter-spacing: -0.005em; margin: 0 0 6px;
+  }
+  .tour-card-text { margin: 0; }
+  .tour-card-text strong { color: var(--luna-gray-900); font-weight: 700; }
+  .tour-card-footer {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--luna-gray-200);
+    background: var(--luna-white);
+  }
+  .tour-progress {
+    font-size: 11px; color: var(--luna-gray-500);
+    font-variant-numeric: tabular-nums; letter-spacing: 0.04em;
+  }
+  .tour-actions-row { display: flex; align-items: center; gap: 6px; }
+  .tour-action-btn {
+    background: var(--luna-white); border: 1px solid var(--luna-gray-300);
+    border-radius: 6px; color: var(--luna-gray-900);
+    font: inherit; font-size: 12px; font-weight: 500;
+    padding: 5px 11px; cursor: pointer;
+    transition: background 80ms, border-color 80ms;
+  }
+  .tour-action-btn:hover { background: var(--luna-gray-50); }
+  .tour-action-btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+  .tour-action-btn.primary {
+    background: var(--luna-teal-500); border-color: var(--luna-teal-500); color: #fff;
+  }
+  .tour-action-btn.primary:hover { background: var(--luna-teal-600); border-color: var(--luna-teal-600); }
+  .tour-skip-btn {
+    background: transparent; border: 0; color: var(--luna-gray-500);
+    font-size: 12px; cursor: pointer; padding: 0 6px; font: inherit;
+  }
+  .tour-skip-btn:hover { color: var(--luna-gray-900); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* Pulsing highlight on the active target */
+  .tour-highlight {
+    position: relative; z-index: 5;
+    animation: tour-highlight-pulse 2.4s ease-in-out infinite;
+    border-radius: inherit;
+  }
+  @keyframes tour-highlight-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(38, 108, 146, 0.45), 0 0 14px rgba(38, 108, 146, 0.22); }
+    50%      { box-shadow: 0 0 0 5px rgba(38, 108, 146, 0.65), 0 0 28px rgba(38, 108, 146, 0.36); }
+  }
+
+  /* Floating "Product tour" relauncher pill (bottom-right) */
+  .tour-restart {
+    position: fixed; bottom: 24px; right: 24px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px 7px 8px;
+    background: linear-gradient(135deg, rgba(10, 54, 85, 0.08), rgba(38, 108, 146, 0.08));
+    border: 1px solid rgba(10, 54, 85, 0.35);
+    color: #0A3655;
     font-size: 12.5px; font-weight: 600;
-    border-radius: 5px; cursor: pointer;
-    border: 1px solid var(--luna-gray-300);
-    background: var(--luna-white); color: var(--luna-gray-800);
+    border-radius: 999px; cursor: pointer;
+    box-shadow: 0 1px 2px rgba(10, 54, 85, 0.06);
+    transition: all 150ms ease;
+    z-index: 1400;
   }
-  .tour-btn:hover { background: var(--luna-gray-50); border-color: var(--luna-gray-400); }
-  .tour-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-  .tour-btn.is-primary {
-    background: var(--luna-teal-500); color: #fff; border-color: var(--luna-teal-500);
+  .tour-restart:hover {
+    background: linear-gradient(135deg, rgba(10, 54, 85, 0.14), rgba(38, 108, 146, 0.14));
+    border-color: rgba(10, 54, 85, 0.5);
+    transform: translateY(-1px);
   }
-  .tour-btn.is-primary:hover { background: var(--luna-teal-600); border-color: var(--luna-teal-600); }
-  body.tour-open .tour-target { position: relative; z-index: 9001; }
+  .tour-restart-avatar {
+    width: 22px; height: 22px; border-radius: 999px;
+    display: inline-grid; place-items: center;
+    background: #fff;
+    font-size: 13px; line-height: 1;
+  }
 
   /* Q2 reference inline link inside the bot's intro prose */
   .prior-link {
@@ -1211,196 +1268,306 @@
 
 <script>
   let flowStarted = false;
-  let tourStep = 0;
-  let tourTargetEl = null;
 
-  const TOUR_STEPS = [
-    {
-      target: null,
-      title: 'A guided tour of ECM in Slack',
-      body: 'ECM is the Sufficiency agent — it judges whether evidence actually proves the control operated, not just whether it looks like prior quarters. Eleven beats walk you through what makes this different from a reminder bot.',
-    },
-    {
-      target: '.slack-evidence-card .head',
-      title: 'The bot meets owners where they work',
-      body: 'Slack DM to the control owner. No portal, no quarterly login. The card is a Slack rich attachment, not a custom UI — which means it behaves like every other Slack message: shareable, searchable, exportable for audit.',
-    },
-    {
-      target: '.slack-evidence-card .suff-verdict',
-      title: 'Sufficiency, not pattern-match',
-      body: 'Categorical verdict: <strong>Adequate to file</strong>. Not a 94% confidence score. Sufficiency in audit terms is pass/fail — evidence either proves the control operated or it doesn\\'t. The icon signals state cleanly; no false precision.',
-    },
-    {
-      target: '.slack-evidence-card .conf-why-wrap',
-      title: 'Show your work',
-      body: 'Hover the (?) for the substantive rules ECM evaluated against. These are the policy-as-code rules signed by the audit committee. The tooltip footer links to the <strong>model card</strong> — version, training data, error rates — for users who want deeper trust calibration.',
-      onEnter: () => {
-        const w = document.querySelector('.slack-evidence-card .conf-why-wrap');
-        if (w) w.classList.add('is-tour-open');
+  // === Tour runtime — floating draggable card + pulsing highlight ===
+  window.TOUR = {
+    title: 'Optro ECM',
+    intro: 'How a sufficiency agent files SOX evidence in Slack.',
+    steps: [
+      {
+        title: 'A guided tour of ECM in Slack',
+        body: 'ECM is the <strong>sufficiency agent</strong> — it judges whether evidence actually proves the control operated, not just whether it looks like prior quarters. Eleven beats walk you through what makes this different from a reminder bot.',
       },
-      onLeave: () => {
-        const w = document.querySelector('.slack-evidence-card .conf-why-wrap');
-        if (w) w.classList.remove('is-tour-open');
+      {
+        title: 'The bot meets owners where they work',
+        body: 'A Slack DM to the control owner. No portal, no quarterly login. The card is a Slack rich attachment — shareable, searchable, exportable as evidence.',
+        selector: '.slack-evidence-card .head',
       },
-    },
-    {
-      target: '.prior-link',
-      title: 'Last quarter\\'s filing, one click away',
-      body: 'The bot claims it drafted from Q2 — and you can <em>verify</em> that claim. Click the link to see exactly what Marie signed off on last quarter. This is what makes the suggested artifact trustworthy: it traces back to a known-adequate baseline.',
-      onEnter: () => { const p = document.getElementById('q2-ref'); if (p) p.style.display = 'block'; },
-      onLeave: () => { const p = document.getElementById('q2-ref'); if (p) p.style.display = 'none'; },
-    },
-    {
-      target: '#approve-btn-anchor',
-      title: 'One tap, when ECM\\'s sure',
-      body: 'No competing edit buttons, no upload-your-own escape hatches. When sufficiency is adequate, Approve & file is the only primary action. That\\'s a deliberate UX claim: the AI did the work, the human ratifies.',
-      onEnter: () => {
-        // Highlight the actions group containing the Approve button
+      {
+        title: 'Sufficiency, not pattern-match',
+        body: 'Categorical verdict: <strong>Adequate to file</strong>. Not a 94% bar, not a confidence score. Sufficiency in audit terms is pass/fail — evidence either proves the control operated or it doesn\'t.',
+        selector: '.slack-evidence-card .suff-verdict',
       },
-      target: '.slack-evidence-card .actions',
-    },
-    {
-      target: '.slack-evidence-card .row-review-link',
-      title: 'The cautious path',
-      body: '<strong>Review the evidence →</strong> opens an inline panel listing every item, with the 2 flagged ones (carryover + escalation) called out and explained. From there you can approve, <strong>flag for Marie</strong> if something still feels off, or close. That flag-for-Marie path is the dispute mechanism — ECM doesn\\'t pretend it can\\'t be wrong.',
-      onEnter: () => { const p = document.getElementById('row-review-panel'); if (p) p.style.display = 'block'; },
-      onLeave: () => { const p = document.getElementById('row-review-panel'); if (p) p.style.display = 'none'; },
-    },
-    {
-      target: '.slack-evidence-card',
-      title: 'The card visibly transitions to filed',
-      body: 'After Approve, the card itself becomes the filed record: title shifts to <strong>Filed access list</strong>, the artifact line says <strong>Filed artifact:</strong>, and a green status row at the bottom shows who and when. One canonical confirmation surface — no duplicate "Tagged…" messages.',
-      onEnter: () => {
-        const card = document.querySelector('.slack-evidence-card');
-        if (card) card.classList.add('is-resolved');
-        // Reveal the filed-msg too
-        const filed = document.getElementById('filed-msg');
-        if (filed) { filed.classList.remove('is-hidden'); filed.classList.add('is-revealing'); }
+      {
+        title: 'Show your work',
+        body: 'Hover the (?) for the substantive rules ECM checked. These are policy-as-code, signed by the audit committee. The tooltip footer links to the <strong>model card</strong> (version, training data, error rates) for deeper trust calibration.',
+        selector: '.slack-evidence-card .conf-why-wrap',
       },
-    },
-    {
-      target: '#filed-msg .notify-row',
-      title: 'Forward-looking after filing',
-      body: 'The bot\\'s follow-up is purely future-tense: <strong>Marie has 2 business days</strong>, and you\\'ll be DM\\'d if she has questions. Slack chips show how Marie was notified. <strong>+ Add channel</strong> is for escalation or audit-committee visibility, not redundancy.',
-    },
-    {
-      target: '#filed-msg .actions',
-      title: 'Two actions, two intents',
-      body: '<strong>What\\'s next →</strong> opens an inline queue of your upcoming SOX work — concrete value beyond filing one thing. <strong>View filing details</strong> shows the labeled audit-trail entry (artifact, signed-block, model card reference) — what the external auditor sees during Q3 testing.',
-      target: '.slack-msg#filed-msg',
-    },
-    {
-      target: null,
-      title: 'That\\'s the tour',
-      body: 'You\\'ve seen the moves that make this the sufficiency agent, not a reminder bot: categorical verdict, named rules, Q2 traceability, one-tap when adequate, the dispute path when not, and a card that knows when it\\'s filed. Click around to explore.',
-      onEnter: () => {
-        // Don't reset the demo state — let user explore
+      {
+        title: 'Last quarter, one click away',
+        body: 'The bot claims it drafted from Q2 — and you can <strong>verify</strong> that claim. Click the inline link to see exactly what Marie signed off on last quarter. r.taylor was dba-read in Jun; the Q3 escalation to dba-admin is the drift ECM flagged.',
+        selector: '.prior-link',
+        before: function () {
+          var p = document.getElementById('q2-ref');
+          if (p) p.style.display = 'block';
+        },
+        after: function () {
+          var p = document.getElementById('q2-ref');
+          if (p) p.style.display = 'none';
+        },
       },
-    },
-  ];
+      {
+        title: 'One tap, when ECM is sure',
+        body: 'When sufficiency is adequate, <strong>Approve &amp; file</strong> is the only primary action. No competing edit-query button, no upload-your-own escape hatch. The AI did the work; the human ratifies.',
+        selector: '.slack-evidence-card .actions',
+      },
+      {
+        title: 'The cautious path',
+        body: '<strong>Review the evidence →</strong> opens an inline panel: all 22 items, the 2 flagged ones (carryover + escalation) called out and explained. You can approve, <strong>flag for Marie</strong> if something still feels off, or close. ECM doesn\'t pretend it can\'t be wrong.',
+        selector: '.slack-evidence-card .row-review-link',
+        before: function () {
+          var p = document.getElementById('row-review-panel');
+          if (p) p.style.display = 'block';
+        },
+        after: function () {
+          var p = document.getElementById('row-review-panel');
+          if (p) p.style.display = 'none';
+        },
+      },
+      {
+        title: 'The card visibly transitions to filed',
+        body: 'After Approve, the card itself becomes the filed record: title flips to <strong>Filed access list</strong>, artifact line says <strong>Filed artifact:</strong>, action buttons hide, and a green status row shows who and when. One canonical confirmation — no duplicate "tagged…" message clutter.',
+        selector: '.slack-evidence-card',
+        before: function () {
+          var card = document.querySelector('.slack-evidence-card');
+          if (card) card.classList.add('is-resolved');
+          var filed = document.getElementById('filed-msg');
+          if (filed) { filed.classList.remove('is-hidden'); filed.classList.add('is-revealing'); }
+          if (typeof flowStarted !== 'undefined') flowStarted = true;
+        },
+      },
+      {
+        title: 'Forward-looking follow-up',
+        body: 'The bot\'s next message is purely future-tense: <strong>Marie has 2 business days</strong>, you\'ll be DM\'d if she comes back. Slack chips show how Marie was notified. <strong>+ Add channel</strong> is for escalation, not redundancy.',
+        selector: '#filed-msg .notify-row',
+      },
+      {
+        title: 'Two actions, two intents',
+        body: '<strong>What\'s next →</strong> opens an inline queue of your upcoming SOX work — concrete forward value. <strong>View filing details</strong> shows the labeled audit-trail entry (artifact, signed-block, model card ref) — what the external auditor sees during Q3 testing.',
+        selector: '#filed-msg p:last-of-type + .notify-row, #filed-msg',
+      },
+      {
+        title: "That's the tour",
+        body: 'The moves that make this the sufficiency agent, not a reminder bot: substantive rules, Q2 traceability, categorical verdict, one-tap when adequate, dispute path when not, and a card that knows when it\'s filed. Click around to explore.',
+      },
+    ],
+  };
 
-  function startTour() {
-    tourStep = 0;
-    document.getElementById('tour').hidden = false;
-    document.body.classList.add('tour-open');
-    showTourStep();
-  }
+  (function () {
+    var SEEN_KEY = 'ecm-tour-seen-slack-a';
+    var POS_KEY = 'ecm-tour-pos-v1';
+    var HIGHLIGHT_CLASS = 'tour-highlight';
+    var cardEl = null;
+    var highlightedEl = null;
+    var stepIdx = 0;
+    var active = false;
 
-  function endTour() {
-    const stepData = TOUR_STEPS[tourStep];
-    if (stepData && stepData.onLeave) try { stepData.onLeave(); } catch(e) {}
-    document.getElementById('tour').hidden = true;
-    document.body.classList.remove('tour-open');
-    if (tourTargetEl) { tourTargetEl.classList.remove('tour-target'); tourTargetEl = null; }
-    const spot = document.getElementById('tour-spotlight');
-    if (spot) spot.classList.remove('is-shown');
-  }
-
-  function tourPrev() {
-    const cur = TOUR_STEPS[tourStep];
-    if (cur && cur.onLeave) try { cur.onLeave(); } catch(e) {}
-    if (tourStep > 0) { tourStep--; showTourStep(); }
-  }
-  function tourNext() {
-    const cur = TOUR_STEPS[tourStep];
-    if (cur && cur.onLeave) try { cur.onLeave(); } catch(e) {}
-    if (tourStep < TOUR_STEPS.length - 1) { tourStep++; showTourStep(); }
-    else { endTour(); }
-  }
-
-  function showTourStep() {
-    const step = TOUR_STEPS[tourStep];
-    if (!step) return;
-    if (tourTargetEl) { tourTargetEl.classList.remove('tour-target'); tourTargetEl = null; }
-    if (step.onEnter) try { step.onEnter(); } catch(e) { console.warn(e); }
-
-    document.getElementById('tour-step-count').textContent = 'Step ' + (tourStep + 1) + ' of ' + TOUR_STEPS.length;
-    document.getElementById('tour-title').textContent = step.title;
-    document.getElementById('tour-body').innerHTML = step.body;
-    document.getElementById('tour-prev').disabled = (tourStep === 0);
-    document.getElementById('tour-next').textContent = (tourStep === TOUR_STEPS.length - 1) ? 'Done' : 'Next →';
-
-    setTimeout(() => positionTour(step.target), 60);
-  }
-
-  function positionTour(selector) {
-    const spot = document.getElementById('tour-spotlight');
-    const pop = document.getElementById('tour-pop');
-    if (!selector) {
-      spot.classList.remove('is-shown');
-      pop.classList.add('is-centered');
-      pop.style.top = ''; pop.style.left = '';
-      return;
+    function $$(sel, root) {
+      if (!sel) return null;
+      try { return (root || document).querySelector(sel); } catch (e) { return null; }
     }
-    const el = document.querySelector(selector);
-    if (!el) { spot.classList.remove('is-shown'); pop.classList.add('is-centered'); return; }
-    tourTargetEl = el;
-    el.classList.add('tour-target');
-    el.scrollIntoView({behavior: 'smooth', block: 'center'});
+    function clearHighlight() {
+      if (highlightedEl) { highlightedEl.classList.remove(HIGHLIGHT_CLASS); highlightedEl = null; }
+    }
+    function applyHighlight(selector) {
+      clearHighlight();
+      if (!selector) return;
+      var el = $$(selector);
+      if (!el) return;
+      el.classList.add(HIGHLIGHT_CLASS);
+      try { el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' }); } catch (e) {}
+      highlightedEl = el;
+    }
+    function waitFor(sel, timeoutMs) {
+      if (!sel) return Promise.resolve(null);
+      return new Promise(function (resolve) {
+        var t0 = performance.now();
+        (function poll() {
+          var node = $$(sel);
+          if (node) return resolve(node);
+          if (performance.now() - t0 > (timeoutMs || 1200)) return resolve(null);
+          requestAnimationFrame(poll);
+        })();
+      });
+    }
 
-    setTimeout(() => {
-      const rect = el.getBoundingClientRect();
-      const scrollY = window.scrollY || window.pageYOffset;
-      const scrollX = window.scrollX || window.pageXOffset;
-      spot.classList.add('is-shown');
-      spot.style.top = (rect.top + scrollY - 6) + 'px';
-      spot.style.left = (rect.left + scrollX - 6) + 'px';
-      spot.style.width = (rect.width + 12) + 'px';
-      spot.style.height = (rect.height + 12) + 'px';
+    function render() {
+      var steps = (window.TOUR && window.TOUR.steps) || [];
+      var total = steps.length;
+      var step = steps[stepIdx];
+      if (!step) { end(); return; }
+      var isFirst = stepIdx === 0;
+      var isLast = stepIdx === total - 1;
+      var name = (window.TOUR && window.TOUR.title) || 'Product tour';
 
-      pop.classList.remove('is-centered');
-      const popW = 380;
-      const popH = pop.offsetHeight || 220;
-      const margin = 18;
-      const viewportRight = window.innerWidth;
-      const viewportBottom = window.innerHeight;
-      let top, left;
-      if (rect.right + margin + popW < viewportRight) {
-        left = rect.right + scrollX + margin;
-        top = rect.top + scrollY + Math.max(0, (rect.height - popH) / 2);
-      } else if (rect.left - margin - popW > 0) {
-        left = rect.left + scrollX - margin - popW;
-        top = rect.top + scrollY + Math.max(0, (rect.height - popH) / 2);
-      } else if (rect.bottom + margin + popH < viewportBottom) {
-        left = rect.left + scrollX + Math.max(0, (rect.width - popW) / 2);
-        top = rect.bottom + scrollY + margin;
-      } else {
-        left = rect.left + scrollX + Math.max(0, (rect.width - popW) / 2);
-        top = rect.top + scrollY - margin - popH;
+      var beforeP = Promise.resolve(typeof step.before === 'function' ? step.before() : null);
+      beforeP.then(function () { return waitFor(step.selector, 1200); }).then(function () {
+        if (!cardEl) {
+          cardEl = document.createElement('div');
+          cardEl.className = 'tour-card';
+          cardEl.setAttribute('role', 'dialog');
+          cardEl.setAttribute('aria-label', 'Product tour');
+          document.body.appendChild(cardEl);
+          applySavedPosition(cardEl);
+        }
+        cardEl.innerHTML =
+          '<div class="tour-card-header" data-tour-handle>' +
+            '<div class="tour-card-avatar" aria-hidden="true">👋</div>' +
+            '<div class="tour-card-who">' +
+              '<span class="name">' + name + '</span>' +
+              '<span class="meta">' + total + ' stops · drag to move</span>' +
+            '</div>' +
+            '<button class="tour-card-close" data-tour-action="end" aria-label="Close tour">×</button>' +
+          '</div>' +
+          '<div class="tour-card-body">' +
+            '<div class="tour-card-title">' + (step.title || '') + '</div>' +
+            '<p class="tour-card-text">' + (step.body || '') + '</p>' +
+          '</div>' +
+          '<div class="tour-card-footer">' +
+            '<span class="tour-progress">' + String(stepIdx + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0') + '</span>' +
+            '<div class="tour-actions-row">' +
+              '<button class="tour-action-btn" data-tour-action="prev"' + (isFirst ? ' disabled' : '') + '>← Back</button>' +
+              '<button class="tour-skip-btn" data-tour-action="end">Skip</button>' +
+              '<button class="tour-action-btn primary" data-tour-action="next">' + (isLast ? 'Done' : 'Next →') + '</button>' +
+            '</div>' +
+          '</div>';
+
+        cardEl.querySelectorAll('[data-tour-action]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var a = btn.getAttribute('data-tour-action');
+            if (a === 'next') next();
+            else if (a === 'prev') prev();
+            else if (a === 'end') end();
+          });
+        });
+        wireDrag(cardEl);
+        requestAnimationFrame(function () { cardEl.classList.add('visible'); });
+        applyHighlight(step.selector);
+      });
+    }
+
+    function wireDrag(card) {
+      var handle = card.querySelector('[data-tour-handle]');
+      if (!handle || handle.dataset.tourDragWired === '1') return;
+      handle.dataset.tourDragWired = '1';
+      var dragging = false, startX = 0, startY = 0, startLeft = 0, startTop = 0;
+      function getPoint(e) {
+        if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        return { x: e.clientX, y: e.clientY };
       }
-      left = Math.max(scrollX + 16, Math.min(scrollX + viewportRight - popW - 16, left));
-      top  = Math.max(scrollY + 16, Math.min(scrollY + viewportBottom - popH - 16, top));
-      pop.style.left = left + 'px';
-      pop.style.top  = top  + 'px';
-    }, 380);
-  }
+      function onDown(e) {
+        if (e.target.closest('button')) return;
+        var rect = card.getBoundingClientRect();
+        var pt = getPoint(e);
+        startX = pt.x; startY = pt.y; startLeft = rect.left; startTop = rect.top;
+        card.style.left = startLeft + 'px'; card.style.top = startTop + 'px';
+        card.style.bottom = 'auto'; card.style.right = 'auto';
+        dragging = true; handle.classList.add('grabbing');
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+      }
+      function onMove(e) {
+        if (!dragging) return;
+        var pt = getPoint(e);
+        var dx = pt.x - startX, dy = pt.y - startY;
+        var w = card.offsetWidth, h = card.offsetHeight;
+        var left = Math.max(8, Math.min(window.innerWidth - w - 8, startLeft + dx));
+        var top = Math.max(8, Math.min(window.innerHeight - h - 8, startTop + dy));
+        card.style.left = left + 'px'; card.style.top = top + 'px';
+        e.preventDefault();
+      }
+      function onUp() {
+        if (!dragging) return;
+        dragging = false; handle.classList.remove('grabbing');
+        document.body.style.userSelect = '';
+        try { sessionStorage.setItem(POS_KEY, JSON.stringify({ left: card.style.left, top: card.style.top })); } catch (e) {}
+      }
+      handle.addEventListener('mousedown', onDown);
+      handle.addEventListener('touchstart', onDown, { passive: false });
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('touchmove', onMove, { passive: false });
+      document.addEventListener('mouseup', onUp);
+      document.addEventListener('touchend', onUp);
+    }
 
-  document.addEventListener('keydown', (e) => {
-    if (document.getElementById('tour').hidden) return;
-    if (e.key === 'Escape') endTour();
-    if (e.key === 'ArrowRight') tourNext();
-    if (e.key === 'ArrowLeft')  tourPrev();
-  });
+    function applySavedPosition(card) {
+      try {
+        var raw = sessionStorage.getItem(POS_KEY);
+        if (!raw) return;
+        var pos = JSON.parse(raw);
+        if (!pos.left || !pos.top) return;
+        var w = card.offsetWidth || 352;
+        var h = card.offsetHeight || 280;
+        var maxLeft = Math.max(0, window.innerWidth - w);
+        var maxTop = Math.max(0, window.innerHeight - h);
+        var left = Math.min(maxLeft, Math.max(0, parseInt(pos.left, 10) || 0));
+        var top = Math.min(maxTop, Math.max(0, parseInt(pos.top, 10) || 0));
+        card.style.left = left + 'px'; card.style.top = top + 'px';
+        card.style.bottom = 'auto'; card.style.right = 'auto';
+      } catch (e) {}
+    }
+
+    function start() {
+      if (!window.TOUR || !Array.isArray(window.TOUR.steps) || !window.TOUR.steps.length) return;
+      active = true; stepIdx = 0; render();
+      document.addEventListener('keydown', onKey, true);
+    }
+    function next() {
+      if (!active) return;
+      var step = window.TOUR.steps[stepIdx];
+      if (step && typeof step.after === 'function') { try { step.after(); } catch (e) {} }
+      if (stepIdx >= window.TOUR.steps.length - 1) { end(); return; }
+      stepIdx++; render();
+    }
+    function prev() {
+      if (!active) return;
+      var step = window.TOUR.steps[stepIdx];
+      if (step && typeof step.after === 'function') { try { step.after(); } catch (e) {} }
+      if (stepIdx === 0) return;
+      stepIdx--; render();
+    }
+    function end() {
+      active = false; clearHighlight();
+      if (cardEl) { cardEl.remove(); cardEl = null; }
+      try { sessionStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+      document.removeEventListener('keydown', onKey, true);
+    }
+    function onKey(e) {
+      if (!active) return;
+      if (e.key === 'Escape') { e.preventDefault(); end(); }
+      else if (e.key === 'ArrowRight' || e.key === 'Enter') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+    }
+
+    function injectRestartButton() {
+      if (document.querySelector('.tour-restart')) return;
+      var btn = document.createElement('button');
+      btn.className = 'tour-restart';
+      btn.type = 'button';
+      btn.title = ((window.TOUR && window.TOUR.steps) ? window.TOUR.steps.length : 0) + '-stop product tour';
+      btn.innerHTML = '<span class="tour-restart-avatar" aria-hidden="true">👋</span><span>Take the tour</span>';
+      btn.addEventListener('click', function () { end(); start(); });
+      document.body.appendChild(btn);
+    }
+
+    function boot() {
+      if (!window.TOUR || !Array.isArray(window.TOUR.steps) || !window.TOUR.steps.length) return;
+      injectRestartButton();
+      var params = new URLSearchParams(location.search);
+      if (params.get('tour') === 'off') return;
+      var seen = false;
+      try { seen = !!sessionStorage.getItem(SEEN_KEY); } catch (e) {}
+      if (!seen) setTimeout(start, 600);
+    }
+
+    window.Tour = { boot: boot, start: start, next: next, prev: prev, end: end };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+    else setTimeout(boot, 0);
+  })();
+
+  // Backward-compat: header button still works
+  function startTour() { if (window.Tour) window.Tour.start(); }
+
 
   function toggleRowReview() {
     if (flowStarted) return;
@@ -1581,21 +1748,5 @@ hide(document.getElementById('filed-msg'));
   }
 </script>
 
-<div id="tour" hidden aria-modal="true" role="dialog">
-  <div class="tour-backdrop" onclick="endTour()"></div>
-  <div class="tour-spotlight" id="tour-spotlight"></div>
-  <div class="tour-pop" id="tour-pop">
-    <div class="tour-meta">
-      <span class="tour-step-count" id="tour-step-count">Step 1 of 11</span>
-      <button class="tour-skip" type="button" onclick="endTour(); return false;">Skip tour</button>
-    </div>
-    <h4 class="tour-title" id="tour-title">Welcome</h4>
-    <p class="tour-body" id="tour-body"></p>
-    <div class="tour-actions">
-      <button class="tour-btn" id="tour-prev" type="button" onclick="tourPrev(); return false;">← Previous</button>
-      <button class="tour-btn is-primary" id="tour-next" type="button" onclick="tourNext(); return false;">Next →</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
