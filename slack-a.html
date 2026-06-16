@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615d" />
-<link rel="stylesheet" href="styles.css?v=20260615d" />
+<link rel="stylesheet" href="tokens.css?v=20260615e" />
+<link rel="stylesheet" href="styles.css?v=20260615e" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -272,7 +272,7 @@
   }
   .slack-sidebar .channel .app-icon {
     width: 18px; height: 18px;
-    background: linear-gradient(135deg, #e5ddfa, #dbeaff);
+    background: #0A3655;
     border-radius: 3px;
     display: inline-grid; place-items: center;
     flex-shrink: 0;
@@ -298,6 +298,7 @@
     border-top: 1px solid var(--luna-gray-200);
     font-size: 12px;
     color: var(--luna-gray-700);
+    line-height: 1.4;
   }
   .slack-evidence-card .resolved-status .check {
     width: 14px; height: 14px;
@@ -309,6 +310,10 @@
     font-size: 9px;
     font-weight: 700;
     flex-shrink: 0;
+  }
+  .slack-evidence-card .resolved-status .msg {
+    flex: 1;
+    min-width: 0;
   }
   .slack-evidence-card .resolved-status .meta {
     color: var(--luna-gray-500);
@@ -464,7 +469,7 @@
 
       <main class="slack-main">
         <header class="slack-header">
-          <span style="width:24px;height:24px;border-radius:4px;background:linear-gradient(135deg,#e5ddfa,#dbeaff);display:grid;place-items:center;"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></span>
+          <span style="width:24px;height:24px;border-radius:4px;background:#0A3655;display:grid;place-items:center;"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;filter:brightness(0) invert(1);" /></span>
           Optro
           <span style="font-size:11px;color:var(--luna-gray-500);font-weight:500;margin-left:4px;">App · ECM assistant</span>
         </header>
@@ -472,7 +477,7 @@
         <div class="slack-messages" id="slack-thread">
           <!-- 1. Bot DM with evidence card -->
           <div class="slack-msg">
-            <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+            <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;filter:brightness(0) invert(1);" /></div>
             <div class="body">
               <div class="head">
                 <span class="name">Optro</span>
@@ -593,8 +598,7 @@ ORDER BY user;</textarea>
 
                 <div class="resolved-status">
                   <span class="check">✓</span>
-                  <span>Approved &amp; filed by Weston</span>
-                  <span class="meta">· Sep 25 · 3:11 PM PT</span>
+                  <span class="msg">Approved &amp; filed by Weston <span class="meta">· Sep 25 · 3:11 PM PT</span></span>
                 </div>
               </div>
             </div>
@@ -643,7 +647,7 @@ ORDER BY user;</textarea>
 
           <!-- 2b. Bot typing while it parses (hidden, briefly shown during the cascade) -->
           <div class="slack-msg is-hidden" id="bot-typing">
-            <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+            <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;filter:brightness(0) invert(1);" /></div>
             <div class="body">
               <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">just now</span></div>
               <div class="slack-typing-bubble"><span></span><span></span><span></span></div>
@@ -653,7 +657,7 @@ ORDER BY user;</textarea>
 
           <!-- 3. Bot confirms filed + receipt (hidden until cascade completes) -->
           <div class="slack-msg is-hidden" id="filed-msg">
-            <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+            <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;filter:brightness(0) invert(1);" /></div>
             <div class="body">
               <div class="head">
                 <span class="name">Optro</span>
