@@ -720,6 +720,8 @@
     letter-spacing: 0.04em; text-transform: uppercase;
     color: var(--luna-gray-500);
     margin: 0 0 6px;
+    display: flex; align-items: center; gap: 6px;
+    flex-wrap: wrap;
   }
   .slack-inline-panel .rr-section-label-spaced { margin-top: 14px; }
   .slack-inline-panel .rr-section-label .ai-citation { text-transform: none; letter-spacing: 0; font-weight: 600; }
@@ -727,6 +729,7 @@
     display: inline-flex; align-items: center; gap: 4px;
     text-decoration: none;
     color: inherit;
+    vertical-align: middle;
   }
   .slack-inline-panel .rr-artifact-link:hover .ai-citation {
     background: var(--luna-teal-100);
@@ -809,6 +812,8 @@
     font-size: 10px; font-weight: 700;
     letter-spacing: 0.04em; text-transform: uppercase;
     color: var(--luna-gray-500); margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+    flex-wrap: wrap;
   }
   .slack-inline-panel textarea {
     width: 100%; min-height: 64px;
@@ -1045,11 +1050,9 @@
     text-underline-offset: 2px;
   }
   .slack-evidence-card .record-title-arrow {
-    width: 11px; height: 11px;
+    width: 12px; height: 12px;
     color: var(--luna-gray-500);
     flex-shrink: 0;
-    position: relative;
-    top: -1px;
   }
   .slack-evidence-card .record-title-link:hover .record-title-arrow {
     color: var(--luna-blue-600);
