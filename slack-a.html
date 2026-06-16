@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260616j" />
-<link rel="stylesheet" href="styles.css?v=20260616j" />
+<link rel="stylesheet" href="tokens.css?v=20260616l" />
+<link rel="stylesheet" href="styles.css?v=20260616l" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -259,6 +259,37 @@
     font-size: 13px; line-height: 1;
   }
 
+  /* Slack app Messages / About tab strip (sits between the header and the messages) */
+  .slack-main .app-tabs {
+    display: flex;
+    align-items: stretch;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--luna-gray-200);
+    background: var(--luna-white);
+    flex-shrink: 0;
+  }
+  .slack-main .app-tab {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    padding: 9px 4px 8px;
+    margin-right: 18px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--luna-gray-600);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    line-height: 1.4;
+  }
+  .slack-main .app-tab:hover { color: var(--luna-gray-900); }
+  .slack-main .app-tab.is-active {
+    color: var(--luna-gray-900);
+    font-weight: 600;
+    border-bottom-color: #0A3655;
+  }
+
   /* Q2 reference inline link inside the bot's intro prose */
   .prior-link {
     appearance: none;
@@ -455,6 +486,62 @@
     color: var(--luna-blue-700, #0e48a1);
     opacity: 0.75;
     margin-left: 4px;
+  }
+
+  /* Needs-redraft state (after Send back to ECM) */
+  .slack-evidence-card.is-needs-redraft {
+    background: #fffbeb;
+    border-color: #fde68a;
+  }
+  .slack-evidence-card.is-needs-redraft .actions,
+  .slack-evidence-card.is-needs-redraft .card-sec-row,
+  .slack-evidence-card.is-needs-redraft #note-panel,
+  .slack-evidence-card.is-needs-redraft #defer-panel,
+  .slack-evidence-card.is-needs-redraft #sendback-panel,
+  .slack-evidence-card.is-needs-redraft #row-review-panel { display: none !important; }
+  .slack-evidence-card.is-needs-redraft .resolved-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #fde68a;
+    font-size: 12px;
+    color: #92400e;
+  }
+  .slack-evidence-card.is-needs-redraft .resolved-status .check {
+    background: #f59e0b;
+  }
+  .slack-evidence-card.is-needs-redraft .resolved-status .meta {
+    color: #92400e;
+    opacity: 0.75;
+    margin-left: 4px;
+  }
+
+  /* Send-back panel preset checkboxes */
+  .slack-inline-panel .sendback-options {
+    display: flex; flex-direction: column; gap: 4px;
+    margin: 4px 0 0;
+  }
+  .slack-inline-panel .sendback-opt {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 10px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 5px;
+    font-size: 12px;
+    color: var(--luna-gray-800);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .slack-inline-panel .sendback-opt:hover {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-300);
+  }
+  .slack-inline-panel .sendback-opt input {
+    margin: 0;
+    accent-color: var(--luna-teal-500);
+    flex-shrink: 0;
   }
   .slack-inline-panel .row-review-intro,
   .slack-inline-panel .row-review-note {
@@ -1124,6 +1211,11 @@
           <span style="font-size:11px;color:var(--luna-gray-500);font-weight:500;margin-left:4px;">App</span>
         </header>
 
+        <nav class="app-tabs" aria-label="App tabs">
+          <button class="app-tab is-active" type="button">Messages</button>
+          <button class="app-tab" type="button">About</button>
+        </nav>
+
         <div class="slack-messages" id="slack-thread">
           <!-- 1. Bot DM with evidence card -->
           <div class="slack-msg">
@@ -1203,6 +1295,8 @@
                   <span class="card-sec-sep">·</span>
                   <button class="card-sec-link" type="button" onclick="toggleDeferPanel(); return false;">Defer</button>
                   <span class="card-sec-sep">·</span>
+                  <button class="card-sec-link" type="button" onclick="toggleSendBackPanel(); return false;">Send back to ECM</button>
+                  <span class="card-sec-sep">·</span>
                   <button class="card-sec-link" type="button" onclick="toggleRowReview(); return false;">Review the evidence →</button>
                 </div>
 
@@ -1243,6 +1337,25 @@
                   <div class="panel-actions">
                     <button class="primary" type="button" onclick="confirmDefer(); return false;">Confirm defer</button>
                     <button type="button" onclick="toggleDeferPanel(); return false;">Cancel</button>
+                  </div>
+                </div>
+
+                <div class="slack-inline-panel" id="sendback-panel" style="display:none;">
+                  <div class="panel-label">Send this back to ECM</div>
+                  <p class="defer-help">ECM doesn't always get the draft right. Tell it what to change and you'll get a new draft. The send-back is logged so the iteration is audit-defensible.</p>
+                  <label class="defer-field-label">What's wrong?</label>
+                  <textarea id="sendback-text" placeholder="Example: contractor-svc-09 should not be in scope — it was decommissioned in Aug per OPS-2199."></textarea>
+                  <label class="defer-field-label">Specific changes ECM should make</label>
+                  <div class="sendback-options">
+                    <label class="sendback-opt"><input type="checkbox" /> Wrong reporting period</label>
+                    <label class="sendback-opt"><input type="checkbox" /> Wrong scope (system or control)</label>
+                    <label class="sendback-opt"><input type="checkbox" /> Missing accounts</label>
+                    <label class="sendback-opt"><input type="checkbox" /> Should exclude certain rows</label>
+                    <label class="sendback-opt"><input type="checkbox" /> Verdict is wrong</label>
+                  </div>
+                  <div class="panel-actions">
+                    <button class="primary" type="button" onclick="confirmSendBack(); return false;">Send back to ECM</button>
+                    <button type="button" onclick="toggleSendBackPanel(); return false;">Cancel</button>
                   </div>
                 </div>
 
@@ -1656,6 +1769,19 @@
         selector: '.slack-evidence-card .card-sec-row',
       },
       {
+        title: 'Send back when the AI is wrong',
+        body: 'When ECM gets the draft wrong (wrong period, wrong scope, missing accounts, verdict you disagree with), this is the path. Tell it what to change with preset checkboxes plus free text. ECM logs the send-back to the audit trail and redrafts. The card flips to a yellow "Sent back to ECM" state so it\'s clear nothing was filed.<span class="tour-why"><strong>Why:</strong> AI doesn\'t always get it right. Without a structured send-back, owners either file evidence they don\'t agree with or argue with the AI in side channels that auditors can\'t see. The send-back gives the disagreement a defensible home in the audit trail.</span>',
+        selector: '#sendback-panel',
+        before: function () {
+          var p = document.getElementById('sendback-panel');
+          if (p) p.style.display = 'block';
+        },
+        after: function () {
+          var p = document.getElementById('sendback-panel');
+          if (p) p.style.display = 'none';
+        },
+      },
+      {
         title: 'The cautious path',
         body: 'If anything feels off, this opens all 22 records inline. The two flagged ones are called out. From there Weston can approve, or send it to Marie with a flag.<span class="tour-why"><strong>Why:</strong> Every AI system needs an error-recovery path. Flag-for-Marie is the dispute mechanism that preserves segregation of duties.</span>',
         selector: '.slack-evidence-card .row-review-link',
@@ -1980,6 +2106,53 @@
     if (p) p.style.display = 'none';
   }
 
+  function toggleSendBackPanel() {
+    if (flowStarted) return;
+    var p = document.getElementById('sendback-panel');
+    if (!p) return;
+    ['note-panel', 'defer-panel', 'row-review-panel'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    var willShow = p.style.display === 'none' || !p.style.display;
+    p.style.display = willShow ? 'block' : 'none';
+    if (willShow) {
+      var ta = document.getElementById('sendback-text');
+      if (ta) ta.focus();
+      p.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
+  }
+
+  function confirmSendBack() {
+    var ta = document.getElementById('sendback-text');
+    var reason = ta ? ta.value.trim() : '';
+    var preset = Array.prototype.slice.call(
+      document.querySelectorAll('.sendback-opt input:checked')
+    ).map(function (cb) { return cb.parentElement.textContent.trim(); });
+
+    flowStarted = true;
+    var card = document.querySelector('.slack-evidence-card');
+    if (card) {
+      card.classList.add('is-needs-redraft');
+      var status = card.querySelector('.resolved-status');
+      if (status) {
+        var summary;
+        if (preset.length) {
+          summary = preset.slice(0, 2).join(', ') + (preset.length > 2 ? ' and ' + (preset.length - 2) + ' more' : '');
+        } else if (reason) {
+          summary = reason.length > 60 ? reason.slice(0, 60) + '…' : reason;
+        } else {
+          summary = '';
+        }
+        status.innerHTML = '<span class="check">↩</span>' +
+                           '<span class="msg">Sent back to ECM' +
+                           (summary ? ' <span class="meta">· ' + summary + '</span>' : '') + '</span>';
+      }
+    }
+    var p = document.getElementById('sendback-panel');
+    if (p) p.style.display = 'none';
+  }
+
   function toggleDeferPanel() {
     if (flowStarted) return;
     var p = document.getElementById('defer-panel');
@@ -2229,7 +2402,7 @@ hide(document.getElementById('filed-msg'));
     if (card) card.classList.remove('is-resolved');
 
     // Close any open inline panels
-    ['row-review-panel', 'q2-ref', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel', 'peek-panel', 'note-panel', 'defer-panel'].forEach(id => {
+    ['row-review-panel', 'q2-ref', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel', 'peek-panel', 'note-panel', 'defer-panel', 'sendback-panel'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
