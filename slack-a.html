@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615j" />
-<link rel="stylesheet" href="styles.css?v=20260615j" />
+<link rel="stylesheet" href="tokens.css?v=20260615k" />
+<link rel="stylesheet" href="styles.css?v=20260615k" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -41,119 +41,6 @@
   .slack-evidence-card .actions button.primary:hover {
     background: var(--luna-teal-600);
     border-color: var(--luna-teal-600);
-  }
-  /* Slack-style file attachment card */
-  .slack-file-card {
-    margin-top: 8px;
-    max-width: 480px;
-    background: var(--luna-white);
-    border: 1px solid var(--luna-gray-200);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-  }
-  .slack-file-card .file-img { background: #f6f8fa; }
-  .slack-file-card .ss-chrome {
-    background: #e7ebef;
-    padding: 7px 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    border-bottom: 1px solid #d4d8de;
-  }
-  .slack-file-card .ss-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .slack-file-card .ss-dot.is-red { background: #ff5f57; }
-  .slack-file-card .ss-dot.is-amber { background: #febc2e; }
-  .slack-file-card .ss-dot.is-green { background: #28c840; }
-  .slack-file-card .ss-title {
-    font-size: 11px;
-    color: var(--luna-gray-600);
-    font-weight: 500;
-    margin-left: 8px;
-    font-family: ui-monospace, monospace;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .slack-file-card .ss-body {
-    max-height: 220px;
-    overflow: hidden;
-    background: var(--luna-white);
-  }
-  .slack-file-card .ss-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: ui-monospace, monospace;
-    font-size: 10.5px;
-  }
-  .slack-file-card .ss-table thead { background: #f3f5f7; }
-  .slack-file-card .ss-table th,
-  .slack-file-card .ss-table td {
-    padding: 5px 14px;
-    text-align: left;
-    border-bottom: 1px solid #eef0f3;
-  }
-  .slack-file-card .ss-table th {
-    font-size: 9px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #6c7178;
-  }
-  .slack-file-card .ss-table td { color: #1f2328; }
-  .slack-file-card .ss-table tr.ss-warn { background: #fff8eb; }
-  .slack-file-card .ss-table tr:last-child td { border-bottom: 0; }
-  .slack-file-card .file-foot {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
-    border-top: 1px solid var(--luna-gray-200);
-    background: var(--luna-white);
-  }
-  .slack-file-card .file-ic {
-    width: 30px; height: 30px;
-    display: inline-grid; place-items: center;
-    background: var(--luna-blue-50);
-    color: var(--luna-blue-700);
-    border-radius: 4px;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-  .slack-file-card .file-text { flex: 1; min-width: 0; }
-  .slack-file-card .file-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--luna-gray-900);
-    line-height: 1.3;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .slack-file-card .file-sub {
-    font-size: 11px;
-    color: var(--luna-gray-500);
-    margin-top: 1px;
-  }
-  .slack-file-card .file-act {
-    background: var(--luna-white);
-    border: 1px solid var(--luna-gray-200);
-    border-radius: 4px;
-    padding: 4px 10px;
-    font-size: 14px;
-    color: var(--luna-gray-600);
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
-    line-height: 1;
-  }
-  .slack-file-card .file-act:hover {
-    background: var(--luna-gray-50);
-    color: var(--luna-gray-900);
-    border-color: var(--luna-gray-300);
   }
   .slack-typing-bubble {
     display: inline-flex; gap: 3px;
@@ -791,58 +678,7 @@ ORDER BY user;</textarea>
             </div>
           </div>
 
-          <!-- 2. Weston's reply with screenshot (hidden until Approve/Save/File click) -->
-          <div class="slack-msg is-hidden" id="weston-reply">
-            <div class="avatar">W</div>
-            <div class="body">
-              <div class="head"><span class="name">Weston Prohaska</span><span class="ts">Friday · 3:11 PM</span></div>
-              <p>In a meeting, already snapped the export from my phone. Filing now.</p>
-              <div class="slack-file-card">
-                <div class="file-img">
-                  <div class="ss-chrome">
-                    <span class="ss-dot is-red"></span>
-                    <span class="ss-dot is-amber"></span>
-                    <span class="ss-dot is-green"></span>
-                    <span class="ss-title">helios.service-now.com / access_audit?system=prod-db-01</span>
-                  </div>
-                  <div class="ss-body">
-                    <table class="ss-table">
-                      <thead><tr><th>user</th><th>role</th><th>last_login</th><th>attested</th></tr></thead>
-                      <tbody>
-                        <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-09-25</td><td>✓</td></tr>
-                        <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-09-22</td><td>✓</td></tr>
-                        <tr class="ss-warn"><td>contractor-svc-09</td><td>dba-admin</td><td>2026-04-12</td><td>—</td></tr>
-                        <tr><td>k.singh@helios.com</td><td>dba-read</td><td>2026-09-19</td><td>✓</td></tr>
-                        <tr class="ss-warn"><td>r.taylor@helios.com</td><td>dba-admin</td><td>2026-09-11</td><td>✓</td></tr>
-                        <tr><td>n.lee@helios.com</td><td>dba-read</td><td>2026-09-23</td><td>✓</td></tr>
-                        <tr><td>app-svc-prod</td><td>app-svc</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div class="file-foot">
-                  <span class="file-ic">📄</span>
-                  <div class="file-text">
-                    <div class="file-name">AR-Q3FY26-prod-db.png</div>
-                    <div class="file-sub">PNG · 1.2 MB · captured Sep 25 · 3:09 PM</div>
-                  </div>
-                  <button class="file-act" title="Download" aria-label="Download">⤓</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 2b. Bot typing while it parses (hidden, briefly shown during the cascade) -->
-          <div class="slack-msg is-hidden" id="bot-typing">
-            <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;filter:brightness(0) invert(1);" /></div>
-            <div class="body">
-              <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">just now</span></div>
-              <div class="slack-typing-bubble"><span></span><span></span><span></span></div>
-              <p style="font-size:11px;color:var(--luna-gray-500);margin-top:4px;">Parsing screenshot, tagging control, routing for review…</p>
-            </div>
-          </div>
-
-          <!-- 3. Bot confirms filed + receipt (hidden until cascade completes) -->
+          <!-- 2. Bot confirms filed (hidden until Approve & file is clicked) -->
           <div class="slack-msg is-hidden" id="filed-msg">
             <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;filter:brightness(0) invert(1);" /></div>
             <div class="body">
@@ -1110,22 +946,11 @@ ORDER BY user;</textarea>
   function runFlow() {
     if (flowStarted) return;
     flowStarted = true;
-
-    // Mark the initial card as resolved (dim buttons + add Filed badge via CSS)
+    // Update the card in place (action buttons hide; ✓ status row appears)
     const card = document.querySelector('.slack-evidence-card');
     if (card) card.classList.add('is-resolved');
-
-    // Reveal Weston's reply almost immediately
-    setTimeout(() => reveal(document.getElementById('weston-reply')), 300);
-
-    // Show bot typing after the reply lands
-    setTimeout(() => reveal(document.getElementById('bot-typing')), 1100);
-
-    // Hide typing + reveal filed message
-    setTimeout(() => {
-      hide(document.getElementById('bot-typing'));
-      reveal(document.getElementById('filed-msg'));
-    }, 2600);
+    // Bot's filed confirmation lands shortly after the click
+    setTimeout(() => reveal(document.getElementById('filed-msg')), 600);
   }
 
   function closePanelsThenRun() {
@@ -1232,9 +1057,7 @@ ORDER BY user;</textarea>
 
   function resetFlow() {
     flowStarted = false;
-    hide(document.getElementById('weston-reply'));
-    hide(document.getElementById('bot-typing'));
-    hide(document.getElementById('filed-msg'));
+hide(document.getElementById('filed-msg'));
 
     const card = document.querySelector('.slack-evidence-card');
     if (card) card.classList.remove('is-resolved');
