@@ -1956,17 +1956,17 @@
       },
       {
         title: 'The rules behind the verdict',
-        body: 'Hover the <strong>(?)</strong> to see the rules ECM evaluated. They\'re specific to control 4.2.1 and signed by the audit committee. The model-card link names which model judged this filing and how accurate it tends to be.<span class="tour-why"><strong>Why:</strong> Show your work. The tooltip plus the model card link let the user calibrate trust without forcing it.</span>',
+        body: 'Hover or tap the <strong>(?)</strong> to see the rules ECM evaluated. They\'re specific to control 4.2.1 and signed by the audit committee. The model-card link names which model judged the filing and how accurate it tends to be.<span class="tour-why"><strong>Why:</strong> Show your work. The tooltip plus the model card link let the user calibrate trust without forcing it. Hover for desktop, tap for touch — both work.</span>',
         selector: '.slack-evidence-card .conf-why-wrap',
       },
       {
         title: 'One tap when the check passes',
-        body: 'When sufficiency is adequate, this is the <strong>primary</strong> action. There\'s no Edit query button (Weston doesn\'t write SQL) and no Upload your own (it breaks chain of custody). ECM did the work; Weston signs off.<span class="tour-why"><strong>Why:</strong> Competing buttons would undermine the claim that ECM did the work. One primary action keeps the workflow defensible.</span>',
+        body: 'When sufficiency is adequate, this is the <strong>primary</strong> action. There\'s no Edit query button (Weston doesn\'t write SQL) and no Upload your own (it breaks chain of custody). ECM did the work; Weston signs off. Hover the button to see exactly what approve does — audit-trail entry, Marie notified, SLA starts.<span class="tour-why"><strong>Why:</strong> Competing buttons would undermine the claim that ECM did the work. One primary action keeps the workflow defensible. The hover tooltip shows consequences without cluttering the card.</span>',
         selector: '.slack-evidence-card .actions',
       },
       {
-        title: 'Add context, or defer',
-        body: '<strong>+ Add a note</strong> captures context that should travel with the filing, like a vendor confirmation or a verbal authorization the data alone wouldn\'t show. <strong>Defer</strong> handles legitimate delays with a reason and a new due date.<span class="tour-why"><strong>Why:</strong> SOX evidence often needs explanatory notes the data doesn\'t carry on its own. And not every filing is ready by its original due date. Both paths leave audit-trail entries, so the reason survives review.</span>',
+        title: 'Add a note, or defer',
+        body: 'Behind <strong>More options</strong> are three secondary paths. <strong>+ Add a note</strong> captures context the data doesn\'t carry on its own — vendor confirmation, verbal authorization. <strong>Defer</strong> handles legitimate delays with a reason and a new due date. <strong>Send back to ECM</strong> handles a bad draft, covered next.<span class="tour-why"><strong>Why:</strong> SOX evidence often needs explanatory notes the data doesn\'t carry. Not every filing is ready on time. Both paths leave audit-trail entries, so the reason survives review.</span>',
         selector: '.slack-evidence-card .card-sec-row',
         before: function () { try { toggleMoreOptions(true); } catch (e) {} },
       },
@@ -1986,7 +1986,7 @@
       },
       {
         title: 'The cautious path',
-        body: 'If anything feels off, <strong>Review the evidence</strong> opens all 22 records inline alongside the email draft. The two flagged rows are called out with their explanations. From there Weston can approve as-is, or send it to Marie with a flag attached.<span class="tour-why"><strong>Why:</strong> Every AI system needs an error-recovery path. Flag-for-Marie routes the dispute to the reviewer and keeps segregation of duties intact.</span>',
+        body: '<strong>Review the evidence</strong> opens the full draft inline: all 22 access records plus the drafted attestation email. The two flagged rows are called out with plain-English explanations. Each artifact name links out to its record in Optro. From there Weston can approve, or route the decision to Marie when he\'s uncertain — flagging doesn\'t file the evidence, it hands the call to her.<span class="tour-why"><strong>Why:</strong> Every AI system needs an error-recovery path. Routing to Marie keeps segregation of duties intact and gives the uncertain owner an honest escape hatch.</span>',
         selector: '.slack-evidence-card .review-evidence-link',
         before: function () {
           var p = document.getElementById('row-review-panel');
@@ -1999,7 +1999,7 @@
       },
       {
         title: 'The card becomes the receipt',
-        body: 'After Approve, the same card transitions in place. The title changes from <strong>Access list draft</strong> to <strong>Filed access list</strong>. The artifact label changes from Suggested to <strong>Filed artifact</strong>. A green row at the bottom shows who filed and when.<span class="tour-why"><strong>Why:</strong> Convey the consequence of the action. The card transitions in place so filed is visible at a glance, and there\'s only one canonical record.</span>',
+        body: 'After Approve, the same card transitions in place. The title changes from <strong>Access list draft</strong> to <strong>Filed access list</strong>, and a green row at the bottom shows who filed and when. The title stays a link to the Optro record, so the card itself is the citation auditors can follow.<span class="tour-why"><strong>Why:</strong> Convey the consequence of the action. The card transitions in place so filed is visible at a glance, and there\'s only one canonical record.</span>',
         selector: '.slack-evidence-card',
         before: function () {
           var card = document.querySelector('.slack-evidence-card');
@@ -2011,7 +2011,7 @@
       },
       {
         title: 'What happens next',
-        body: 'The bot\'s next message doesn\'t repeat the confirmation. It tells Weston what comes next. Marie has two business days, and Slack will DM him if she has questions. The chips show how Marie was notified. <strong>+ Add channel</strong> adds Email, Microsoft Teams, a Calendar block, a ServiceNow ticket, or a Jira issue. Useful when the review needs to land in her actual work queue, not just her chat.<span class="tour-why"><strong>Why:</strong> Post-action messages should move the user forward, not echo the card. Two confirmation surfaces saying the same thing is one too many.</span>',
+        body: 'The bot\'s next message doesn\'t repeat the confirmation. It tells Weston what comes next: Marie has two business days, and Slack will DM him if she comes back with questions. Each chip shows how Marie was notified, with a green check confirming delivery. <strong>+ Add channel</strong> adds Email, Microsoft Teams, a Calendar block, a ServiceNow ticket, or a Jira issue — useful when the review needs to land in her actual work queue, not just her chat.<span class="tour-why"><strong>Why:</strong> Post-action messages should move the user forward, not echo the card. The delivery check makes notification state visible without forcing a click.</span>',
         selector: '#filed-msg .notify-row',
       },
       {
