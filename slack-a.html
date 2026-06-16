@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615n" />
-<link rel="stylesheet" href="styles.css?v=20260615n" />
+<link rel="stylesheet" href="tokens.css?v=20260615o" />
+<link rel="stylesheet" href="styles.css?v=20260615o" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -21,6 +21,12 @@
   .slack-evidence-card .meta { font-size: 12px; color: var(--luna-gray-600); margin-bottom: 8px; }
   .slack-evidence-card .conf-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 12px; color: var(--luna-gray-700); }
   .slack-evidence-card .conf-row .ai-confidence-bar { flex: 1; }
+  .slack-evidence-card .conf-row .conf-why-wrap {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    line-height: 1;
+  }
   .slack-evidence-card .conf-row .conf-why {
     width: 14px; height: 14px;
     border-radius: 50%;
@@ -30,12 +36,61 @@
     border: 0;
     cursor: help;
     display: inline-grid; place-items: center;
-    flex-shrink: 0;
     line-height: 1;
     padding: 0;
     transition: background 0.15s;
   }
-  .slack-evidence-card .conf-row .conf-why:hover { background: var(--luna-teal-500); }
+  .slack-evidence-card .conf-row .conf-why-wrap:hover .conf-why,
+  .slack-evidence-card .conf-row .conf-why-wrap:focus-within .conf-why { background: var(--luna-teal-500); }
+
+  .slack-evidence-card .conf-tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: #0A3655;
+    color: #fff;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    line-height: 1.4;
+    width: 280px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    display: flex; flex-direction: column; gap: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .slack-evidence-card .conf-tooltip strong {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 4px;
+  }
+  .slack-evidence-card .conf-tooltip .tt-rule {
+    font-size: 12px;
+    color: #fff;
+    line-height: 1.4;
+  }
+  .slack-evidence-card .conf-tooltip::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    right: 4px;
+    width: 10px; height: 10px;
+    background: #0A3655;
+    transform: rotate(45deg);
+  }
+  .slack-evidence-card .conf-row .conf-why-wrap:hover .conf-tooltip,
+  .slack-evidence-card .conf-row .conf-why-wrap:focus-within .conf-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
   .slack-evidence-card .actions { display: flex; gap: 6px; margin-top: 8px; }
   .slack-evidence-card .actions button {
     padding: 6px 12px; font-size: 12px; font-weight: 600;
@@ -586,12 +641,17 @@
                   <span>Sufficiency check:</span>
                   <div class="ai-confidence-bar" style="max-width:200px;"><span style="width:94%;"></span></div>
                   <strong>Adequate to file</strong>
-                  <button class="conf-why" type="button" aria-label="What ECM evaluated" title="What ECM evaluated:
-✓ All 22 accounts have a documented business need
-✓ Escalations within the period have approval tickets
-✓ No active accounts with last_login over 90 days
-✓ Service accounts properly classified
-✓ Q2 carryover HEL-3471 acknowledged">?</button>
+                  <span class="conf-why-wrap" tabindex="0">
+                    <button class="conf-why" type="button" aria-label="What ECM evaluated">?</button>
+                    <span class="conf-tooltip" role="tooltip">
+                      <strong>What ECM evaluated</strong>
+                      <span class="tt-rule">✓ All 22 accounts have a documented business need</span>
+                      <span class="tt-rule">✓ Escalations within the period have approval tickets</span>
+                      <span class="tt-rule">✓ No active accounts with last_login over 90 days</span>
+                      <span class="tt-rule">✓ Service accounts properly classified</span>
+                      <span class="tt-rule">✓ Q2 carryover HEL-3471 acknowledged</span>
+                    </span>
+                  </span>
                 </div>
                 <div style="font-size:12px;color:var(--luna-gray-700);">
                   Suggested artifact:
