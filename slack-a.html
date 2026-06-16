@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615w" />
-<link rel="stylesheet" href="styles.css?v=20260615w" />
+<link rel="stylesheet" href="tokens.css?v=20260616a" />
+<link rel="stylesheet" href="styles.css?v=20260616a" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -833,7 +833,7 @@
         <a href="index.html">ECM options</a> · Slack &amp; Teams · <span style="color:var(--luna-text);">Take A ★</span>
       </div>
       <h1 class="luna-heading-600">A Friday afternoon bot DM.</h1>
-      <p class="subtitle">Weston's in a meeting. The Optro bot sends his quarterly access check as a Slack DM. He approves from his phone.</p>
+      <p class="subtitle">Weston's in a meeting. The Optro bot sends his quarterly access check as a Slack DM.</p>
     </div>
     <div class="right-meta">
       <span class="luna-badge is-teal">Persona · Control owner</span>
@@ -1272,31 +1272,36 @@
   // === Tour runtime — floating draggable card + pulsing highlight ===
   window.TOUR = {
     title: 'Optro ECM',
-    intro: 'How a sufficiency agent files SOX evidence in Slack.',
+    intro: 'How ECM files SOX evidence in Slack.',
     steps: [
       {
-        title: 'A guided tour of ECM in Slack',
-        body: 'ECM is the <strong>sufficiency agent</strong> — it judges whether evidence actually proves the control operated, not just whether it looks like prior quarters. Eleven beats walk you through what makes this different from a reminder bot.',
+        title: 'A quick tour',
+        body: 'How Optro ECM files SOX evidence in Slack. Twelve stops, about a minute.',
       },
       {
-        title: 'The bot meets owners where they work',
-        body: 'A Slack DM to the control owner. No portal, no quarterly login. The card is a Slack rich attachment — shareable, searchable, exportable as evidence.',
+        title: 'A regular Slack DM',
+        body: 'Weston gets the reminder the same way he gets any other Slack message. He can search it, share it, or forward it to an auditor without leaving Slack.',
         selector: '.slack-evidence-card .head',
       },
       {
-        title: 'Sufficiency, not pattern-match',
-        body: 'Categorical verdict: <strong>Adequate to file</strong>. Not a 94% bar, not a confidence score. Sufficiency in audit terms is pass/fail — evidence either proves the control operated or it doesn\'t.',
+        title: 'Adequate to file',
+        body: '<strong>Adequate to file</strong> is a yes-or-no answer, not a percentage. Auditors think pass or fail, so that\'s what ECM shows. No fake 94% bar that means nothing.',
         selector: '.slack-evidence-card .suff-verdict',
       },
       {
-        title: 'Show your work',
-        body: 'Hover the (?) for the substantive rules ECM checked. These are policy-as-code, signed by the audit committee. The tooltip footer links to the <strong>model card</strong> (version, training data, error rates) for deeper trust calibration.',
+        title: 'The rules behind the verdict',
+        body: 'Hover the <strong>(?)</strong> to see the rules ECM checked against. They\'re tied to control 4.2.1 specifically and signed by the audit committee. The model-card link names the model, its version, and how accurate it is.',
         selector: '.slack-evidence-card .conf-why-wrap',
       },
       {
-        title: 'Last quarter, one click away',
-        body: 'The bot claims it drafted from Q2 — and you can <strong>verify</strong> that claim. Click the inline link to see exactly what Marie signed off on last quarter. r.taylor was dba-read in Jun; the Q3 escalation to dba-admin is the drift ECM flagged.',
+        title: 'Compare with last quarter',
+        body: 'Most owners want to see what they filed last quarter before signing off on anything. The <strong>your Q2 filing</strong> link in the bot\'s intro takes Weston there directly. No portal, no archive search.',
         selector: '.prior-link',
+      },
+      {
+        title: 'Last quarter, opened in place',
+        body: 'Here\'s exactly what Marie signed off on in June. Weston can compare without leaving the thread. Notice <strong>r.taylor was dba-read</strong> back then. He\'s dba-admin in the Q3 draft. That change is what ECM flagged.',
+        selector: '#q2-ref',
         before: function () {
           var p = document.getElementById('q2-ref');
           if (p) p.style.display = 'block';
@@ -1307,13 +1312,13 @@
         },
       },
       {
-        title: 'One tap, when ECM is sure',
-        body: 'When sufficiency is adequate, <strong>Approve &amp; file</strong> is the only primary action. No competing edit-query button, no upload-your-own escape hatch. The AI did the work; the human ratifies.',
+        title: 'One tap when the check passes',
+        body: 'When sufficiency is adequate, this is the only button. No edit-query for someone who doesn\'t write SQL, no upload-your-own that breaks chain of custody. ECM did the work; Weston signs off.',
         selector: '.slack-evidence-card .actions',
       },
       {
         title: 'The cautious path',
-        body: '<strong>Review the evidence →</strong> opens an inline panel: all 22 items, the 2 flagged ones (carryover + escalation) called out and explained. You can approve, <strong>flag for Marie</strong> if something still feels off, or close. ECM doesn\'t pretend it can\'t be wrong.',
+        body: 'If anything feels off, this opens all 22 records inline. The two flagged ones are called out. From there Weston can approve, or send it to Marie with a flag.',
         selector: '.slack-evidence-card .row-review-link',
         before: function () {
           var p = document.getElementById('row-review-panel');
@@ -1325,8 +1330,8 @@
         },
       },
       {
-        title: 'The card visibly transitions to filed',
-        body: 'After Approve, the card itself becomes the filed record: title flips to <strong>Filed access list</strong>, artifact line says <strong>Filed artifact:</strong>, action buttons hide, and a green status row shows who and when. One canonical confirmation — no duplicate "tagged…" message clutter.',
+        title: 'The card becomes the receipt',
+        body: 'After Approve, the same card transitions in place. Title shifts from <strong>Access list draft</strong> to <strong>Filed access list</strong>. The artifact label shifts to <strong>Filed artifact</strong>. The green row at the bottom shows who filed and when.',
         selector: '.slack-evidence-card',
         before: function () {
           var card = document.querySelector('.slack-evidence-card');
@@ -1337,18 +1342,18 @@
         },
       },
       {
-        title: 'Forward-looking follow-up',
-        body: 'The bot\'s next message is purely future-tense: <strong>Marie has 2 business days</strong>, you\'ll be DM\'d if she comes back. Slack chips show how Marie was notified. <strong>+ Add channel</strong> is for escalation, not redundancy.',
+        title: 'What happens next',
+        body: 'The bot\'s next message doesn\'t repeat the confirmation. It tells Weston what comes next. Marie has two business days. Slack will DM him if she has questions.',
         selector: '#filed-msg .notify-row',
       },
       {
-        title: 'Two actions, two intents',
-        body: '<strong>What\'s next →</strong> opens an inline queue of your upcoming SOX work — concrete forward value. <strong>View filing details</strong> shows the labeled audit-trail entry (artifact, signed-block, model card ref) — what the external auditor sees during Q3 testing.',
-        selector: '#filed-msg p:last-of-type + .notify-row, #filed-msg',
+        title: 'Move on, or look back',
+        body: '<strong>What\'s next →</strong> opens his upcoming SOX queue. <strong>View filing details</strong> shows the formal audit-trail entry. Two distinct views, kept apart on purpose.',
+        selector: '#filed-msg',
       },
       {
         title: "That's the tour",
-        body: 'The moves that make this the sufficiency agent, not a reminder bot: substantive rules, Q2 traceability, categorical verdict, one-tap when adequate, dispute path when not, and a card that knows when it\'s filed. Click around to explore.',
+        body: 'Optro ECM judges evidence the way an auditor would. Click around to explore the inline panels.',
       },
     ],
   };
