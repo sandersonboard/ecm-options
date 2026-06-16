@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615k" />
-<link rel="stylesheet" href="styles.css?v=20260615k" />
+<link rel="stylesheet" href="tokens.css?v=20260615n" />
+<link rel="stylesheet" href="styles.css?v=20260615n" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -21,6 +21,21 @@
   .slack-evidence-card .meta { font-size: 12px; color: var(--luna-gray-600); margin-bottom: 8px; }
   .slack-evidence-card .conf-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 12px; color: var(--luna-gray-700); }
   .slack-evidence-card .conf-row .ai-confidence-bar { flex: 1; }
+  .slack-evidence-card .conf-row .conf-why {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--luna-gray-300);
+    color: #fff;
+    font-size: 9px; font-weight: 700;
+    border: 0;
+    cursor: help;
+    display: inline-grid; place-items: center;
+    flex-shrink: 0;
+    line-height: 1;
+    padding: 0;
+    transition: background 0.15s;
+  }
+  .slack-evidence-card .conf-row .conf-why:hover { background: var(--luna-teal-500); }
   .slack-evidence-card .actions { display: flex; gap: 6px; margin-top: 8px; }
   .slack-evidence-card .actions button {
     padding: 6px 12px; font-size: 12px; font-weight: 600;
@@ -568,9 +583,15 @@
                 </div>
                 <div class="meta">Access review · SOX control 4.2.1 · quarterly · Reviewer: Marie Curie</div>
                 <div class="conf-row">
-                  <span>Match to Q2:</span>
-                  <div class="ai-confidence-bar" style="max-width:200px;"><span style="width:85%;"></span></div>
-                  <strong>85%</strong>
+                  <span>Sufficiency check:</span>
+                  <div class="ai-confidence-bar" style="max-width:200px;"><span style="width:94%;"></span></div>
+                  <strong>Adequate to file</strong>
+                  <button class="conf-why" type="button" aria-label="What ECM evaluated" title="What ECM evaluated:
+✓ All 22 accounts have a documented business need
+✓ Escalations within the period have approval tickets
+✓ No active accounts with last_login over 90 days
+✓ Service accounts properly classified
+✓ Q2 carryover HEL-3471 acknowledged">?</button>
                 </div>
                 <div style="font-size:12px;color:var(--luna-gray-700);">
                   Suggested artifact:
