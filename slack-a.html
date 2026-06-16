@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260616h" />
-<link rel="stylesheet" href="styles.css?v=20260616h" />
+<link rel="stylesheet" href="tokens.css?v=20260616i" />
+<link rel="stylesheet" href="styles.css?v=20260616i" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -322,8 +322,8 @@
   .slack-evidence-card .actions { display: flex; gap: 6px; margin-top: 8px; }
   .slack-evidence-card .card-sec-row {
     display: flex; align-items: center; flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 8px;
+    gap: 8px;
+    margin-top: 10px;
   }
   .slack-evidence-card .card-sec-link {
     appearance: none;
@@ -350,14 +350,15 @@
 
   /* Note-attached chip */
   .slack-evidence-card .note-attached {
-    display: flex; align-items: center; gap: 6px;
+    display: flex; align-items: center; gap: 8px;
     margin-top: 8px;
-    padding: 6px 10px;
+    padding: 7px 10px;
     background: var(--luna-blue-50, #f2f8ff);
     border: 1px solid var(--luna-blue-300, #93c5fd);
     border-radius: 6px;
     font-size: 11.5px;
     color: var(--luna-gray-700);
+    line-height: 1.45;
   }
   .slack-evidence-card .note-attached-ic { font-size: 13px; line-height: 1; }
   .slack-evidence-card .note-attached-text { flex: 1; min-width: 0; }
@@ -449,6 +450,11 @@
   }
   .slack-evidence-card.is-deferred .resolved-status .check {
     background: var(--luna-blue-500, #3172e3);
+  }
+  .slack-evidence-card.is-deferred .resolved-status .meta {
+    color: var(--luna-blue-700, #0e48a1);
+    opacity: 0.75;
+    margin-left: 4px;
   }
   .slack-inline-panel .row-review-intro,
   .slack-inline-panel .row-review-note {
@@ -1027,6 +1033,7 @@
     border: 1px solid var(--luna-gray-300);
     background: var(--luna-white); color: var(--luna-gray-800);
     white-space: nowrap;
+    line-height: 1.5;
   }
   .marie-view-actions button:disabled { opacity: 0.6; cursor: default; }
   .marie-view-actions button.primary {
@@ -1644,8 +1651,13 @@
       },
       {
         title: 'One tap when the check passes',
-        body: 'When sufficiency is adequate, this is the only button. No edit-query for someone who doesn\'t write SQL, no upload-your-own that breaks chain of custody. ECM did the work; Weston signs off.<span class="tour-why"><strong>Why:</strong> Competing edit and upload buttons would undermine the AI-does-the-work claim. One primary action keeps the workflow defensible.</span>',
+        body: 'When sufficiency is adequate, this is the <strong>primary</strong> action. No edit-query for someone who doesn\'t write SQL, no upload-your-own that breaks chain of custody. ECM did the work; Weston signs off.<span class="tour-why"><strong>Why:</strong> Competing edit and upload buttons would undermine the AI-does-the-work claim. One primary action keeps the workflow defensible.</span>',
         selector: '.slack-evidence-card .actions',
+      },
+      {
+        title: 'Add context, or defer',
+        body: 'Two secondary affordances next to Review the evidence. <strong>+ Add a note</strong> captures explanatory context that should travel with the filing (vendor confirmations, verbal authorizations, exceptions the data alone can\'t show). <strong>Defer</strong> handles legitimate delays with a reason and a new due date.<span class="tour-why"><strong>Why:</strong> SOX evidence often needs explanatory notes the data itself can\'t carry, and not every filing is ready on its original due date. Both paths leave audit-trail entries so the reason for context (or delay) survives review.</span>',
+        selector: '.slack-evidence-card .card-sec-row',
       },
       {
         title: 'The cautious path',
@@ -1674,7 +1686,7 @@
       },
       {
         title: 'What happens next',
-        body: 'The bot\'s next message doesn\'t repeat the confirmation. It tells Weston what comes next. Marie has two business days. Slack will DM him if she has questions.<span class="tour-why"><strong>Why:</strong> post-action messages should move the user forward, not echo the card. Avoid duplicate confirmation surfaces.</span>',
+        body: 'The bot\'s next message doesn\'t repeat the confirmation. It tells Weston what comes next. Marie has two business days. Slack will DM him if she has questions. The notify chips show how Marie was routed; <strong>+ Add channel</strong> layers on Email, Microsoft Teams, Calendar block, ServiceNow ticket, or Jira issue — useful when the review needs to land in Marie\'s actual work queue, not just her chat.<span class="tour-why"><strong>Why:</strong> post-action messages should move the user forward, not echo the card. Avoid duplicate confirmation surfaces.</span>',
         selector: '#filed-msg .notify-row',
       },
       {
