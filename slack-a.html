@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260616e" />
-<link rel="stylesheet" href="styles.css?v=20260616e" />
+<link rel="stylesheet" href="tokens.css?v=20260616f" />
+<link rel="stylesheet" href="styles.css?v=20260616f" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -1427,7 +1427,7 @@
       },
       {
         title: 'Compare with last quarter',
-        body: 'Most owners want to see what they filed last quarter before signing off on anything new. The <strong>your Q2 filing</strong> link inside the bot\'s message takes Weston there directly. No portal, no archive search.<span class="tour-why"><strong>Why:</strong> HCAI recognition over recall. Put the affordance where the user is already looking.</span>',
+        body: 'Most owners want to see what they filed last quarter before signing off on anything new. The <strong>your Q2 filing</strong> link inside the bot\'s message takes Weston there directly. No portal, no archive search.<span class="tour-why"><strong>Why:</strong> Recognition over recall. Put the affordance where the user is already looking.</span>',
         selector: '.prior-link',
       },
       {
@@ -1445,12 +1445,12 @@
       },
       {
         title: 'Adequate to file',
-        body: '<strong>Adequate to file</strong> is a yes-or-no answer, not a percentage. Auditors think pass or fail, so that\'s what ECM shows. No fake 94% bar that means nothing.<span class="tour-why"><strong>Why:</strong> HCAI principle. Match the visualization to the underlying data type. Sufficiency is categorical, so a percentage bar would create false precision.</span>',
+        body: '<strong>Adequate to file</strong> is a yes-or-no answer, not a percentage. Auditors think pass or fail, so that\'s what ECM shows. No fake 94% bar that means nothing.<span class="tour-why"><strong>Why:</strong> Match the visualization to the underlying data type. Sufficiency is categorical, so a percentage bar would create false precision.</span>',
         selector: '.slack-evidence-card .suff-verdict',
       },
       {
         title: 'The rules behind the verdict',
-        body: 'Hover the <strong>(?)</strong> to see the rules ECM checked against. They\'re tied to control 4.2.1 specifically and signed by the audit committee. The model-card link names the model, its version, and how accurate it is.<span class="tour-why"><strong>Why:</strong> PAIR principle. Show your work. Tooltip plus model card link let the user calibrate trust without forcing it.</span>',
+        body: 'Hover the <strong>(?)</strong> to see the rules ECM checked against. They\'re tied to control 4.2.1 specifically and signed by the audit committee. The model-card link names the model, its version, and how accurate it is.<span class="tour-why"><strong>Why:</strong> Show your work. The tooltip plus the model card link let the user calibrate trust without forcing it.</span>',
         selector: '.slack-evidence-card .conf-why-wrap',
       },
       {
@@ -1460,7 +1460,7 @@
       },
       {
         title: 'The cautious path',
-        body: 'If anything feels off, this opens all 22 records inline. The two flagged ones are called out. From there Weston can approve, or send it to Marie with a flag.<span class="tour-why"><strong>Why:</strong> HAX G17. Every AI system needs an error-recovery path. Flag-for-Marie is the dispute mechanism that preserves SoD.</span>',
+        body: 'If anything feels off, this opens all 22 records inline. The two flagged ones are called out. From there Weston can approve, or send it to Marie with a flag.<span class="tour-why"><strong>Why:</strong> Every AI system needs an error-recovery path. Flag-for-Marie is the dispute mechanism that preserves segregation of duties.</span>',
         selector: '.slack-evidence-card .row-review-link',
         before: function () {
           var p = document.getElementById('row-review-panel');
@@ -1473,7 +1473,7 @@
       },
       {
         title: 'The card becomes the receipt',
-        body: 'After Approve, the same card transitions in place. Title shifts from <strong>Access list draft</strong> to <strong>Filed access list</strong>. The artifact label shifts to <strong>Filed artifact</strong>. The green row at the bottom shows who filed and when.<span class="tour-why"><strong>Why:</strong> HAX G16. Convey the consequence of the action. The card transitions in place so filed is visible at a glance, with one canonical record.</span>',
+        body: 'After Approve, the same card transitions in place. Title shifts from <strong>Access list draft</strong> to <strong>Filed access list</strong>. The artifact label shifts to <strong>Filed artifact</strong>. The green row at the bottom shows who filed and when.<span class="tour-why"><strong>Why:</strong> Convey the consequence of the action. The card transitions in place so filed is visible at a glance, with one canonical record.</span>',
         selector: '.slack-evidence-card',
         before: function () {
           var card = document.querySelector('.slack-evidence-card');
