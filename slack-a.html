@@ -23,23 +23,137 @@
   .slack-evidence-card .conf-row .ai-confidence-bar { flex: 1; }
   .slack-evidence-card .actions { display: flex; gap: 6px; margin-top: 8px; }
   .slack-evidence-card .actions button {
-    padding: 5px 10px; font-size: 12px; font-weight: 600;
-    border-radius: 4px; border: 1px solid var(--luna-gray-300); background: var(--luna-white); color: var(--luna-gray-800);
+    padding: 6px 12px; font-size: 12px; font-weight: 600;
+    border-radius: 5px; border: 1px solid var(--luna-gray-300);
+    background: var(--luna-white); color: var(--luna-gray-800);
     cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+    line-height: 1.25;
   }
-  .slack-evidence-card .actions button.primary { background: var(--luna-teal-500); color: var(--luna-white); border-color: var(--luna-teal-500); }
-  .slack-evidence-card .actions button.primary:hover { background: var(--luna-teal-600); }
-  .slack-thumb {
+  .slack-evidence-card .actions button:hover {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-400);
+  }
+  .slack-evidence-card .actions button.primary {
+    background: var(--luna-teal-500); color: var(--luna-white);
+    border-color: var(--luna-teal-500);
+  }
+  .slack-evidence-card .actions button.primary:hover {
+    background: var(--luna-teal-600);
+    border-color: var(--luna-teal-600);
+  }
+  /* Slack-style file attachment card */
+  .slack-file-card {
     margin-top: 8px;
-    width: 280px; height: 160px;
-    background: var(--luna-gray-100);
+    max-width: 480px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .slack-file-card .file-img { background: #f6f8fa; }
+  .slack-file-card .ss-chrome {
+    background: #e7ebef;
+    padding: 7px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid #d4d8de;
+  }
+  .slack-file-card .ss-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .slack-file-card .ss-dot.is-red { background: #ff5f57; }
+  .slack-file-card .ss-dot.is-amber { background: #febc2e; }
+  .slack-file-card .ss-dot.is-green { background: #28c840; }
+  .slack-file-card .ss-title {
+    font-size: 11px;
+    color: var(--luna-gray-600);
+    font-weight: 500;
+    margin-left: 8px;
+    font-family: ui-monospace, monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .slack-file-card .ss-body {
+    max-height: 220px;
+    overflow: hidden;
+    background: var(--luna-white);
+  }
+  .slack-file-card .ss-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: ui-monospace, monospace;
+    font-size: 10.5px;
+  }
+  .slack-file-card .ss-table thead { background: #f3f5f7; }
+  .slack-file-card .ss-table th,
+  .slack-file-card .ss-table td {
+    padding: 5px 14px;
+    text-align: left;
+    border-bottom: 1px solid #eef0f3;
+  }
+  .slack-file-card .ss-table th {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6c7178;
+  }
+  .slack-file-card .ss-table td { color: #1f2328; }
+  .slack-file-card .ss-table tr.ss-warn { background: #fff8eb; }
+  .slack-file-card .ss-table tr:last-child td { border-bottom: 0; }
+  .slack-file-card .file-foot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--luna-gray-200);
+    background: var(--luna-white);
+  }
+  .slack-file-card .file-ic {
+    width: 30px; height: 30px;
+    display: inline-grid; place-items: center;
+    background: var(--luna-purple-50);
+    color: var(--luna-purple-700);
+    border-radius: 4px;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .slack-file-card .file-text { flex: 1; min-width: 0; }
+  .slack-file-card .file-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--luna-gray-900);
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .slack-file-card .file-sub {
+    font-size: 11px;
+    color: var(--luna-gray-500);
+    margin-top: 1px;
+  }
+  .slack-file-card .file-act {
+    background: var(--luna-white);
     border: 1px solid var(--luna-gray-200);
     border-radius: 4px;
-    display: grid; place-items: center;
-    font-size: 12px; color: var(--luna-gray-500);
-    background-image:
-      linear-gradient(135deg, transparent 49%, var(--luna-gray-200) 50%, transparent 51%),
-      linear-gradient(45deg, transparent 49%, var(--luna-gray-200) 50%, transparent 51%);
+    padding: 4px 10px;
+    font-size: 14px;
+    color: var(--luna-gray-600);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    line-height: 1;
+  }
+  .slack-file-card .file-act:hover {
+    background: var(--luna-gray-50);
+    color: var(--luna-gray-900);
+    border-color: var(--luna-gray-300);
   }
   .slack-typing-bubble {
     display: inline-flex; gap: 3px;
@@ -112,9 +226,9 @@
   }
   .slack-inline-panel .panel-actions button.primary:hover { background: var(--luna-teal-600); }
   .slack-dropzone {
-    border: 2px dashed var(--luna-gray-300);
-    border-radius: 5px;
-    padding: 16px;
+    border: 1.5px dashed var(--luna-gray-300);
+    border-radius: 6px;
+    padding: 18px 16px;
     text-align: center;
     color: var(--luna-gray-600);
     font-size: 12px;
@@ -125,24 +239,33 @@
   .slack-dropzone:hover, .slack-dropzone.is-hover {
     border-color: var(--luna-teal-500);
     background: var(--luna-teal-50);
+    color: var(--luna-teal-700);
   }
   .slack-dropzone .picker-link { color: var(--luna-teal-500); font-weight: 600; cursor: pointer; text-decoration: underline; }
   .slack-upload-preview {
     margin-top: 8px;
-    padding: 8px 10px;
+    padding: 9px 12px;
     background: var(--luna-white);
-    border: 1px solid var(--luna-green-200, #b7e4c7);
-    border-left: 3px solid var(--luna-green-500);
-    border-radius: 4px;
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
     font-size: 12px;
     color: var(--luna-gray-800);
     display: none;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
   .slack-upload-preview.is-shown { display: flex; }
-  .slack-upload-preview .check { color: var(--luna-green-700); font-weight: 700; }
-  .slack-upload-preview .fname { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-gray-800); }
+  .slack-upload-preview .check {
+    width: 16px; height: 16px;
+    display: inline-grid; place-items: center;
+    background: var(--luna-green-500);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 9px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .slack-upload-preview .fname { font-weight: 600; font-size: 12px; color: var(--luna-gray-900); }
   .slack-upload-preview .size { color: var(--luna-gray-500); font-size: 11px; margin-left: auto; }
   .slack-sidebar .channel.is-app {
     display: flex; align-items: center; gap: 6px;
@@ -483,7 +606,38 @@ ORDER BY user;</textarea>
             <div class="body">
               <div class="head"><span class="name">Weston Prohaska</span><span class="ts">Friday · 3:11 PM</span></div>
               <p>In a meeting — but I have the export already, snapped from my phone. Filing it now.</p>
-              <div class="slack-thumb">📸 AR-Q3FY26-prod-db.png · 1.2 MB</div>
+              <div class="slack-file-card">
+                <div class="file-img">
+                  <div class="ss-chrome">
+                    <span class="ss-dot is-red"></span>
+                    <span class="ss-dot is-amber"></span>
+                    <span class="ss-dot is-green"></span>
+                    <span class="ss-title">helios.service-now.com / access_audit?system=prod-db-01</span>
+                  </div>
+                  <div class="ss-body">
+                    <table class="ss-table">
+                      <thead><tr><th>user</th><th>role</th><th>last_login</th><th>attested</th></tr></thead>
+                      <tbody>
+                        <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-09-25</td><td>✓</td></tr>
+                        <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-09-22</td><td>✓</td></tr>
+                        <tr class="ss-warn"><td>contractor-svc-09</td><td>dba-admin</td><td>2026-04-12</td><td>—</td></tr>
+                        <tr><td>k.singh@helios.com</td><td>dba-read</td><td>2026-09-19</td><td>✓</td></tr>
+                        <tr class="ss-warn"><td>r.taylor@helios.com</td><td>dba-admin</td><td>2026-09-11</td><td>✓</td></tr>
+                        <tr><td>n.lee@helios.com</td><td>dba-read</td><td>2026-09-23</td><td>✓</td></tr>
+                        <tr><td>app-svc-prod</td><td>app-svc</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="file-foot">
+                  <span class="file-ic">📄</span>
+                  <div class="file-text">
+                    <div class="file-name">AR-Q3FY26-prod-db.png</div>
+                    <div class="file-sub">PNG · 1.2 MB · captured Sep 25 · 3:09 PM</div>
+                  </div>
+                  <button class="file-act" title="Download" aria-label="Download">⤓</button>
+                </div>
+              </div>
             </div>
           </div>
 
