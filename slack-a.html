@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615d" />
-<link rel="stylesheet" href="styles.css?v=20260615d" />
+<link rel="stylesheet" href="tokens.css?v=20260615e" />
+<link rel="stylesheet" href="styles.css?v=20260615e" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -17,6 +17,7 @@
     border-radius: 4px;
     max-width: 460px;
   }
+  .slack-evidence-card.is-accepted { border-left-color: var(--luna-green-500); }
   .slack-evidence-card .head { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
   .slack-evidence-card .meta { font-size: 12px; color: var(--luna-gray-600); margin-bottom: 8px; }
   .slack-evidence-card .conf-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 12px; color: var(--luna-gray-700); }
@@ -35,6 +36,21 @@
   }
   .slack-evidence-card .field-row .k { color: var(--luna-gray-600); font-weight: 500; }
   .slack-evidence-card .field-row .v { color: var(--luna-gray-800); }
+
+  .state-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px;
+    background: var(--luna-gray-100);
+    color: var(--luna-gray-700);
+    border-radius: 999px;
+    font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .state-pill.is-draft { background: #f3f4f6; color: #4b5563; }
+  .state-pill.is-open { background: #fef3c7; color: #92400e; }
+  .state-pill.is-submitted { background: #fde68a; color: #78350f; }
+  .state-pill.is-accepted { background: #dafbe1; color: #1a7f37; }
+  .state-pill.is-linked { background: #dbeafe; color: #1e40af; }
 
   .slack-quote {
     margin-top: 8px;
@@ -108,6 +124,22 @@
   }
   .filed-receipt-line strong { color: var(--luna-green-700); font-weight: 600; }
 
+  .handoff-card {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: linear-gradient(180deg, #fafbfc, #f1f5f9);
+    border: 1px dashed var(--luna-gray-400);
+    border-radius: 4px;
+    max-width: 460px;
+    font-size: 12px;
+  }
+  .handoff-card .handoff-head {
+    font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--luna-gray-600); margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .handoff-card .handoff-arrow { color: #b91c1c; font-weight: 800; }
+
   .slack-msg.is-dim { opacity: 0.5; }
   .slack-msg.is-dim p { font-size: 13px; margin: 2px 0; }
 </style>
@@ -120,8 +152,8 @@
       <div class="breadcrumb">
         <a href="index.html">ECM options</a> · Slack &amp; Teams · <span style="color:var(--luna-text);">Take A ★</span>
       </div>
-      <h1 class="luna-heading-600">A Friday afternoon Q3 close — orchestrated from one DM.</h1>
-      <p class="subtitle">Weston's on a call. Optro DMs him the quarterly UAR ask with a pre-drafted card. He approves with a phone screenshot. Marie joins from her own DM and pushes back on a schema change. The bot orchestrates the exchange across both sides — and the thread itself becomes the audit trail.</p>
+      <h1 class="luna-heading-600">Auditor creates request → Marie accepts → linked to control → midship testing.</h1>
+      <p class="subtitle">The full ECM evidence loop, in one Slack DM. Sarah (external audit) drafts the request. Optro routes it to Weston. He uploads. AI auto-reviews. Marie flags a question — the reject-with-reasons loop. The bot helps trace the change. Marie accepts. ML links the file to the control's test sample. Then the evidence is handed off downstream to midship testing — a separate step.</p>
     </div>
     <div class="right-meta">
       <span class="luna-badge is-teal">Persona · Control owner</span>
@@ -141,25 +173,29 @@
 
   <div class="flow-stepper">
     <span class="lbl">Flow</span>
-    <div class="flow-step" data-step="dm-open"><span class="num">1</span> Bot DMs Weston</div>
+    <div class="flow-step" data-step="request-drafted"><span class="num">1</span> Auditor drafts</div>
     <span class="flow-arrow">→</span>
-    <div class="flow-step" data-step="dm-filed"><span class="num">2</span> Weston files</div>
+    <div class="flow-step" data-step="request-sent"><span class="num">2</span> Sent to Weston</div>
     <span class="flow-arrow">→</span>
-    <div class="flow-step" data-step="dm-routed"><span class="num">3</span> Routed to Marie</div>
+    <div class="flow-step" data-step="uploads-submitted"><span class="num">3</span> Weston uploads</div>
     <span class="flow-arrow">→</span>
-    <div class="flow-step" data-step="marie-asked"><span class="num">4</span> Marie's question</div>
+    <div class="flow-step" data-step="ai-auto-review"><span class="num">4</span> AI auto-review</div>
     <span class="flow-arrow">→</span>
-    <div class="flow-step" data-step="bot-options"><span class="num">5</span> Bot offers paths</div>
+    <div class="flow-step" data-step="marie-flagged"><span class="num">5</span> Reviewer rejects</div>
     <span class="flow-arrow">→</span>
-    <div class="flow-step" data-step="diff-shown"><span class="num">6</span> Schema diff</div>
+    <div class="flow-step" data-step="bot-options"><span class="num">6</span> Bot offers paths</div>
     <span class="flow-arrow">→</span>
-    <div class="flow-step" data-step="change-traced"><span class="num">7</span> Change traced</div>
+    <div class="flow-step" data-step="diff-shown"><span class="num">7</span> Schema diff</div>
     <span class="flow-arrow">→</span>
-    <div class="flow-step" data-step="weston-explains"><span class="num">8</span> Weston explains</div>
+    <div class="flow-step" data-step="change-traced"><span class="num">8</span> Change traced</div>
     <span class="flow-arrow">→</span>
-    <div class="flow-step" data-step="marie-signed"><span class="num">9</span> Marie signs off</div>
+    <div class="flow-step" data-step="weston-explains"><span class="num">9</span> Weston explains</div>
     <span class="flow-arrow">→</span>
-    <div class="flow-step" data-step="receipt"><span class="num">10</span> Filed</div>
+    <div class="flow-step" data-step="marie-accepted"><span class="num">10</span> Marie accepts</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="linked-to-control"><span class="num">11</span> Linked to control</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step" data-step="midship-handoff"><span class="num">12</span> → Midship testing</div>
     <span class="ctrl">
       <button data-go="prev">← Back</button>
       <button data-go="next">Next →</button>
@@ -169,16 +205,76 @@
 
   <div class="page-content">
 
-    <!-- ============== State 1: dm-open ============== -->
-    <div class="flow-state" data-state="dm-open">
+    <!-- ============== State 1: request-drafted (Sarah's perspective) ============== -->
+    <div class="flow-state" data-state="request-drafted">
       <div class="slack-window" role="region">
         <aside class="slack-sidebar">
-          <div class="workspace">
-            <span style="width:24px;height:24px;display:grid;place-items:center;"><img src="watts-mark.png" alt="Watts" style="width:100%;height:100%;object-fit:contain;display:block;" /></span>
-            Watts Water Technologies
-          </div>
-          <div class="section">Direct messages</div>
+          <div class="workspace"><span style="width:24px;height:24px;display:grid;place-items:center;"><img src="watts-mark.png" alt="Watts" style="width:100%;height:100%;object-fit:contain;display:block;" /></span>Watts Water Technologies</div>
+          <div class="section">Direct messages · Sarah Kim</div>
           <div class="channel is-active">Optro</div>
+          <div class="channel">@ Marie Curie</div>
+          <div class="channel">@ Weston Prohaska</div>
+          <div class="section">Channels</div>
+          <div class="channel"># sox-q3-close</div>
+          <div class="channel"># external-audit-q3</div>
+        </aside>
+
+        <main class="slack-main">
+          <header class="slack-header">
+            <span style="width:24px;height:24px;border-radius:4px;background:linear-gradient(135deg,#e5ddfa,#dbeaff);display:grid;place-items:center;"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></span>
+            Optro
+            <span style="font-size:11px;color:var(--luna-gray-500);font-weight:500;margin-left:4px;">App · ECM assistant · <em>Sarah's DM</em></span>
+          </header>
+
+          <div class="slack-messages">
+            <div class="slack-msg">
+              <div class="avatar">S</div>
+              <div class="body">
+                <div class="head"><span class="name">Sarah Kim</span><span class="ts">Friday · 2:42 PM</span><span style="font-size:11px;color:var(--luna-gray-500);">External Audit</span></div>
+                <p>Drafting a Q3 PBC for control 4.2.1 — user-access review on prod-db-01. Need the export + reviewer attestation.</p>
+              </div>
+            </div>
+
+            <div class="slack-msg">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">Friday · 2:42 PM</span></div>
+                <p>Got it. Here's a pre-filled PBC request from the prior period. Confirm and send to the assignee.</p>
+
+                <div class="slack-evidence-card">
+                  <div class="head">
+                    <span class="ai-chip">Optro ECM</span>
+                    PBC request · draft
+                    <span class="state-pill is-draft" style="margin-left:auto;">Draft</span>
+                  </div>
+                  <div class="field-row"><span class="k">Control</span><span class="v"><span class="ai-citation">4.2.1</span> · Quarterly user-access review</span></div>
+                  <div class="field-row"><span class="k">Period</span><span class="v">Q3 FY26 (Jul 1 – Sep 30)</span></div>
+                  <div class="field-row"><span class="k">Proof needed</span><span class="v">User-access listing + reviewer attestation</span></div>
+                  <div class="field-row"><span class="k">Assignee</span><span class="v">Weston Prohaska · IT Lead · control owner</span></div>
+                  <div class="field-row"><span class="k">Reviewer</span><span class="v">Marie Curie · Internal Audit</span></div>
+                  <div class="field-row"><span class="k">SLA</span><span class="v">2 business days from open</span></div>
+                  <div class="actions">
+                    <button class="primary" data-go="request-sent">✓ Send to Weston</button>
+                    <button>Edit fields</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slack-input">Message Optro…</div>
+        </main>
+      </div>
+      <p class="surface-caption"><strong>State 1 · Auditor creates request.</strong> Sarah (external audit) drafts the PBC in her DM with Optro. Control, period, proof needed, assignee. ECM state: <strong>draft</strong>. Clicking <em>Send to Weston</em> opens the request and routes it to the control owner.</p>
+    </div>
+
+    <!-- ============== State 2: request-sent (now Weston's perspective) ============== -->
+    <div class="flow-state" data-state="request-sent">
+      <div class="slack-window" role="region">
+        <aside class="slack-sidebar">
+          <div class="workspace"><span style="width:24px;height:24px;display:grid;place-items:center;"><img src="watts-mark.png" alt="Watts" style="width:100%;height:100%;object-fit:contain;display:block;" /></span>Watts Water Technologies</div>
+          <div class="section">Direct messages · Weston Prohaska</div>
+          <div class="channel is-active">Optro <span style="margin-left:auto;background:#fef3c7;color:#92400e;font-size:10px;font-weight:700;padding:1px 5px;border-radius:6px;">1</span></div>
           <div class="channel">@ Marie Curie</div>
           <div class="channel">@ Ada Lovelace</div>
           <div class="section">Channels</div>
@@ -191,26 +287,26 @@
           <header class="slack-header">
             <span style="width:24px;height:24px;border-radius:4px;background:linear-gradient(135deg,#e5ddfa,#dbeaff);display:grid;place-items:center;"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></span>
             Optro
-            <span style="font-size:11px;color:var(--luna-gray-500);font-weight:500;margin-left:4px;">App · ECM assistant</span>
+            <span style="font-size:11px;color:var(--luna-gray-500);font-weight:500;margin-left:4px;">App · ECM assistant · <em>Weston's DM</em></span>
           </header>
 
           <div class="slack-messages">
             <div class="slack-msg">
               <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
               <div class="body">
-                <div class="head">
-                  <span class="name">Optro</span>
-                  <span class="bot-tag">APP</span>
-                  <span class="ts">Friday · 2:48 PM</span>
-                </div>
-                <p>Hey Weston — heads up, your <strong>quarterly user-access review for <span class="ai-citation">control 4.2.1</span> (prod-db-01)</strong> is due Monday. I drafted the evidence task and prefilled the ServiceNow query you used last quarter.</p>
+                <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">Friday · 2:48 PM</span></div>
+                <p>Hey Weston — new evidence request from <strong>Sarah Kim · External Audit</strong>. Your quarterly user-access review for <span class="ai-citation">control 4.2.1</span> (prod-db-01) is due Monday. I prefilled the ServiceNow query you used last quarter.</p>
 
                 <div class="slack-evidence-card">
                   <div class="head">
                     <span class="ai-chip">Optro ECM</span>
-                    Evidence draft · UAR-Q3FY26-prod-db
+                    Evidence request · UAR-Q3FY26-prod-db
+                    <span class="state-pill is-open" style="margin-left:auto;">Open</span>
                   </div>
-                  <div class="meta">Control 4.2.1 · Cadence: quarterly · Reviewer: Marie Curie</div>
+                  <div class="field-row"><span class="k">Control</span><span class="v">4.2.1 · Quarterly user-access review</span></div>
+                  <div class="field-row"><span class="k">Period</span><span class="v">Q3 FY26</span></div>
+                  <div class="field-row"><span class="k">Requested by</span><span class="v">Sarah Kim · External Audit</span></div>
+                  <div class="field-row"><span class="k">Reviewer</span><span class="v">Marie Curie · Internal Audit</span></div>
                   <div class="conf-row">
                     <span>Match to prior periods:</span>
                     <div class="ai-confidence-bar" style="max-width:200px;"><span style="width:94%;"></span></div>
@@ -221,9 +317,9 @@
                     <span class="ai-citation">DBA attestation memo</span>. Same shape as Q2.
                   </div>
                   <div class="actions">
-                    <button class="primary" data-go="dm-filed">✓ Approve &amp; file</button>
+                    <button class="primary" data-go="uploads-submitted">✓ Approve &amp; file</button>
                     <button>Edit query</button>
-                    <button data-go="dm-filed">Upload your own</button>
+                    <button data-go="uploads-submitted">Upload your own</button>
                   </div>
                 </div>
               </div>
@@ -233,15 +329,15 @@
           <div class="slack-input">Message Optro…</div>
         </main>
       </div>
-      <p class="surface-caption"><strong>State 1.</strong> Optro opens with a pre-drafted Block Kit card — the control, the cadence, the reviewer, the suggested artifact, and a confidence bar against four prior periods. Click "Approve &amp; file" or "Upload your own" to advance.</p>
+      <p class="surface-caption"><strong>State 2 · Sent to assignee.</strong> Request lands in Weston's DM. ECM state: <strong>open</strong>. The card carries the full provenance (who requested it, who reviews it, the SLA) so the control owner has everything to act.</p>
     </div>
 
-    <!-- ============== State 2: dm-filed ============== -->
-    <div class="flow-state" data-state="dm-filed">
+    <!-- ============== State 3: uploads-submitted ============== -->
+    <div class="flow-state" data-state="uploads-submitted">
       <div class="slack-window" role="region">
         <aside class="slack-sidebar">
           <div class="workspace"><span style="width:24px;height:24px;display:grid;place-items:center;"><img src="watts-mark.png" alt="Watts" style="width:100%;height:100%;object-fit:contain;display:block;" /></span>Watts Water Technologies</div>
-          <div class="section">Direct messages</div>
+          <div class="section">Direct messages · Weston Prohaska</div>
           <div class="channel is-active">Optro</div>
           <div class="channel">@ Marie Curie</div>
           <div class="channel">@ Ada Lovelace</div>
@@ -261,7 +357,7 @@
           <div class="slack-messages">
             <div class="slack-msg is-dim">
               <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
-              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">2:48 PM</span></div><p>Drafted UAR Q3 evidence card · 94% match to prior periods</p></div>
+              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">2:48 PM</span></div><p>PBC request from Sarah · Q3 UAR for ctrl 4.2.1 · <span class="state-pill is-open">Open</span></p></div>
             </div>
 
             <div class="slack-msg">
@@ -277,8 +373,10 @@
               <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
               <div class="body">
                 <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">just now</span></div>
-                <div class="slack-typing-bubble"><span></span><span></span><span></span></div>
-                <p style="font-size:11px;color:var(--luna-gray-500);margin-top:4px;">Parsing screenshot · tagging control · routing for review…</p>
+                <p>Got it. Computing content fingerprint and checking the evidence library for prior matches…</p>
+                <div class="filed-receipt-line">
+                  sha256: <strong>a7c4f9...e2b1</strong> · no prior match in library · <strong>new submission</strong> · <span class="state-pill is-submitted" style="background:#fde68a;color:#78350f;">Submitted</span>
+                </div>
               </div>
             </div>
           </div>
@@ -286,15 +384,15 @@
           <div class="slack-input">Message Optro…</div>
         </main>
       </div>
-      <p class="surface-caption"><strong>State 2.</strong> Weston replied with a phone screenshot. Optro is parsing the image, tagging the control, and routing for review — in real time.</p>
+      <p class="surface-caption"><strong>State 3 · Uploads and submits.</strong> Weston files a phone screenshot. Optro computes the content hash to dedupe against the evidence library — a fresh submission gets a unique fingerprint, a duplicate would short-circuit. ECM state: <strong>submitted</strong>.</p>
     </div>
 
-    <!-- ============== State 3: dm-routed ============== -->
-    <div class="flow-state" data-state="dm-routed">
+    <!-- ============== State 4: ai-auto-review ============== -->
+    <div class="flow-state" data-state="ai-auto-review">
       <div class="slack-window" role="region">
         <aside class="slack-sidebar">
           <div class="workspace"><span style="width:24px;height:24px;display:grid;place-items:center;"><img src="watts-mark.png" alt="Watts" style="width:100%;height:100%;object-fit:contain;display:block;" /></span>Watts Water Technologies</div>
-          <div class="section">Direct messages</div>
+          <div class="section">Direct messages · Weston Prohaska</div>
           <div class="channel is-active">Optro</div>
           <div class="channel">@ Marie Curie</div>
           <div class="channel">@ Ada Lovelace</div>
@@ -313,33 +411,34 @@
 
           <div class="slack-messages">
             <div class="slack-msg is-dim">
-              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
-              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">2:48 PM</span></div><p>Drafted UAR Q3 evidence card · 94% match</p></div>
-            </div>
-            <div class="slack-msg is-dim">
               <div class="avatar">W</div>
-              <div class="body"><div class="head"><span class="name">Weston Prohaska</span><span class="ts">3:11 PM</span></div><p>Filing it now [phone screenshot attached]</p></div>
+              <div class="body"><div class="head"><span class="name">Weston Prohaska</span><span class="ts">3:11 PM</span></div><p>Filed: UAR-Q3FY26-prod-db.png · <span class="state-pill is-submitted">Submitted</span></p></div>
             </div>
 
             <div class="slack-msg">
               <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
               <div class="body">
                 <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">Friday · 3:11 PM</span></div>
-                <p>
-                  Got it. Auto-tagged the screenshot:
-                  <span class="ai-citation">control 4.2.1</span> ·
-                  <span class="ai-citation">Q3 FY26</span> ·
-                  <span class="ai-citation">freshness: today</span>.
-                  Routed to Marie for review. <strong>I'll DM her now.</strong>
-                  <span class="luna-badge is-green" style="margin-left:6px;">Routed</span>
-                </p>
-                <div class="filed-receipt-line">
-                  routed: <strong>UAR-Q3FY26-prod-db.png</strong> → control 4.2.1 · AI confidence 93% · reviewer=Marie · sla=2bd
-                </div>
-                <p style="margin-top:8px;font-size:13px;">Want me to ping you if Marie has a question, or @-mention you in <code style="font-size:11px;background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;">#sox-q3-close</code>?</p>
-                <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
-                  <button data-go="marie-asked" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-teal-500);background:var(--luna-teal-500);color:var(--luna-white);cursor:pointer;">Ping me on bounce-back</button>
-                  <button style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">@-mention me in #sox-q3-close</button>
+                <p>AI auto-review complete. Sending the assessment to Marie for the human call.</p>
+
+                <div class="slack-evidence-card">
+                  <div class="head">
+                    <span class="ai-chip">Optro ECM</span>
+                    AI auto-review · assistive only
+                  </div>
+                  <div class="field-row"><span class="k">Completeness</span><span class="v">✓ 12 of 12 expected columns present</span></div>
+                  <div class="field-row"><span class="k">Freshness</span><span class="v">✓ Exported today · within 7-day SLA</span></div>
+                  <div class="field-row"><span class="k">Population</span><span class="v">261 rows · +3% vs Q2 (in band)</span></div>
+                  <div class="field-row"><span class="k">Schema match</span><span class="v">⚠ +1 column vs Q2 — variance flag</span></div>
+                  <div class="field-row"><span class="k">Auto-classified</span><span class="v">control 4.2.1 · Q3 FY26 · UAR · prod-db-01</span></div>
+                  <div class="conf-row">
+                    <span>AI confidence:</span>
+                    <div class="ai-confidence-bar" style="max-width:200px;"><span style="width:93%;"></span></div>
+                    <strong>93%</strong>
+                  </div>
+                  <div style="font-size:12px;color:var(--luna-gray-700);">
+                    <strong>Sent to Marie</strong> with the variance flag highlighted. The AI assesses — the reviewer decides.
+                  </div>
                 </div>
               </div>
             </div>
@@ -348,16 +447,16 @@
           <div class="slack-input">Message Optro…</div>
         </main>
       </div>
-      <p class="surface-caption"><strong>State 3.</strong> Filed and routed to Marie in under 30 seconds. One-tap approve is gated to high-confidence pattern matches against Weston's prior approvals — anything novel forces an expand-and-review step before the file button becomes available.</p>
+      <p class="surface-caption"><strong>State 4 · AI auto-review.</strong> The bot runs an assistive review — completeness, freshness, population, schema match, classification — and surfaces a variance flag (the +1 column). The AI <em>assesses</em>; it never accepts. Sent to Marie for the human call.</p>
     </div>
 
-    <!-- ============== State 4: marie-asked ============== -->
-    <div class="flow-state" data-state="marie-asked">
+    <!-- ============== State 5: marie-flagged (= reject loop) ============== -->
+    <div class="flow-state" data-state="marie-flagged">
       <div class="slack-window" role="region">
         <aside class="slack-sidebar">
           <div class="workspace"><span style="width:24px;height:24px;display:grid;place-items:center;"><img src="watts-mark.png" alt="Watts" style="width:100%;height:100%;object-fit:contain;display:block;" /></span>Watts Water Technologies</div>
-          <div class="section">Direct messages</div>
-          <div class="channel is-active">Optro <span style="margin-left:auto;background:#e5ddfa;color:#5b21b6;font-size:10px;font-weight:700;padding:1px 5px;border-radius:6px;">1</span></div>
+          <div class="section">Direct messages · Weston Prohaska</div>
+          <div class="channel is-active">Optro <span style="margin-left:auto;background:#fef3c7;color:#92400e;font-size:10px;font-weight:700;padding:1px 5px;border-radius:6px;">1</span></div>
           <div class="channel">@ Marie Curie</div>
           <div class="channel">@ Ada Lovelace</div>
           <div class="section">Channels</div>
@@ -376,20 +475,20 @@
           <div class="slack-messages">
             <div class="slack-msg is-dim">
               <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
-              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">2:48 PM</span></div><p>Drafted UAR Q3 · routed to Marie at 3:11 PM</p></div>
+              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">3:11 PM</span></div><p>Auto-review complete · variance flag on schema · sent to Marie</p></div>
             </div>
 
             <div class="slack-msg">
               <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
               <div class="body">
                 <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">Friday · 3:24 PM</span></div>
-                <p>Marie has a question about the export. Want me to surface it?</p>
+                <p>Marie sent it back with reasons. The submission is back in <span class="state-pill is-open">Open</span> until the variance is resolved.</p>
                 <div class="slack-quote">
-                  <div class="who">Marie Curie · in her DM with Optro · just now</div>
-                  Quick question — there's a new column in the Q3 export. Where'd it come from? Want to make sure it's documented.
+                  <div class="who">Marie Curie · reject with reasons · just now</div>
+                  Quick question — there's a new column in the Q3 export. Where'd it come from? Want to make sure it's documented before I accept.
                 </div>
                 <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
-                  <button data-go="bot-options" style="padding:5px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-teal-500);background:var(--luna-teal-500);color:var(--luna-white);cursor:pointer;">Help me answer it</button>
+                  <button data-go="bot-options" style="padding:5px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-teal-500);background:var(--luna-teal-500);color:var(--luna-white);cursor:pointer;">Help me answer</button>
                   <button style="padding:5px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">I'll DM Marie myself</button>
                 </div>
               </div>
@@ -399,15 +498,15 @@
           <div class="slack-input">Message Optro…</div>
         </main>
       </div>
-      <p class="surface-caption"><strong>State 4.</strong> Marie pushed back from her own DM with Optro. The bot relays her question to Weston — not as a verdict, but as a fact. Notice the absence of escalation language. Two surfaces, one orchestrator.</p>
+      <p class="surface-caption"><strong>State 5 · Reviewer rejects · back with reasons.</strong> Marie does the human call. She doesn't accept yet — she sends the submission back with a specific concern. ECM state regresses to <strong>open</strong>. The bot relays Marie's reason and offers Weston a path to resolve.</p>
     </div>
 
-    <!-- ============== State 5: bot-options ============== -->
+    <!-- ============== State 6: bot-options ============== -->
     <div class="flow-state" data-state="bot-options">
       <div class="slack-window" role="region">
         <aside class="slack-sidebar">
           <div class="workspace"><span style="width:24px;height:24px;display:grid;place-items:center;"><img src="watts-mark.png" alt="Watts" style="width:100%;height:100%;object-fit:contain;display:block;" /></span>Watts Water Technologies</div>
-          <div class="section">Direct messages</div>
+          <div class="section">Direct messages · Weston Prohaska</div>
           <div class="channel is-active">Optro</div>
           <div class="channel">@ Marie Curie</div>
           <div class="channel">@ Ada Lovelace</div>
@@ -427,14 +526,14 @@
           <div class="slack-messages">
             <div class="slack-msg is-dim">
               <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
-              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">3:24 PM</span></div><p>Marie asked about a new column · "Where'd it come from?"</p></div>
+              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">3:24 PM</span></div><p>Marie's reject reason · "new column · where'd it come from?"</p></div>
             </div>
 
             <div class="slack-msg">
               <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
               <div class="body">
                 <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">Friday · 3:25 PM</span></div>
-                <p>Three ways I can help — your call:</p>
+                <p>Three ways I can help resolve the variance — your call:</p>
 
                 <div class="slack-evidence-card">
                   <div class="head">
@@ -457,15 +556,15 @@
           <div class="slack-input">Message Optro…</div>
         </main>
       </div>
-      <p class="surface-caption"><strong>State 5.</strong> The bot offers three options, no recommendation. The user controls the next move. Restraint as a feature — the bot is the operator, not the decider.</p>
+      <p class="surface-caption"><strong>State 6 · Bot offers paths.</strong> No recommendation. Weston picks. Restraint as a feature — the bot operates, the human decides.</p>
     </div>
 
-    <!-- ============== State 6: diff-shown ============== -->
+    <!-- ============== State 7: diff-shown ============== -->
     <div class="flow-state" data-state="diff-shown">
       <div class="slack-window" role="region">
         <aside class="slack-sidebar">
           <div class="workspace"><span style="width:24px;height:24px;display:grid;place-items:center;"><img src="watts-mark.png" alt="Watts" style="width:100%;height:100%;object-fit:contain;display:block;" /></span>Watts Water Technologies</div>
-          <div class="section">Direct messages</div>
+          <div class="section">Direct messages · Weston Prohaska</div>
           <div class="channel is-active">Optro</div>
           <div class="channel">@ Marie Curie</div>
           <div class="channel">@ Ada Lovelace</div>
@@ -503,33 +602,19 @@
                     <div class="col">
                       <div class="col-title">Q2 schema · 11 cols</div>
                       <ul>
-                        <li>user_id</li>
-                        <li>role</li>
-                        <li>role_assigned_at</li>
-                        <li>last_login</li>
-                        <li>last_review_date</li>
-                        <li>reviewer</li>
-                        <li>review_outcome</li>
-                        <li>is_active</li>
-                        <li>created_at</li>
-                        <li>updated_at</li>
-                        <li>export_ts</li>
+                        <li>user_id</li><li>role</li><li>role_assigned_at</li>
+                        <li>last_login</li><li>last_review_date</li><li>reviewer</li>
+                        <li>review_outcome</li><li>is_active</li><li>created_at</li>
+                        <li>updated_at</li><li>export_ts</li>
                       </ul>
                     </div>
                     <div class="col">
                       <div class="col-title">Q3 schema · 12 cols</div>
                       <ul>
-                        <li>user_id</li>
-                        <li>role</li>
-                        <li>role_assigned_at</li>
-                        <li>last_login</li>
-                        <li>last_review_date</li>
-                        <li>reviewer</li>
-                        <li>review_outcome</li>
-                        <li>is_active</li>
-                        <li>created_at</li>
-                        <li>updated_at</li>
-                        <li>export_ts</li>
+                        <li>user_id</li><li>role</li><li>role_assigned_at</li>
+                        <li>last_login</li><li>last_review_date</li><li>reviewer</li>
+                        <li>review_outcome</li><li>is_active</li><li>created_at</li>
+                        <li>updated_at</li><li>export_ts</li>
                         <li class="is-new">termination_date_normalized</li>
                       </ul>
                     </div>
@@ -546,15 +631,15 @@
           <div class="slack-input">Message Optro…</div>
         </main>
       </div>
-      <p class="surface-caption"><strong>State 6.</strong> Side-by-side schema diff. Q2 had 11 columns; Q3 has 12. The new column is highlighted — still no judgment from the bot. Just the fact.</p>
+      <p class="surface-caption"><strong>State 7 · Schema diff.</strong> Side-by-side. Q2 had 11 columns; Q3 has 12. The new column is highlighted. Still no judgment from the bot — just the fact.</p>
     </div>
 
-    <!-- ============== State 7: change-traced ============== -->
+    <!-- ============== State 8: change-traced ============== -->
     <div class="flow-state" data-state="change-traced">
       <div class="slack-window" role="region">
         <aside class="slack-sidebar">
           <div class="workspace"><span style="width:24px;height:24px;display:grid;place-items:center;"><img src="watts-mark.png" alt="Watts" style="width:100%;height:100%;object-fit:contain;display:block;" /></span>Watts Water Technologies</div>
-          <div class="section">Direct messages</div>
+          <div class="section">Direct messages · Weston Prohaska</div>
           <div class="channel is-active">Optro</div>
           <div class="channel">@ Marie Curie</div>
           <div class="channel">@ Ada Lovelace</div>
@@ -588,18 +673,10 @@
                     <span class="ai-chip">Optro ECM</span>
                     Change source · located
                   </div>
-                  <div class="field-row">
-                    <span class="k">Field added</span> <span class="v"><span class="ai-citation">termination_date_normalized</span></span>
-                  </div>
-                  <div class="field-row">
-                    <span class="k">Source patch</span> <span class="v"><span class="ai-citation">Oracle patch log · Apr 14, 2026</span></span>
-                  </div>
-                  <div class="field-row">
-                    <span class="k">Linked CR</span> <span class="v"><span class="ai-citation">DBA-CR-2401</span> · "Add GDPR-normalized termination date"</span>
-                  </div>
-                  <div class="field-row">
-                    <span class="k">Approved by</span> <span class="v">Legal Review · <span class="ai-citation">apr12-counsel-memo.pdf</span></span>
-                  </div>
+                  <div class="field-row"><span class="k">Field added</span><span class="v"><span class="ai-citation">termination_date_normalized</span></span></div>
+                  <div class="field-row"><span class="k">Source patch</span><span class="v"><span class="ai-citation">Oracle patch log · Apr 14, 2026</span></span></div>
+                  <div class="field-row"><span class="k">Linked CR</span><span class="v"><span class="ai-citation">DBA-CR-2401</span> · "Add GDPR-normalized termination date"</span></div>
+                  <div class="field-row"><span class="k">Approved by</span><span class="v">Legal Review · <span class="ai-citation">apr12-counsel-memo.pdf</span></span></div>
                   <div class="actions" style="margin-top:8px;">
                     <button class="primary" data-go="weston-explains">Send to Marie</button>
                     <button>Loop in Sarah (auditor)</button>
@@ -612,15 +689,15 @@
           <div class="slack-input">Message Optro…</div>
         </main>
       </div>
-      <p class="surface-caption"><strong>State 7.</strong> The integration graph in action. Optro follows the Oracle patch log → DBA-CR-2401 → legal counsel memo, all on its own. The cross-system reach is the work an LLM cannot do alone — and the moat competitors take four quarters to catch up on.</p>
+      <p class="surface-caption"><strong>State 8 · Change traced.</strong> The integration graph in action — Oracle patch log → DBA-CR-2401 → legal counsel memo, all without leaving Slack. The cross-system reach is the moat.</p>
     </div>
 
-    <!-- ============== State 8: weston-explains ============== -->
+    <!-- ============== State 9: weston-explains ============== -->
     <div class="flow-state" data-state="weston-explains">
       <div class="slack-window" role="region">
         <aside class="slack-sidebar">
           <div class="workspace"><span style="width:24px;height:24px;display:grid;place-items:center;"><img src="watts-mark.png" alt="Watts" style="width:100%;height:100%;object-fit:contain;display:block;" /></span>Watts Water Technologies</div>
-          <div class="section">Direct messages</div>
+          <div class="section">Direct messages · Weston Prohaska</div>
           <div class="channel is-active">Optro</div>
           <div class="channel">@ Marie Curie</div>
           <div class="channel">@ Ada Lovelace</div>
@@ -655,7 +732,7 @@
               <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
               <div class="body">
                 <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">Friday · 3:28 PM</span></div>
-                <p>Got it. Relayed to Marie with the CR link + counsel memo. She'll see the full provenance trail.</p>
+                <p>Got it. Re-submitted to Marie with the CR link + counsel memo attached. Submission is back to <span class="state-pill is-submitted">Submitted</span>.</p>
                 <div class="slack-quote">
                   <div class="who">Optro → Marie · just now</div>
                   Weston: "GDPR field added by DBA team after legal review." Linked: <span class="ai-citation">DBA-CR-2401</span> · <span class="ai-citation">apr12-counsel-memo.pdf</span> · <span class="ai-citation">Oracle patch log Apr 14</span>.
@@ -667,15 +744,15 @@
           <div class="slack-input">Message Optro…</div>
         </main>
       </div>
-      <p class="surface-caption"><strong>State 8.</strong> Weston explains in one sentence — because the bot already did the legwork. Optro relays the exchange to Marie with the source documents attached. The bot is the connective tissue between two DMs.</p>
+      <p class="surface-caption"><strong>State 9 · Weston explains.</strong> One sentence — because the bot already did the legwork. Optro re-submits to Marie with the source documents attached. ECM state moves back to <strong>submitted</strong>.</p>
     </div>
 
-    <!-- ============== State 9: marie-signed ============== -->
-    <div class="flow-state" data-state="marie-signed">
+    <!-- ============== State 10: marie-accepted ============== -->
+    <div class="flow-state" data-state="marie-accepted">
       <div class="slack-window" role="region">
         <aside class="slack-sidebar">
           <div class="workspace"><span style="width:24px;height:24px;display:grid;place-items:center;"><img src="watts-mark.png" alt="Watts" style="width:100%;height:100%;object-fit:contain;display:block;" /></span>Watts Water Technologies</div>
-          <div class="section">Direct messages</div>
+          <div class="section">Direct messages · Weston Prohaska</div>
           <div class="channel is-active">Optro <span style="margin-left:auto;background:#dafbe1;color:#1a7f37;font-size:10px;font-weight:700;padding:1px 5px;border-radius:6px;">✓</span></div>
           <div class="channel">@ Marie Curie</div>
           <div class="channel">@ Ada Lovelace</div>
@@ -695,35 +772,26 @@
           <div class="slack-messages">
             <div class="slack-msg is-dim">
               <div class="avatar">W</div>
-              <div class="body"><div class="head"><span class="name">Weston Prohaska</span><span class="ts">3:28 PM</span></div><p>"GDPR field, DBA team added after legal review" — relayed to Marie</p></div>
+              <div class="body"><div class="head"><span class="name">Weston Prohaska</span><span class="ts">3:28 PM</span></div><p>"GDPR field, DBA team added after legal review" — re-submitted</p></div>
             </div>
 
             <div class="slack-msg">
               <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
               <div class="body">
                 <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">Friday · 3:32 PM</span></div>
-                <p>Marie signed off. <strong>Approved with notes</strong> — her reviewer note references the audit trail.</p>
+                <p>Marie accepted. <strong>Approved with notes</strong> — her reviewer note references the audit trail.</p>
 
-                <div class="slack-evidence-card">
+                <div class="slack-evidence-card is-accepted">
                   <div class="head">
                     <span class="ai-chip">Optro ECM</span>
                     Reviewer sign-off · Q3 FY26
+                    <span class="state-pill is-accepted" style="margin-left:auto;">Accepted</span>
                   </div>
-                  <div class="field-row">
-                    <span class="k">Reviewer</span> <span class="v">Marie Curie · Internal Audit</span>
-                  </div>
-                  <div class="field-row">
-                    <span class="k">Outcome</span> <span class="v"><strong>Approved with notes</strong></span>
-                  </div>
-                  <div class="field-row">
-                    <span class="k">Reviewer note</span> <span class="v">"Verified — new column documented via <span class="ai-citation">DBA-CR-2401</span>, see thread for full context."</span>
-                  </div>
-                  <div class="field-row">
-                    <span class="k">Workpaper ref</span> <span class="v"><span class="ai-citation">thread://ctrl-4-2-1/q3-2026/exchange-1</span></span>
-                  </div>
-                  <div class="actions">
-                    <button class="primary" data-go="receipt">View receipt + chain anchor</button>
-                  </div>
+                  <div class="field-row"><span class="k">Reviewer</span><span class="v">Marie Curie · Internal Audit</span></div>
+                  <div class="field-row"><span class="k">Outcome</span><span class="v"><strong>Accepted with notes</strong></span></div>
+                  <div class="field-row"><span class="k">Reviewer note</span><span class="v">"Verified — new column documented via <span class="ai-citation">DBA-CR-2401</span>. See thread for context."</span></div>
+                  <div class="field-row"><span class="k">Workpaper ref</span><span class="v"><span class="ai-citation">thread://ctrl-4-2-1/q3-2026/exchange-1</span></span></div>
+                  <div class="field-row"><span class="k">Reject loop</span><span class="v">1 round · resolved in 21 minutes</span></div>
                 </div>
               </div>
             </div>
@@ -732,15 +800,15 @@
           <div class="slack-input">Message Optro…</div>
         </main>
       </div>
-      <p class="surface-caption"><strong>State 9.</strong> Marie's sign-off includes the workpaper reference — the next auditor sees not just "approved" but "approved after this 3-message clarification, here it is." The exchange IS part of the audit record.</p>
+      <p class="surface-caption"><strong>State 10 · Reviewer accepts.</strong> Marie's human call — AI-assisted, never AI-decided. ECM state: <strong>accepted</strong>. The reviewer note links to the audit trail so the next auditor sees the full provenance.</p>
     </div>
 
-    <!-- ============== State 10: receipt ============== -->
-    <div class="flow-state" data-state="receipt">
+    <!-- ============== State 11: linked-to-control ============== -->
+    <div class="flow-state" data-state="linked-to-control">
       <div class="slack-window" role="region">
         <aside class="slack-sidebar">
           <div class="workspace"><span style="width:24px;height:24px;display:grid;place-items:center;"><img src="watts-mark.png" alt="Watts" style="width:100%;height:100%;object-fit:contain;display:block;" /></span>Watts Water Technologies</div>
-          <div class="section">Direct messages</div>
+          <div class="section">Direct messages · Weston Prohaska</div>
           <div class="channel is-active">Optro</div>
           <div class="channel">@ Marie Curie</div>
           <div class="channel">@ Ada Lovelace</div>
@@ -760,22 +828,87 @@
           <div class="slack-messages">
             <div class="slack-msg is-dim">
               <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
-              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">3:32 PM</span></div><p>Marie signed off · Approved with notes · workpaper reference attached</p></div>
+              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">3:32 PM</span></div><p>Marie accepted with notes · <span class="state-pill is-accepted">Accepted</span></p></div>
             </div>
 
             <div class="slack-msg">
               <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
               <div class="body">
                 <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">Friday · 3:33 PM</span></div>
-                <p>
-                  Closed. Q3 UAR for <span class="ai-citation">control 4.2.1</span> — filed with the audit trail intact.
-                  <span class="luna-badge is-green" style="margin-left:6px;">Closed</span>
-                </p>
-                <div class="filed-receipt-line">
-                  closed: <strong>UAR-Q3FY26-prod-db.png</strong> → control 4.2.1 · AI confidence 96% · reviewer=Marie · resolved 1 reviewer Q · 11 messages · workpaper bundle attached · chain=block #4,180,221
+                <p>ML matched the artifact to the control's test sample. Linked.</p>
+
+                <div class="slack-evidence-card">
+                  <div class="head">
+                    <span class="ai-chip">Optro ECM</span>
+                    Linked to control · ML-matched
+                    <span class="state-pill is-linked" style="margin-left:auto;">Linked</span>
+                  </div>
+                  <div class="field-row"><span class="k">Control</span><span class="v"><span class="ai-citation">4.2.1</span> · Quarterly user-access review</span></div>
+                  <div class="field-row"><span class="k">Period</span><span class="v">Q3 FY26 · Jul 1 – Sep 30</span></div>
+                  <div class="field-row"><span class="k">Sample size</span><span class="v">47 of 261 users (statistical sample)</span></div>
+                  <div class="field-row"><span class="k">Match method</span><span class="v">ML auto-classified · 96% confidence</span></div>
+                  <div class="field-row"><span class="k">Coverage</span><span class="v">100% — every sampled user appears in the artifact</span></div>
+                  <div class="filed-receipt-line">
+                    linked: <strong>UAR-Q3FY26-prod-db.png</strong> → ctrl 4.2.1 · sample 47/261 · chain=block #4,180,221 · workpaper bundle attached
+                  </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slack-input">Message Optro…</div>
+        </main>
+      </div>
+      <p class="surface-caption"><strong>State 11 · Linked to control.</strong> ML matches the file to the control's test sample — 47 of 261 users covered. This is what makes the artifact <em>usable</em> for testing: not just filed, but mapped to the specific selection the auditor will reperform.</p>
+    </div>
+
+    <!-- ============== State 12: midship-handoff ============== -->
+    <div class="flow-state" data-state="midship-handoff">
+      <div class="slack-window" role="region">
+        <aside class="slack-sidebar">
+          <div class="workspace"><span style="width:24px;height:24px;display:grid;place-items:center;"><img src="watts-mark.png" alt="Watts" style="width:100%;height:100%;object-fit:contain;display:block;" /></span>Watts Water Technologies</div>
+          <div class="section">Direct messages · Weston Prohaska</div>
+          <div class="channel is-active">Optro</div>
+          <div class="channel">@ Marie Curie</div>
+          <div class="channel">@ Ada Lovelace</div>
+          <div class="section">Channels</div>
+          <div class="channel"># sox-q3-close</div>
+          <div class="channel"># it-security</div>
+          <div class="channel"># dba-team</div>
+        </aside>
+
+        <main class="slack-main">
+          <header class="slack-header">
+            <span style="width:24px;height:24px;border-radius:4px;background:linear-gradient(135deg,#e5ddfa,#dbeaff);display:grid;place-items:center;"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></span>
+            Optro
+            <span style="font-size:11px;color:var(--luna-gray-500);font-weight:500;margin-left:4px;">App · ECM assistant</span>
+          </header>
+
+          <div class="slack-messages">
+            <div class="slack-msg is-dim">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body"><div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">3:33 PM</span></div><p>ML linked to ctrl 4.2.1 · sample 47/261 · <span class="state-pill is-linked">Linked</span></p></div>
+            </div>
+
+            <div class="slack-msg">
+              <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+              <div class="body">
+                <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">Friday · 3:34 PM</span></div>
+                <p>Evidence is now <strong>sufficient</strong>. The collection loop is closed. Handing off to Sarah's testing — a separate downstream step.</p>
+
+                <div class="handoff-card">
+                  <div class="handoff-head"><span class="handoff-arrow">⤴</span> Handoff · ECM ends here</div>
+                  <div style="font-size:13px;color:var(--luna-gray-800);line-height:1.5;">
+                    Sarah Kim (External Audit) can now proceed with <strong>midship testing</strong> — sampling and reperforming control 4.2.1. The ECM loop's job was to make sufficient, attestable evidence available. Testing is downstream.
+                  </div>
+                  <div class="field-row" style="margin-top:10px;"><span class="k">Available to test</span><span class="v">Artifact + workpaper bundle + audit trail</span></div>
+                  <div class="field-row"><span class="k">Sample ready</span><span class="v">47 of 261 users · linked + ML-matched</span></div>
+                  <div class="field-row"><span class="k">Audit trail</span><span class="v"><span class="ai-citation">thread://ctrl-4-2-1/q3-2026/exchange-1</span></span></div>
+                  <div class="field-row"><span class="k">Chain anchor</span><span class="v">block #4,180,221</span></div>
+                </div>
+
                 <p style="margin-top:10px;font-size:13px;">
-                  Total turnaround: <strong>45 minutes</strong> · Marie clicked through the exchange to sign off · the audit trail captured the schema-diff conversation with linked source records.
+                  Total ECM cycle: <strong>45 minutes</strong>. 1 reject loop resolved. 1 reviewer question logged in the audit trail. The bundle is ready when Sarah is.
                 </p>
                 <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
                   <button data-go="reset" style="padding:5px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-teal-500);background:var(--luna-teal-500);color:var(--luna-white);cursor:pointer;">↻ Run another</button>
@@ -789,7 +922,7 @@
           <div class="slack-input">Message Optro…</div>
         </main>
       </div>
-      <p class="surface-caption"><strong>State 10.</strong> Closed in 45 minutes — including a real reviewer question that would have taken days to resolve over email. The thread itself <em>is</em> the audit record. Next quarter's draft will be even higher confidence because the bot just learned another pattern.</p>
+      <p class="surface-caption"><strong>State 12 · Handoff to midship testing.</strong> The dashed line in the lifecycle diagram. ECM's job ends at <em>accepted + linked</em>. Sarah's downstream testing (sampling, reperformance) is a separate step — but now it has sufficient, attested evidence and an audit trail to reperform against.</p>
     </div>
 
   </div>
