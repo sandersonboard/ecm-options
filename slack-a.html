@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615q" />
-<link rel="stylesheet" href="styles.css?v=20260615q" />
+<link rel="stylesheet" href="tokens.css?v=20260615r" />
+<link rel="stylesheet" href="styles.css?v=20260615r" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -20,7 +20,22 @@
   .slack-evidence-card .head { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
   .slack-evidence-card .meta { font-size: 12px; color: var(--luna-gray-600); margin-bottom: 8px; }
   .slack-evidence-card .conf-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 12px; color: var(--luna-gray-700); }
-  .slack-evidence-card .conf-row .ai-confidence-bar { flex: 1; }
+  .slack-evidence-card .conf-row .suff-verdict {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .slack-evidence-card .conf-row .suff-check {
+    width: 16px; height: 16px;
+    background: var(--luna-green-500);
+    color: #fff;
+    border-radius: 50%;
+    display: inline-grid; place-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+    line-height: 1;
+  }
   .slack-evidence-card .conf-row .conf-why-wrap {
     position: relative;
     display: inline-flex;
@@ -676,8 +691,10 @@
                 <div class="meta">Access review · SOX control 4.2.1 · quarterly · Reviewer: Marie Curie</div>
                 <div class="conf-row">
                   <span>Sufficiency check:</span>
-                  <div class="ai-confidence-bar" style="max-width:200px;"><span style="width:94%;"></span></div>
-                  <strong>Adequate to file</strong>
+                  <span class="suff-verdict">
+                    <span class="suff-check" aria-hidden="true">✓</span>
+                    <strong>Adequate to file</strong>
+                  </span>
                   <span class="conf-why-wrap" tabindex="0">
                     <button class="conf-why" type="button" aria-label="What ECM evaluated">?</button>
                     <span class="conf-tooltip" role="tooltip">
