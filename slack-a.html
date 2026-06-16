@@ -374,15 +374,58 @@
   .slack-evidence-card.is-pending-marie .review-evidence-link { display: none; }
 
   .slack-evidence-card .actions { display: flex; gap: 6px; margin-top: 8px; }
-  .slack-evidence-card .approve-consequences {
-    margin-top: 6px;
-    font-size: 11px;
-    color: var(--luna-gray-500);
+  .slack-evidence-card .approve-wrap {
+    position: relative;
+    display: inline-flex;
+  }
+  .slack-evidence-card .approve-tip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    background: #0A3655;
+    color: #fff;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    line-height: 1.4;
+    width: 240px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    display: flex; flex-direction: column; gap: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .slack-evidence-card .approve-tip strong {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 4px;
+  }
+  .slack-evidence-card .approve-tip .at-rule {
+    font-size: 12px;
+    color: #fff;
     line-height: 1.4;
   }
-  .slack-evidence-card.is-resolved .approve-consequences,
-  .slack-evidence-card.is-deferred .approve-consequences,
-  .slack-evidence-card.is-needs-redraft .approve-consequences { display: none; }
+  .slack-evidence-card .approve-tip::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 18px;
+    width: 10px; height: 10px;
+    background: #0A3655;
+    transform: rotate(45deg);
+  }
+  .slack-evidence-card .approve-wrap:hover .approve-tip,
+  .slack-evidence-card .approve-wrap:focus-within .approve-tip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
   .slack-evidence-card .card-sec-row {
     display: flex; align-items: center; flex-wrap: wrap;
     gap: 8px;
@@ -614,7 +657,6 @@
     border-color: #fde68a;
   }
   .slack-evidence-card.is-pending-marie .actions,
-  .slack-evidence-card.is-pending-marie .approve-consequences,
   .slack-evidence-card.is-pending-marie .more-options-toggle,
   .slack-evidence-card.is-pending-marie .card-sec-row,
   .slack-evidence-card.is-pending-marie #note-panel,
@@ -1476,10 +1518,15 @@
                 </div>
                 <button type="button" class="review-evidence-link" onclick="toggleRowReview(); return false;">Review the evidence<svg class="rev-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
                 <div class="actions">
-                  <button class="primary" onclick="runFlow(); return false;">Approve &amp; file</button>
-                </div>
-                <div class="approve-consequences" id="approve-consequences">
-                  On approve: audit-trail entry written · Marie notified · 2-business-day SLA starts.
+                  <span class="approve-wrap">
+                    <button class="primary" onclick="runFlow(); return false;" aria-describedby="approve-tip">Approve &amp; file</button>
+                    <span class="approve-tip" id="approve-tip" role="tooltip">
+                      <strong>What happens on approve</strong>
+                      <span class="at-rule">Audit-trail entry written</span>
+                      <span class="at-rule">Marie notified</span>
+                      <span class="at-rule">2-business-day review SLA starts</span>
+                    </span>
+                  </span>
                 </div>
                 <button class="more-options-toggle" id="more-options-toggle" type="button" onclick="toggleMoreOptions(); return false;" aria-expanded="false" aria-controls="card-sec-row">More options<svg class="mo-chev" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
                 <div class="card-sec-row" id="card-sec-row" hidden>
