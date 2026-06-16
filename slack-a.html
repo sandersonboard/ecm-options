@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615i" />
-<link rel="stylesheet" href="styles.css?v=20260615i" />
+<link rel="stylesheet" href="tokens.css?v=20260615j" />
+<link rel="stylesheet" href="styles.css?v=20260615j" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -548,6 +548,70 @@
     background: var(--luna-gray-50);
     border-color: var(--luna-gray-400);
   }
+  /* Multi-channel reviewer notification row */
+  .notify-row {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 6px; margin-top: 6px; font-size: 12px;
+  }
+  .notify-row .notify-label { font-size: 11px; color: var(--luna-gray-500); margin-right: 2px; }
+  .channel-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 12px;
+    font-size: 11px; font-weight: 600;
+    color: var(--luna-gray-700);
+  }
+  .channel-chip.is-active {
+    background: var(--luna-teal-50);
+    border-color: var(--luna-teal-300, #c9ecee);
+    color: var(--luna-teal-700);
+  }
+  .channel-chip .ch-ic { width: 11px; height: 11px; stroke: currentColor; }
+  .channel-chip.is-add {
+    background: transparent;
+    border-style: dashed;
+    color: var(--luna-gray-600);
+    cursor: pointer;
+    font: inherit; font-size: 11px; font-weight: 600;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .channel-chip.is-add:hover {
+    background: var(--luna-gray-50);
+    color: var(--luna-gray-900);
+    border-color: var(--luna-gray-400);
+  }
+  .channel-chip[hidden] { display: none; }
+
+  .slack-inline-panel .channel-options { display: flex; flex-direction: column; gap: 6px; }
+  .slack-inline-panel .channel-opt {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 9px 12px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .slack-inline-panel .channel-opt:hover {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-300);
+  }
+  .slack-inline-panel .channel-opt input { margin-top: 2px; flex-shrink: 0; accent-color: var(--luna-teal-500); }
+  .slack-inline-panel .channel-opt .opt-text { flex: 1; min-width: 0; }
+  .slack-inline-panel .channel-opt .opt-title {
+    font-size: 12.5px; font-weight: 600;
+    color: var(--luna-gray-900); line-height: 1.3;
+  }
+  .slack-inline-panel .channel-opt .opt-meta {
+    font-weight: 500; color: var(--luna-gray-500); margin-left: 4px;
+    font-family: ui-monospace, monospace; font-size: 11px;
+  }
+  .slack-inline-panel .channel-opt .opt-sub {
+    font-size: 11px; color: var(--luna-gray-600);
+    margin-top: 2px; line-height: 1.4;
+  }
 </style>
 </head>
 <body>
@@ -808,6 +872,47 @@ ORDER BY user;</textarea>
                 filed: <strong>AR-Q3FY26-prod-db.png</strong> → control 4.2.1 · classifier 93% · routed=Marie · sla=2bd · signed #4,180,221
               </div>
               <p style="margin-top:8px;font-size:13px;">I'll ping you here if Marie has questions.</p>
+
+              <div class="notify-row">
+                <span class="notify-label">Notified Marie via</span>
+                <span class="channel-chip is-active" id="chip-slack">
+                  <svg class="ch-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm6-6a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
+                  Slack DM
+                </span>
+                <span class="channel-chip" id="chip-email" hidden>
+                  <svg class="ch-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  Email
+                </span>
+                <span class="channel-chip" id="chip-teams" hidden>
+                  <svg class="ch-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                  Teams
+                </span>
+                <button type="button" class="channel-chip is-add" id="add-channel-btn" onclick="toggleNotifyPanel(); return false;">+ Also notify by email or Teams</button>
+              </div>
+
+              <div class="slack-inline-panel" id="notify-panel" style="display:none;margin-top:10px;">
+                <div class="panel-label">Also notify Marie via</div>
+                <div class="channel-options">
+                  <label class="channel-opt">
+                    <input type="checkbox" id="opt-email" />
+                    <div class="opt-text">
+                      <div class="opt-title">Email <span class="opt-meta">mcurie@helios.com</span></div>
+                      <div class="opt-sub">Same filing summary as a structured email, with the receipt link.</div>
+                    </div>
+                  </label>
+                  <label class="channel-opt">
+                    <input type="checkbox" id="opt-teams" />
+                    <div class="opt-text">
+                      <div class="opt-title">Microsoft Teams <span class="opt-meta">@Marie Curie · #helios-audit</span></div>
+                      <div class="opt-sub">Adaptive card in Marie's chat plus a post in the audit channel.</div>
+                    </div>
+                  </label>
+                </div>
+                <div class="panel-actions">
+                  <button type="button" class="primary" onclick="confirmAddChannels(); return false;">Send to selected</button>
+                  <button type="button" onclick="toggleNotifyPanel(); return false;">Cancel</button>
+                </div>
+              </div>
               <div style="display:flex;gap:6px;margin-top:6px;">
                 <button onclick="toggleQueue(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">What's next →</button>
                 <button onclick="toggleReceipt(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">View filing details</button>
@@ -936,6 +1041,7 @@ ORDER BY user;</textarea>
                   <span class="r-k">Control</span><span class="r-v">4.2.1<a class="optro-link" href="ipad-b.html" target="_blank" rel="noopener" title="Open control 4.2.1 in Optro" aria-label="Open in new tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a> · quarterly user-access review · prod-db-01</span>
                   <span class="r-k">Classifier</span><span class="r-v">93% match to Q2 attestation pattern</span>
                   <span class="r-k">Routed to</span><span class="r-v">Marie Curie · Internal Audit</span>
+                  <span class="r-k">Notified via</span><span class="r-v" id="detail-channels">Slack DM</span>
                   <span class="r-k">Review SLA</span><span class="r-v">2 business days</span>
                   <span class="r-k">Filed at</span><span class="r-v">Friday Sep 25 · 3:11 PM PT</span>
                   <span class="r-k">Signed by</span><span class="r-v">Optro ECM · model card v2026.06</span>
@@ -1071,6 +1177,39 @@ ORDER BY user;</textarea>
     if (willShow) panel.scrollIntoView({behavior: 'smooth', block: 'center'});
   }
 
+  function toggleNotifyPanel() {
+    const p = document.getElementById('notify-panel');
+    if (!p) return;
+    const willShow = p.style.display === 'none' || !p.style.display;
+    p.style.display = willShow ? 'block' : 'none';
+    if (willShow) p.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
+  function confirmAddChannels() {
+    const wantEmail = document.getElementById('opt-email')?.checked;
+    const wantTeams = document.getElementById('opt-teams')?.checked;
+    const chipEmail = document.getElementById('chip-email');
+    const chipTeams = document.getElementById('chip-teams');
+    const addBtn = document.getElementById('add-channel-btn');
+    const detailChannels = document.getElementById('detail-channels');
+    const channels = ['Slack DM'];
+    if (wantEmail) {
+      if (chipEmail) { chipEmail.hidden = false; chipEmail.classList.add('is-active'); }
+      channels.push('Email');
+    }
+    if (wantTeams) {
+      if (chipTeams) { chipTeams.hidden = false; chipTeams.classList.add('is-active'); }
+      channels.push('Microsoft Teams');
+    }
+    if (detailChannels) detailChannels.textContent = channels.join(' · ');
+    if (addBtn) {
+      if (wantEmail && wantTeams) addBtn.hidden = true;
+      else if (wantEmail) addBtn.textContent = '+ Also notify by Teams';
+      else if (wantTeams) addBtn.textContent = '+ Also notify by email';
+    }
+    toggleNotifyPanel();
+  }
+
   function toggleQueue() {
     const panel = document.getElementById('queue-panel');
     if (!panel) return;
@@ -1116,7 +1255,7 @@ ORDER BY user;</textarea>
     if (card) card.classList.remove('is-resolved');
 
     // Close any open inline panels
-    ['query-editor-panel', 'file-picker-panel', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel'].forEach(id => {
+    ['query-editor-panel', 'file-picker-panel', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
