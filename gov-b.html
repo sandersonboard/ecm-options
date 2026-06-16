@@ -161,7 +161,7 @@
               <td><span class="ctrl-id">4.2.1</span></td>
               <td class="ecm-said"><span class="pill is-inadequate">✗ Inadequate · 73%</span></td>
               <td class="human-did"><span class="pill is-adequate">✓ Adequate (Marie)</span></td>
-              <td class="reason">ECM expected email attestation; ServiceNow workflow comment was substantively equivalent.</td>
+              <td class="reason">ECM expected email sign-off; ServiceNow workflow comment was substantively equivalent.</td>
             </tr>
             <tr>
               <td class="when">09-14 11:21</td>
@@ -175,7 +175,7 @@
               <td><span class="ctrl-id">4.2.1</span></td>
               <td class="ecm-said"><span class="pill is-adequate">✓ Adequate · 91%</span></td>
               <td class="human-did"><span class="pill is-inadequate">✗ Inadequate (Marie)</span></td>
-              <td class="reason">DBA attester departed mid-cycle; ECM didn't cross-check Workday at the time.</td>
+              <td class="reason">DBA signer departed mid-cycle; ECM didn't cross-check Workday at the time.</td>
             </tr>
             <tr>
               <td class="when">08-29 10:14</td>
@@ -266,7 +266,7 @@
             <h4>⚠ Substantive agreement on IT.AC.1.C01 dropped to 74% in Q3 FY26</h4>
             <p>
               Three of the four substantive overrides this quarter shared a pattern: <strong>ECM was structurally adequate but missed cross-system substantive sufficiency</strong>
-              (escalations without approval tickets, departed attesters, ServiceNow workflow comments treated as inferior to email).
+              (escalations without approval tickets, departed signers, ServiceNow workflow comments treated as inferior to email).
               The structural agreement line is steady at <code>96%</code> — ECM's foundation is solid.
             </p>
             <p>
@@ -300,21 +300,21 @@
           <div class="opt is-suggested">
             <div class="checkbox"></div>
             <div>
-              <div class="title">Add Workday active-employment check for attesters</div>
+              <div class="title">Add Workday active-employment check for signers</div>
               <div class="detail">Cross-check <code style="background:var(--luna-white);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;font-size:11px;">dba_attestation</code> signer against Workday active-status at signature timestamp. Already approved 2026-08-02 for control 4.2.1; expanding scope to 4.2.2 and 4.2.3.</div>
             </div>
           </div>
           <div class="opt">
             <div class="checkbox"></div>
             <div>
-              <div class="title">Accept ServiceNow workflow comments as equivalent to email attestation</div>
-              <div class="detail">Two of the four false-fail overrides flagged ECM as too strict on attestation format. Suggest broadening accepted formats; requires Marie's sign-off on substantive equivalence.</div>
+              <div class="title">Accept ServiceNow workflow comments as equivalent to email sign-off</div>
+              <div class="detail">Two of the four false-fail overrides flagged ECM as too strict on sign-off format. Suggest broadening accepted formats; requires Marie's sign-off on substantive equivalence.</div>
             </div>
           </div>
           <div class="opt">
             <div class="checkbox"></div>
             <div>
-              <div class="title">Demote IT.AC.1.C01 out of auto-attestation policy</div>
+              <div class="title">Demote IT.AC.1.C01 out of auto-sign-off policy</div>
               <div class="detail">Conservative option: while substantive agreement is below threshold, remove this control from <code style="background:var(--luna-white);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;font-size:11px;">POL-AT-2026</code> until rules catch up. (Currently this control is reviewer-gated already, so the impact is small.)</div>
             </div>
           </div>

@@ -125,7 +125,7 @@
             ECM pre-judges the <strong>structural sufficiency</strong> of SOX evidence at submission time. It checks that artifacts cover the required period, carry the required fields, and match the schema declared by the control's evidence template (see <code>aiready-b</code>). When a structural gap is detected, ECM blocks submission with a specific diagnostic; the owner sees what's missing before the package reaches the reviewer.
           </p>
           <p>
-            ECM is <strong>assistive</strong>. It does not author the substantive verdict, it does not attest on behalf of any party, and it does not bypass the reviewer. The reviewer's judgment and signature remain authoritative.
+            ECM is <strong>assistive</strong>. It does not author the substantive verdict, it does not sign off on behalf of any party, and it does not bypass the reviewer. The reviewer's judgment and signature remain authoritative.
           </p>
         </div>
 
@@ -147,7 +147,7 @@
               <h5>✗ ECM doesn't</h5>
               <ul>
                 <li>Author the substantive sufficiency verdict</li>
-                <li>Attest to anything on behalf of management</li>
+                <li>Sign off to anything on behalf of management</li>
                 <li>Auto-accept any evidence — every submission requires a human action</li>
                 <li>Compose the reviewer's finding language</li>
                 <li>Make causal inferences without explicit human ratification</li>
@@ -162,7 +162,7 @@
           <ul>
             <li><strong>Substantive sufficiency varies by control.</strong> ECM's structural checks generalize across the control catalog; the substantive judgment doesn't and is reviewer-owned.</li>
             <li><strong>NL parsing has error modes.</strong> Conversational intake (Slack-C, Mobile-C, palette-B) requires explicit owner confirmation of the parsed structured action before filing.</li>
-            <li><strong>Auto-attestation is policy-bounded.</strong> Only controls explicitly listed in <code>POL-AT-2026</code> can be filed under standing approval (see policy-as-code).</li>
+            <li><strong>Auto-sign-off is policy-bounded.</strong> Only controls explicitly listed in <code>POL-AT-2026</code> can be filed under standing approval (see policy-as-code).</li>
             <li><strong>Connector classifications are reversible.</strong> Any auto-tag can be overridden by the owner or reviewer, and overrides feed the training set for future tuning.</li>
           </ul>
         </div>
@@ -203,8 +203,8 @@
         <div class="change-log-row">
           <div class="when">2026-08-14</div>
           <div class="change">
-            <h5>Expanded auto-attest scope: +6 routine controls</h5>
-            <div class="body">Added 6 controls to <code>POL-AT-2026</code> auto-attestation policy after 2 quarters of clean structural + substantive agreement. Net effect: 14 of 47 controls now auto-attestable (up from 8).</div>
+            <h5>Expanded auto-sign off scope: +6 routine controls</h5>
+            <div class="body">Added 6 controls to <code>POL-AT-2026</code> auto-sign-off policy after 2 quarters of clean structural + substantive agreement. Net effect: 14 of 47 controls now auto-attestable (up from 8).</div>
           </div>
           <div class="signers">
             <span class="pill">3 of 3 signed</span><br/>
@@ -214,8 +214,8 @@
         <div class="change-log-row">
           <div class="when">2026-08-02</div>
           <div class="change">
-            <h5>Updated DBA attester active-employment check</h5>
-            <div class="body">Schema rule for <code>dba_attestation</code> now cross-checks Workday for active employment at the time of signature. Blocks attestations from departed personnel at submission time.</div>
+            <h5>Updated DBA signer active-employment check</h5>
+            <div class="body">Schema rule for <code>dba_attestation</code> now cross-checks Workday for active employment at the time of signature. Blocks sign-offs from departed personnel at submission time.</div>
           </div>
           <div class="signers">
             <span class="pill">3 of 3 signed</span><br/>
@@ -311,7 +311,7 @@
       </div>
 
       <p class="surface-caption">
-        <strong>State 3.</strong> The committee doesn't just rubber-stamp ECM — each named director ratifies the model card with a reasoned attestation. That signed ratification goes into the chain (see Take Chain-A) alongside the evidence it gated. When the external auditor asks "did management oversee the AI control," the answer is here.
+        <strong>State 3.</strong> The committee doesn't just rubber-stamp ECM — each named director ratifies the model card with a reasoned sign-off. That signed ratification goes into the chain (see Take Chain-A) alongside the evidence it gated. When the external auditor asks "did management oversee the AI control," the answer is here.
       </p>
     </div>
 

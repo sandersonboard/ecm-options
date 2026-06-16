@@ -27,7 +27,7 @@
   .doc-pencil { position: absolute; border: 2px solid var(--luna-orange-500); border-radius: 2px; background: rgba(204, 78, 0, 0.06); animation: pencil-fade 0.3s ease-out; }
   .doc-pencil-note { position: absolute; background: var(--luna-orange-500); color: var(--luna-white); padding: 2px 8px; border-radius: 4px 4px 0 4px; font-size: 10px; font-weight: 600; font-family: var(--luna-fontFamily); transform: translateY(-100%); animation: pencil-fade 0.3s ease-out; }
   @keyframes pencil-fade { from { opacity: 0; } to { opacity: 1; } }
-  .doc-attestation { padding: 10px 12px; background: var(--luna-gray-50); border: 1px dashed var(--luna-gray-300); border-radius: 4px; font-size: 11px; color: var(--luna-gray-700); }
+  .doc-sign-off { padding: 10px 12px; background: var(--luna-gray-50); border: 1px dashed var(--luna-gray-300); border-radius: 4px; font-size: 11px; color: var(--luna-gray-700); }
   .ipad-side { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: 8px; padding: 14px; overflow: auto; display: flex; flex-direction: column; gap: 12px; }
   .ipad-side h3 { margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); display: flex; align-items: center; gap: 6px; }
   .ai-finding { padding: 10px 12px; background: linear-gradient(135deg, var(--luna-blue-50), var(--luna-blue-50)); border: 1px solid var(--luna-blue-100); border-left: 3px solid var(--luna-blue-500); border-radius: 4px; }
@@ -120,7 +120,7 @@
                 <div class="meta">prod-db-01.helios · exported 2026-09-25 via ServiceNow · 22 active accounts</div>
               </div>
               <table class="doc-table">
-                <thead><tr><th>User</th><th>Role</th><th>Last login</th><th>Manager attested</th></tr></thead>
+                <thead><tr><th>User</th><th>Role</th><th>Last login</th><th>Manager signed off</th></tr></thead>
                 <tbody>
                   <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-09-25</td><td>✓</td></tr>
                   <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-09-22</td><td>✓</td></tr>
@@ -132,7 +132,7 @@
                   <tr><td>etl-svc</td><td>etl</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
                 </tbody>
               </table>
-              <div class="doc-attestation"><strong>DBA attestation</strong> — Weston Prohaska. "All accounts reviewed. Service accounts attest via automation."</div>
+              <div class="doc-sign-off"><strong>DBA sign-off</strong> — Weston Prohaska. "All accounts reviewed. Service accounts sign off via automation."</div>
             </div>
 
             <aside class="ipad-side">
@@ -143,7 +143,7 @@
               </div>
               <div class="ai-finding">
                 <div class="head">✦ Pattern match</div>
-                <div class="body">Service-account auto-attestations match Q2 format. <strong>Coverage identical (4 of 4).</strong></div>
+                <div class="body">Service-account auto-sign-offs match Q2 format. <strong>Coverage identical (4 of 4).</strong></div>
               </div>
               <div style="padding:10px 12px;background:var(--luna-gray-50);border:1px dashed var(--luna-gray-300);border-radius:4px;font-size:12px;color:var(--luna-gray-600);">
                 <strong>Waiting on Pencil.</strong><br/>
@@ -177,7 +177,7 @@
                 <div class="meta">prod-db-01.helios · exported 2026-09-25 via ServiceNow · 22 active accounts</div>
               </div>
               <table class="doc-table">
-                <thead><tr><th>User</th><th>Role</th><th>Last login</th><th>Manager attested</th></tr></thead>
+                <thead><tr><th>User</th><th>Role</th><th>Last login</th><th>Manager signed off</th></tr></thead>
                 <tbody>
                   <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-09-25</td><td>✓</td></tr>
                   <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-09-22</td><td>✓</td></tr>
@@ -189,7 +189,7 @@
                   <tr><td>etl-svc</td><td>etl</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
                 </tbody>
               </table>
-              <div class="doc-attestation"><strong>DBA attestation</strong> — Weston Prohaska. "All accounts reviewed."</div>
+              <div class="doc-sign-off"><strong>DBA sign-off</strong> — Weston Prohaska. "All accounts reviewed."</div>
 
               <div class="doc-pencil" style="top:182px;left:20px;right:20px;height:24px;"></div>
               <div class="doc-pencil-note" style="top:182px;left:20px;">contractor still admin?</div>
@@ -203,7 +203,7 @@
               </div>
               <div class="ai-finding">
                 <div class="head">✦ Pattern match</div>
-                <div class="body">Service-account auto-attestations match Q2 format verbatim. <strong>Coverage identical (4 of 4).</strong></div>
+                <div class="body">Service-account auto-sign-offs match Q2 format verbatim. <strong>Coverage identical (4 of 4).</strong></div>
               </div>
 
               <div class="verdict-card">
@@ -257,7 +257,7 @@
                 <div class="meta">prod-db-01.helios · exported 2026-09-25 · 22 active accounts</div>
               </div>
               <table class="doc-table">
-                <thead><tr><th>User</th><th>Role</th><th>Last login</th><th>Attested</th></tr></thead>
+                <thead><tr><th>User</th><th>Role</th><th>Last login</th><th>Signed off</th></tr></thead>
                 <tbody>
                   <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-09-25</td><td>✓</td></tr>
                   <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-09-22</td><td>✓</td></tr>

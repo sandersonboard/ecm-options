@@ -110,7 +110,7 @@
           <h4>Control summary</h4>
           <div class="ctrl-summary">
             <span class="ctrl-id">IT.AC.1.C01</span><br/>
-            <strong>Quarterly user access review</strong> on the production database cluster. The control operates when a designated reviewer has, in the last quarter, examined the active account roster, attested to its accuracy, and surfaced exceptions for remediation.
+            <strong>Quarterly user access review</strong> on the production database cluster. The control operates when a designated reviewer has, in the last quarter, examined the active account roster, signed off on its accuracy, and surfaced exceptions for remediation.
           </div>
 
           <h4>Required evidence shape</h4>
@@ -136,7 +136,7 @@
               <span class="type">file/eml|pdf</span>
               <span class="req">required</span>
             </div>
-            <div class="desc">Signed attestation from active DBA personnel. Signer must be employed at the time of signature.</div>
+            <div class="desc">Signed statement from active DBA personnel. Signer must be employed at the time of signature.</div>
           </div>
           <div class="schema-field">
             <div class="row1">
@@ -195,7 +195,7 @@
           </div>
           <div class="sub-row">
             <div class="label">dba_attestation</div>
-            <div class="value is-file">📄 DBA-attestation-Q3FY26.eml · signer <code style="font-size:11px;background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;">m.rivera</code></div>
+            <div class="value is-file">📄 DBA-sign-off-Q3FY26.eml · signer <code style="font-size:11px;background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;">m.rivera</code></div>
             <div class="status is-warn">⚠</div>
           </div>
           <div class="sub-row">
@@ -218,11 +218,11 @@
       </div>
 
       <div style="padding: 14px 18px; background: var(--luna-orange-50); border: 1px solid var(--luna-orange-100); border-left: 3px solid var(--luna-orange-500); border-radius: 6px; font-size: 13px; color: var(--luna-gray-800); line-height: 1.55;">
-        <strong style="color: var(--luna-orange-700);">Heads-up on the DBA attestation:</strong> m.rivera was terminated on 2026-09-12 (per Workday connector). Schema rule says signer must be employed at time of signature. ECM flagged it, but the file is still parseable — the warning surfaces here so Weston can swap in a current attester before submitting.
+        <strong style="color: var(--luna-orange-700);">Heads-up on the DBA sign-off:</strong> m.rivera was terminated on 2026-09-12 (per Workday connector). Schema rule says signer must be employed at time of signature. ECM flagged it, but the file is still parseable — the warning surfaces here so Weston can swap in a current signer before submitting.
       </div>
 
       <p class="surface-caption">
-        <strong>State 2.</strong> The schema doesn't just check that fields exist — it checks structural sufficiency. The missing approval ticket and the departed attester both surface at submission time, not after Marie opens the package three weeks later. Diagnosis collapses from "weeks" to "while Weston is still at his desk."
+        <strong>State 2.</strong> The schema doesn't just check that fields exist — it checks structural sufficiency. The missing approval ticket and the departed signer both surface at submission time, not after Marie opens the package three weeks later. Diagnosis collapses from "weeks" to "while Weston is still at his desk."
       </p>
     </div>
 
@@ -251,7 +251,7 @@
           </div>
           <div class="sub-row">
             <div class="label">dba_attestation</div>
-            <div class="value is-file">📄 DBA-attestation-Q3FY26-rev.eml · signer <code style="font-size:11px;background:var(--luna-white);padding:1px 5px;border-radius:3px;">j.kowalski</code> (active)</div>
+            <div class="value is-file">📄 DBA-sign-off-Q3FY26-rev.eml · signer <code style="font-size:11px;background:var(--luna-white);padding:1px 5px;border-radius:3px;">j.kowalski</code> (active)</div>
             <div class="status is-ok">✓</div>
           </div>
           <div class="sub-row">
@@ -277,7 +277,7 @@
       </div>
 
       <p class="surface-caption">
-        <strong>State 3.</strong> Weston resolved both gaps before submitting: swapped in a current attester, attached the HEL-3471 approval-ticket reference. The submission is schema-valid; Marie's review queue is the next step but it's now reviewing a package that already passes structural checks — she can spend her time on substantive judgment instead of diagnosing what's missing.
+        <strong>State 3.</strong> Weston resolved both gaps before submitting: swapped in a current signer, attached the HEL-3471 approval-ticket reference. The submission is schema-valid; Marie's review queue is the next step but it's now reviewing a package that already passes structural checks — she can spend her time on substantive judgment instead of diagnosing what's missing.
       </p>
     </div>
 
