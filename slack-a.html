@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260616o" />
-<link rel="stylesheet" href="styles.css?v=20260616o" />
+<link rel="stylesheet" href="tokens.css?v=20260616p" />
+<link rel="stylesheet" href="styles.css?v=20260616p" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -370,16 +370,16 @@
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     transition: color 0.15s;
   }
-  .slack-evidence-card .more-options-toggle::after {
-    content: "\25BE";
-    font-size: 9px;
+  .slack-evidence-card .more-options-toggle .mo-chev {
+    width: 10px; height: 10px;
+    stroke: currentColor;
     transition: transform 0.2s;
-    display: inline-block;
+    flex-shrink: 0;
   }
-  .slack-evidence-card .more-options-toggle.is-open::after {
+  .slack-evidence-card .more-options-toggle.is-open .mo-chev {
     transform: rotate(180deg);
   }
   .slack-evidence-card .more-options-toggle:hover {
@@ -424,6 +424,7 @@
     color: var(--luna-gray-700);
     line-height: 1.4;
   }
+  .slack-evidence-card .note-attached[hidden] { display: none; }
   .slack-evidence-card .note-attached-ic {
     width: 13px; height: 13px;
     color: var(--luna-blue-700, #0e48a1);
@@ -1347,7 +1348,7 @@
                 <div class="actions">
                   <button class="primary" onclick="runFlow(); return false;">Approve &amp; file</button>
                 </div>
-                <button class="more-options-toggle" id="more-options-toggle" type="button" onclick="toggleMoreOptions(); return false;" aria-expanded="false" aria-controls="card-sec-row">More options</button>
+                <button class="more-options-toggle" id="more-options-toggle" type="button" onclick="toggleMoreOptions(); return false;" aria-expanded="false" aria-controls="card-sec-row">More options<svg class="mo-chev" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
                 <div class="card-sec-row" id="card-sec-row" hidden>
                   <button class="card-sec-link" type="button" onclick="toggleNotePanel(); return false;">+ Add a note</button>
                   <span class="card-sec-sep">·</span>
