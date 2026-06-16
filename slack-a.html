@@ -484,7 +484,7 @@
                 <span class="bot-tag">APP</span>
                 <span class="ts">Friday · 2:48 PM</span>
               </div>
-              <p>Hey Weston — heads up, your <strong>quarterly user-access review for <span class="ai-citation">control 4.2.1</span> (prod-db-01)</strong> is due Monday. I drafted the evidence task and prefilled the ServiceNow query you used last quarter.</p>
+              <p>Heads up Weston — your <strong>Q3 user-access review for <span class="ai-citation">control 4.2.1</span> (prod-db-01)</strong> is due Monday. I drafted the task with your Q2 query prefilled.</p>
 
               <div class="slack-evidence-card">
                 <div class="head">
@@ -493,15 +493,14 @@
                 </div>
                 <div class="meta">Control 4.2.1 · Cadence: quarterly · Reviewer: Marie Curie</div>
                 <div class="conf-row">
-                  <span>Match to your usual pattern:</span>
+                  <span>Match to Q2:</span>
                   <div class="ai-confidence-bar" style="max-width:200px;"><span style="width:85%;"></span></div>
                   <strong>85%</strong>
                 </div>
                 <div style="font-size:12px;color:var(--luna-gray-700);">
                   Suggested artifact:
                   <button class="artifact-chip" onclick="toggleArtifact('csv'); return false;"><span class="ai-citation">snow-query-AR-prod-db.csv</span></button> +
-                  <button class="artifact-chip" onclick="toggleArtifact('email'); return false;"><span class="ai-citation">DBA attestation email</span></button>.
-                  Same shape as Q2.
+                  <button class="artifact-chip" onclick="toggleArtifact('email'); return false;"><span class="ai-citation">DBA attestation email</span></button>
                 </div>
                 <div class="actions">
                   <button class="primary" onclick="runFlow(); return false;">✓ Approve &amp; file</button>
@@ -510,13 +509,13 @@
                 </div>
 
                 <div class="slack-inline-panel" id="query-editor-panel" style="display:none;">
-                  <div class="panel-label">Edit ServiceNow query · prefilled from Q2</div>
+                  <div class="panel-label">ServiceNow query · prefilled from Q2</div>
                   <textarea spellcheck="false" id="query-editor-text">SELECT user, role, last_login, attested
 FROM access_audit
 WHERE system = 'prod-db-01'
   AND fiscal_quarter = 'Q3FY26'
 ORDER BY user;</textarea>
-                  <div style="font-size:11px;color:var(--luna-gray-500);margin-top:6px;">Tip: Optro re-runs against ServiceNow and updates the suggested artifact.</div>
+                  <div style="font-size:11px;color:var(--luna-gray-500);margin-top:6px;">Optro will re-run the query and update the suggested artifact.</div>
                   <div class="panel-actions">
                     <button class="primary" onclick="closePanelsThenRun(); return false;">Save &amp; file</button>
                     <button onclick="toggleQueryEditor(); return false;">Cancel</button>
@@ -526,7 +525,7 @@ ORDER BY user;</textarea>
                 <div class="slack-inline-panel" id="file-picker-panel" style="display:none;">
                   <div class="panel-label">Upload your own evidence</div>
                   <div class="slack-dropzone" id="dropzone-area" onclick="fakeUpload(); return false;">
-                    📎 Drop a file here or <span class="picker-link">choose from your computer</span>
+                    Drop a file, or <span class="picker-link">click to browse</span>
                   </div>
                   <div class="slack-upload-preview" id="upload-preview">
                     <span class="check">✓</span>
@@ -609,7 +608,7 @@ ORDER BY user;</textarea>
             <div class="avatar">W</div>
             <div class="body">
               <div class="head"><span class="name">Weston Prohaska</span><span class="ts">Friday · 3:11 PM</span></div>
-              <p>In a meeting — but I have the export already, snapped from my phone. Filing it now.</p>
+              <p>In a meeting — already snapped the export from my phone. Filing now.</p>
               <div class="slack-file-card">
                 <div class="file-img">
                   <div class="ss-chrome">
@@ -665,17 +664,15 @@ ORDER BY user;</textarea>
                 <span class="ts">Friday · 3:11 PM</span>
               </div>
               <p>
-                Got it. Auto-tagged the screenshot:
+                Tagged
                 <span class="ai-citation">control 4.2.1</span> ·
-                <span class="ai-citation">Q3FY26</span> ·
-                <span class="ai-citation">freshness: today</span>.
-                Routed to Marie for review. <strong>I'll DM her now.</strong>
+                <span class="ai-citation">Q3FY26</span>, routed to Marie.
                 <span class="luna-badge is-green" style="margin-left:6px;">Filed</span>
               </p>
               <div class="filed-receipt-line">
                 filed: <strong>AR-Q3FY26-prod-db.png</strong> → control 4.2.1 · classifier 93% · routed=Marie · sla=2bd · signed #4,180,221
               </div>
-              <p style="margin-top:8px;font-size:13px;">I'll DM you here if Marie has questions or sends it back.</p>
+              <p style="margin-top:8px;font-size:13px;">I'll ping you here if Marie has questions.</p>
               <div style="display:flex;gap:6px;margin-top:6px;">
                 <button onclick="resetFlow(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">↻ Run another</button>
                 <button onclick="toggleReceipt(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">View filing details</button>
@@ -694,7 +691,7 @@ ORDER BY user;</textarea>
                   <span class="r-k">Signed by</span><span class="r-v">Optro ECM · model card v2026.06</span>
                   <span class="r-k">Tamper seal</span><span class="r-v">signed-block #4,180,221 · sha 0x7f3e&hellip;a3e</span>
                 </div>
-                <p class="receipt-note">This is the audit-trail entry the external auditor will see during the Q3 testing window. Each row is signed and cannot be edited after filing.</p>
+                <p class="receipt-note">This is what the external auditor sees during Q3 testing. Every row is signed and locked.</p>
                 <div class="panel-actions">
                   <a class="open-external" href="chain-a.html" target="_blank" rel="noopener">Open full audit trail ↗</a>
                   <button onclick="toggleReceipt(); return false;">Close</button>
@@ -709,10 +706,10 @@ ORDER BY user;</textarea>
     </div>
 
     <p class="surface-caption">
-      Bot DM → Weston replies → filed evidence with a signed audit trail, all in one Slack thread.
-      The one-tap <strong>Approve &amp; file</strong> path is gated to high-confidence pattern matches against Weston's prior approvals —
-      anything novel (new account, new finding, new attester) would force an expand-and-review step before the file button becomes available.
-      So one-tap doesn't mean one-thought; it means a routine pattern Weston has already attested to before.
+      Bot DM → owner replies → filed with a signed audit trail, all in one thread.
+      One-tap <strong>Approve &amp; file</strong> only appears when the pattern matches the owner's prior signed approvals.
+      Anything new — new account, finding, or attester — forces an expand-and-review step first.
+      One-tap is for routines the owner has signed before, not a shortcut around judgment.
     </p>
 
     </div>
@@ -853,7 +850,7 @@ ORDER BY user;</textarea>
     if (dz) {
       dz.style.borderColor = '';
       dz.style.background = '';
-      dz.innerHTML = '📎 Drop a file here or <span class="picker-link">choose from your computer</span>';
+      dz.innerHTML = 'Drop a file, or <span class="picker-link">click to browse</span>';
     }
 
     // Scroll back to the original bot DM
