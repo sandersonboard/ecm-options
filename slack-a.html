@@ -71,6 +71,93 @@
     line-height: 1.5;
   }
   .filed-receipt-line strong { color: var(--luna-green-700); font-weight: 600; }
+  .slack-inline-panel {
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
+    font-size: 12px;
+  }
+  .slack-inline-panel .panel-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--luna-gray-500); margin-bottom: 6px;
+  }
+  .slack-inline-panel textarea {
+    width: 100%; min-height: 64px;
+    padding: 8px 10px;
+    font-family: ui-monospace, monospace;
+    font-size: 11.5px; line-height: 1.5;
+    color: var(--luna-gray-800);
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-300);
+    border-radius: 4px;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+  .slack-inline-panel textarea:focus {
+    outline: none;
+    border-color: var(--luna-teal-500);
+    box-shadow: 0 0 0 2px var(--luna-teal-100);
+  }
+  .slack-inline-panel .panel-actions { display: flex; gap: 6px; margin-top: 8px; }
+  .slack-inline-panel .panel-actions button {
+    padding: 5px 10px; font-size: 12px; font-weight: 600;
+    border-radius: 4px; cursor: pointer;
+    border: 1px solid var(--luna-gray-300);
+    background: var(--luna-white); color: var(--luna-gray-800);
+  }
+  .slack-inline-panel .panel-actions button.primary {
+    background: var(--luna-teal-500); color: var(--luna-white); border-color: var(--luna-teal-500);
+  }
+  .slack-inline-panel .panel-actions button.primary:hover { background: var(--luna-teal-600); }
+  .slack-dropzone {
+    border: 2px dashed var(--luna-gray-300);
+    border-radius: 5px;
+    padding: 16px;
+    text-align: center;
+    color: var(--luna-gray-600);
+    font-size: 12px;
+    background: var(--luna-white);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .slack-dropzone:hover, .slack-dropzone.is-hover {
+    border-color: var(--luna-teal-500);
+    background: var(--luna-teal-50);
+  }
+  .slack-dropzone .picker-link { color: var(--luna-teal-500); font-weight: 600; cursor: pointer; text-decoration: underline; }
+  .slack-upload-preview {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-green-200, #b7e4c7);
+    border-left: 3px solid var(--luna-green-500);
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--luna-gray-800);
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+  .slack-upload-preview.is-shown { display: flex; }
+  .slack-upload-preview .check { color: var(--luna-green-700); font-weight: 700; }
+  .slack-upload-preview .fname { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-gray-800); }
+  .slack-upload-preview .size { color: var(--luna-gray-500); font-size: 11px; margin-left: auto; }
+  .slack-sidebar .channel.is-app {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .slack-sidebar .channel .app-icon {
+    width: 18px; height: 18px;
+    background: linear-gradient(135deg, #e5ddfa, #dbeaff);
+    border-radius: 3px;
+    display: inline-grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .slack-sidebar .channel .app-icon img {
+    width: 62%; height: auto; display: block;
+  }
 </style>
 </head>
 <body>
@@ -124,8 +211,12 @@
             <span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>
             Helios Robotics
           </div>
+          <div class="section">Apps</div>
+          <div class="channel is-active is-app">
+            <span class="app-icon"><img src="optro-mark.svg" alt="" /></span>
+            Optro
+          </div>
           <div class="section">Direct messages</div>
-          <div class="channel is-active">Optro</div>
           <div class="channel">@ Marie Curie</div>
           <div class="channel">@ Ada Lovelace</div>
           <div class="section">Channels</div>
@@ -169,8 +260,38 @@
                   </div>
                   <div class="actions">
                     <button class="primary" data-go="reply">✓ Approve &amp; file</button>
-                    <button>Edit query</button>
-                    <button data-go="reply">Upload your own</button>
+                    <button onclick="toggleQueryEditor(); return false;">Edit query</button>
+                    <button onclick="toggleFilePicker(); return false;">Upload your own</button>
+                  </div>
+
+                  <div class="slack-inline-panel" id="query-editor-panel" style="display:none;">
+                    <div class="panel-label">Edit ServiceNow query · prefilled from Q2</div>
+                    <textarea spellcheck="false" id="query-editor-text">SELECT user, role, last_login, attested
+FROM access_audit
+WHERE system = 'prod-db-01'
+  AND fiscal_quarter = 'Q3FY26'
+ORDER BY user;</textarea>
+                    <div style="font-size:11px;color:var(--luna-gray-500);margin-top:6px;">Tip: Optro re-runs against ServiceNow and updates the suggested artifact.</div>
+                    <div class="panel-actions">
+                      <button class="primary" data-go="reply">Save &amp; file</button>
+                      <button onclick="toggleQueryEditor(); return false;">Cancel</button>
+                    </div>
+                  </div>
+
+                  <div class="slack-inline-panel" id="file-picker-panel" style="display:none;">
+                    <div class="panel-label">Upload your own evidence</div>
+                    <div class="slack-dropzone" id="dropzone-area" onclick="fakeUpload(); return false;">
+                      📎 Drop a file here or <span class="picker-link">choose from your computer</span>
+                    </div>
+                    <div class="slack-upload-preview" id="upload-preview">
+                      <span class="check">✓</span>
+                      <span class="fname">AR-Q3FY26-prod-db.csv</span>
+                      <span class="size">42 KB · just now</span>
+                    </div>
+                    <div class="panel-actions">
+                      <button class="primary" data-go="reply" id="file-now-btn" disabled style="opacity:0.5;cursor:not-allowed;">File now</button>
+                      <button onclick="toggleFilePicker(); return false;">Cancel</button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -188,8 +309,12 @@
       <div class="slack-window" role="region">
         <aside class="slack-sidebar">
           <div class="workspace"><span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>Helios Robotics</div>
+          <div class="section">Apps</div>
+          <div class="channel is-active is-app">
+            <span class="app-icon"><img src="optro-mark.svg" alt="" /></span>
+            Optro
+          </div>
           <div class="section">Direct messages</div>
-          <div class="channel is-active">Optro</div>
           <div class="channel">@ Marie Curie</div>
           <div class="channel">@ Ada Lovelace</div>
           <div class="section">Channels</div>
@@ -244,8 +369,12 @@
       <div class="slack-window" role="region">
         <aside class="slack-sidebar">
           <div class="workspace"><span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>Helios Robotics</div>
+          <div class="section">Apps</div>
+          <div class="channel is-active is-app">
+            <span class="app-icon"><img src="optro-mark.svg" alt="" /></span>
+            Optro
+          </div>
           <div class="section">Direct messages</div>
-          <div class="channel is-active">Optro</div>
           <div class="channel">@ Marie Curie</div>
           <div class="channel">@ Ada Lovelace</div>
           <div class="section">Channels</div>
@@ -309,6 +438,44 @@
   </div>
 </div>
 
+<script>
+  function toggleQueryEditor() {
+    const ed = document.getElementById('query-editor-panel');
+    const fp = document.getElementById('file-picker-panel');
+    if (!ed) return;
+    const willShow = ed.style.display === 'none' || !ed.style.display;
+    ed.style.display = willShow ? 'block' : 'none';
+    if (fp) fp.style.display = 'none';
+    if (willShow) {
+      const ta = document.getElementById('query-editor-text');
+      if (ta) ta.focus();
+    }
+  }
+  function toggleFilePicker() {
+    const fp = document.getElementById('file-picker-panel');
+    const ed = document.getElementById('query-editor-panel');
+    if (!fp) return;
+    const willShow = fp.style.display === 'none' || !fp.style.display;
+    fp.style.display = willShow ? 'block' : 'none';
+    if (ed) ed.style.display = 'none';
+  }
+  function fakeUpload() {
+    const prev = document.getElementById('upload-preview');
+    const btn = document.getElementById('file-now-btn');
+    const dz = document.getElementById('dropzone-area');
+    if (prev) prev.classList.add('is-shown');
+    if (btn) {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+    }
+    if (dz) {
+      dz.style.borderColor = 'var(--luna-green-500)';
+      dz.style.background = 'var(--luna-green-50)';
+      dz.innerHTML = '✓ File selected — ready to file';
+    }
+  }
+</script>
 <script src="flows.js"></script>
 </body>
 </html>
