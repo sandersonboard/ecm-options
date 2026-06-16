@@ -347,17 +347,74 @@
     font-weight: 700;
     letter-spacing: 0.02em;
   }
-  .slack-evidence-card .artifact-line {
-    font-size: 12px;
-    color: var(--luna-gray-700);
+  /* Evidence block: single clickable affordance that names the artifacts AND opens the review */
+  .slack-evidence-card .evidence-block {
+    appearance: none;
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
+    font: inherit;
+    color: var(--luna-gray-800);
+    cursor: pointer;
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 6px;
+    gap: 10px;
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
   }
-  .slack-evidence-card .artifact-and {
+  .slack-evidence-card .evidence-block:hover,
+  .slack-evidence-card .evidence-block:focus-visible {
+    border-color: var(--luna-teal-400);
+    background: var(--luna-teal-50);
+    outline: none;
+  }
+  .slack-evidence-card .evidence-block .ev-label {
+    font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
     color: var(--luna-gray-500);
+    flex-shrink: 0;
+    line-height: 1.2;
   }
+  .slack-evidence-card .evidence-block .ev-files {
+    display: flex; align-items: center; gap: 6px;
+    flex-wrap: wrap;
+    flex: 1;
+    min-width: 0;
+  }
+  .slack-evidence-card .evidence-block .ev-plus {
+    color: var(--luna-gray-400);
+    font-size: 12px;
+  }
+  .slack-evidence-card .evidence-block .ev-action {
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11.5px; font-weight: 600;
+    color: var(--luna-teal-500);
+    margin-left: auto;
+  }
+  .slack-evidence-card .evidence-block .ev-arrow {
+    width: 12px; height: 12px;
+    transition: transform 0.15s;
+  }
+  .slack-evidence-card .evidence-block:hover .ev-arrow,
+  .slack-evidence-card .evidence-block:focus-visible .ev-arrow {
+    transform: translateX(2px);
+  }
+  /* Post-state: still a citation, no longer the primary click target */
+  .slack-evidence-card.is-resolved .evidence-block,
+  .slack-evidence-card.is-deferred .evidence-block,
+  .slack-evidence-card.is-needs-redraft .evidence-block,
+  .slack-evidence-card.is-pending-marie .evidence-block {
+    cursor: default;
+    pointer-events: none;
+  }
+  .slack-evidence-card.is-resolved .evidence-block .ev-action,
+  .slack-evidence-card.is-deferred .evidence-block .ev-action,
+  .slack-evidence-card.is-needs-redraft .evidence-block .ev-action,
+  .slack-evidence-card.is-pending-marie .evidence-block .ev-action { display: none; }
 
   .slack-evidence-card .actions { display: flex; gap: 6px; margin-top: 8px; }
   .slack-evidence-card .approve-consequences {
@@ -369,23 +426,6 @@
   .slack-evidence-card.is-resolved .approve-consequences,
   .slack-evidence-card.is-deferred .approve-consequences,
   .slack-evidence-card.is-needs-redraft .approve-consequences { display: none; }
-  .slack-evidence-card .review-evidence-link {
-    appearance: none; background: none; border: 0; padding: 0;
-    font: inherit; font-size: 11.5px;
-    color: var(--luna-teal-500);
-    cursor: pointer;
-    text-decoration: underline; text-underline-offset: 2px;
-    text-decoration-color: transparent;
-    transition: text-decoration-color 0.15s, color 0.15s;
-    margin-left: 8px;
-  }
-  .slack-evidence-card .review-evidence-link:hover {
-    color: var(--luna-teal-700);
-    text-decoration-color: currentColor;
-  }
-  .slack-evidence-card.is-resolved .review-evidence-link,
-  .slack-evidence-card.is-deferred .review-evidence-link,
-  .slack-evidence-card.is-needs-redraft .review-evidence-link { display: none; }
   .slack-evidence-card .card-sec-row {
     display: flex; align-items: center; flex-wrap: wrap;
     gap: 8px;
@@ -606,6 +646,38 @@
     background: #f59e0b;
   }
   .slack-evidence-card.is-needs-redraft .resolved-status .meta {
+    color: #92400e;
+    opacity: 0.75;
+    margin-left: 4px;
+  }
+
+  /* Flagged-for-Marie: routed to her for the decision; not approved by Weston */
+  .slack-evidence-card.is-pending-marie {
+    background: #fffbeb;
+    border-color: #fde68a;
+  }
+  .slack-evidence-card.is-pending-marie .actions,
+  .slack-evidence-card.is-pending-marie .approve-consequences,
+  .slack-evidence-card.is-pending-marie .more-options-toggle,
+  .slack-evidence-card.is-pending-marie .card-sec-row,
+  .slack-evidence-card.is-pending-marie #note-panel,
+  .slack-evidence-card.is-pending-marie #defer-panel,
+  .slack-evidence-card.is-pending-marie #sendback-panel,
+  .slack-evidence-card.is-pending-marie #row-review-panel { display: none !important; }
+  .slack-evidence-card.is-pending-marie .resolved-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #fde68a;
+    font-size: 12px;
+    color: #92400e;
+  }
+  .slack-evidence-card.is-pending-marie .resolved-status .check {
+    background: #f59e0b;
+  }
+  .slack-evidence-card.is-pending-marie .resolved-status .meta {
     color: #92400e;
     opacity: 0.75;
     margin-left: 4px;
@@ -845,17 +917,6 @@
     color: var(--luna-gray-500);
     margin-left: 4px;
   }
-  .artifact-chip {
-    display: inline-flex;
-    align-items: center;
-    font: inherit;
-  }
-  .slack-inline-panel.artifact-preview .panel-label {
-    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
-    font-size: 12px; font-weight: 600; color: var(--luna-gray-800);
-    text-transform: none; letter-spacing: 0;
-  }
-  .slack-inline-panel.artifact-preview .ai-chip { font-size: 10px; }
   .csv-preview {
     background: var(--luna-white);
     border: 1px solid var(--luna-gray-200);
@@ -1438,14 +1499,18 @@
                     </span>
                   </span>
                 </div>
-                <div class="artifact-line">
-                  <span class="state-pre">Suggested artifact:</span>
-                  <span class="state-post">Filed artifact:</span>
-                  <span class="artifact-chip"><span class="ai-citation">snow-query-AR-prod-db.csv</span></span>
-                  <span class="artifact-and">and</span>
-                  <span class="artifact-chip"><span class="ai-citation">DBA attestation email</span></span>
-                  <button type="button" class="review-evidence-link" onclick="toggleRowReview(); return false;">Review the evidence →</button>
-                </div>
+                <button type="button" class="evidence-block" onclick="toggleRowReview(); return false;" aria-label="Review the evidence">
+                  <div class="ev-label">
+                    <span class="state-pre">Evidence to file</span>
+                    <span class="state-post">Filed evidence</span>
+                  </div>
+                  <div class="ev-files">
+                    <span class="ai-citation">snow-query-AR-prod-db.csv</span>
+                    <span class="ev-plus">+</span>
+                    <span class="ai-citation">DBA attestation email</span>
+                  </div>
+                  <span class="ev-action">Review<svg class="ev-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+                </button>
                 <div class="actions">
                   <button class="primary" onclick="runFlow(); return false;">Approve &amp; file</button>
                 </div>
@@ -1911,7 +1976,7 @@
       {
         title: 'The cautious path',
         body: 'If anything feels off, <strong>Review the evidence</strong> opens all 22 records inline alongside the email draft. The two flagged rows are called out with their explanations. From there Weston can approve as-is, or send it to Marie with a flag attached.<span class="tour-why"><strong>Why:</strong> Every AI system needs an error-recovery path. Flag-for-Marie routes the dispute to the reviewer and keeps segregation of duties intact.</span>',
-        selector: '.slack-evidence-card .review-evidence-link',
+        selector: '.slack-evidence-card .evidence-block',
         before: function () {
           var p = document.getElementById('row-review-panel');
           if (p) p.style.display = 'block';
@@ -2386,10 +2451,16 @@
 
   function flagForMarie() {
     if (flowStarted) return;
-    // For the demo, flagging files the evidence but adds a flag visible to Marie.
+    flowStarted = true;
     const card = document.querySelector('.slack-evidence-card');
-    if (card) card.classList.add('is-flagged');
-    runFlow();
+    if (card) {
+      card.classList.add('is-pending-marie');
+      var status = card.querySelector('.resolved-status');
+      if (status) {
+        var msg = status.querySelector('.msg');
+        if (msg) msg.innerHTML = "Routed to Marie for her decision <span class=\"meta\">· you didn’t attest</span>";
+      }
+    }
     const p = document.getElementById('row-review-panel');
     if (p) p.style.display = 'none';
   }
