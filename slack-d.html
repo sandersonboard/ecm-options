@@ -1,0 +1,2809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="gate.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Slack · Take D — Delta review · ECM options</title>
+<link rel="stylesheet" href="tokens.css?v=20260616q" />
+<link rel="stylesheet" href="styles.css?v=20260616q" />
+<style>
+  .slack-evidence-card {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-300);
+    border-left: 3px solid var(--luna-blue-500);
+    border-radius: 4px;
+    max-width: 520px;
+    box-sizing: border-box;
+  }
+  .slack-evidence-card .head { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .slack-evidence-card .meta { font-size: 12px; color: var(--luna-gray-600); margin-bottom: 8px; }
+  .slack-evidence-card .conf-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 12px; color: var(--luna-gray-700); }
+  .slack-evidence-card .conf-row .suff-verdict {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .slack-evidence-card .conf-row .suff-check {
+    width: 16px; height: 16px;
+    background: var(--luna-green-500);
+    color: #fff;
+    border-radius: 50%;
+    display: inline-grid; place-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .slack-evidence-card .conf-row .conf-why-wrap {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .slack-evidence-card .conf-row .conf-why {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--luna-gray-300);
+    color: #fff;
+    font-size: 9px; font-weight: 700;
+    border: 0;
+    cursor: help;
+    display: inline-grid; place-items: center;
+    line-height: 1;
+    padding: 0;
+    transition: background 0.15s;
+  }
+  .slack-evidence-card .conf-row .conf-why-wrap:hover .conf-why,
+  .slack-evidence-card .conf-row .conf-why-wrap:focus-within .conf-why { background: var(--luna-teal-500); }
+
+  .slack-evidence-card .conf-tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: #0A3655;
+    color: #fff;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    line-height: 1.4;
+    width: 280px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    display: flex; flex-direction: column; gap: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .slack-evidence-card .conf-tooltip strong {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 4px;
+  }
+  .slack-evidence-card .conf-tooltip .tt-rule {
+    font-size: 12px;
+    color: #fff;
+    line-height: 1.4;
+  }
+  .slack-evidence-card .conf-tooltip .tt-footer {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.65);
+    pointer-events: auto;
+  }
+  .slack-evidence-card .conf-tooltip .tt-footer a {
+    color: #93c5fd;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .slack-evidence-card .conf-tooltip .tt-footer a:hover { color: #fff; }
+  .slack-evidence-card .conf-tooltip::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    right: 4px;
+    width: 10px; height: 10px;
+    background: #0A3655;
+    transform: rotate(45deg);
+  }
+  .slack-evidence-card .conf-row .conf-why-wrap:hover .conf-tooltip,
+  .slack-evidence-card .conf-row .conf-why-wrap:focus-within .conf-tooltip,
+  .slack-evidence-card .conf-row .conf-why-wrap.is-open .conf-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .slack-evidence-card .conf-row .conf-why-wrap.is-open .conf-why { background: var(--luna-teal-500); }
+  /* Take-the-guided-tour entry button */
+  .tour-start-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 11px;
+    background: var(--luna-teal-500);
+    color: #fff;
+    border: 1px solid var(--luna-teal-500);
+    border-radius: 5px;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .tour-start-btn:hover { background: var(--luna-teal-600); border-color: var(--luna-teal-600); }
+  .tour-start-btn svg { width: 13px; height: 13px; }
+
+  /* === Floating-card tour (reference pattern: draggable card + pulsing highlight) === */
+  .tour-card {
+    position: fixed;
+    left: 24px; bottom: 24px;
+    width: 22rem; max-width: calc(100vw - 48px);
+    z-index: 1500;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18), 0 2px 6px rgba(15, 23, 42, 0.08);
+    color: var(--luna-gray-900);
+    z-index: 1000;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    opacity: 0; transform: translateY(6px);
+    transition: opacity 160ms ease, transform 160ms ease;
+  }
+  .tour-card.visible { opacity: 1; transform: translateY(0); }
+  .tour-card-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    background: var(--luna-gray-50);
+    border-bottom: 1px solid var(--luna-gray-200);
+    cursor: grab; user-select: none; touch-action: none;
+  }
+  .tour-card-header.grabbing { cursor: grabbing; }
+  .tour-card-avatar {
+    width: 2.25rem; height: 2.25rem; border-radius: 999px;
+    background: linear-gradient(135deg, #ebf3fc 0%, #c8dcf0 70%, #9dc4ef 100%);
+    border: 1px solid #9dc4ef;
+    font-size: 1.25rem; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .tour-card-who { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
+  .tour-card-who .name {
+    font-size: 13px; font-weight: 600; color: var(--luna-gray-900);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .tour-card-who .meta { font-size: 11px; color: var(--luna-gray-500); }
+  .tour-card-close {
+    background: transparent; border: 0; padding: 4px;
+    color: var(--luna-gray-500); font-size: 18px; line-height: 1; cursor: pointer;
+    border-radius: 4px;
+  }
+  .tour-card-close:hover { color: var(--luna-gray-900); background: var(--luna-gray-100); }
+  .tour-card-body {
+    padding: 14px 16px 8px;
+    font-size: 13px; line-height: 1.55; color: var(--luna-gray-800);
+    max-height: 22rem; overflow-y: auto;
+  }
+  .tour-card-title {
+    font-size: 15px; font-weight: 700; color: var(--luna-gray-900);
+    letter-spacing: -0.005em; margin: 0 0 6px;
+  }
+  .tour-card-text { margin: 0; }
+  .tour-card-text strong { color: var(--luna-gray-900); font-weight: 700; }
+  .tour-card-footer {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--luna-gray-200);
+    background: var(--luna-white);
+  }
+  .tour-progress {
+    font-size: 11px; color: var(--luna-gray-500);
+    font-variant-numeric: tabular-nums; letter-spacing: 0.04em;
+  }
+  .tour-actions-row { display: flex; align-items: center; gap: 6px; }
+  .tour-action-btn {
+    background: var(--luna-white); border: 1px solid var(--luna-gray-300);
+    border-radius: 6px; color: var(--luna-gray-900);
+    font: inherit; font-size: 12px; font-weight: 500;
+    padding: 5px 11px; cursor: pointer;
+    transition: background 80ms, border-color 80ms;
+  }
+  .tour-action-btn:hover { background: var(--luna-gray-50); }
+  .tour-action-btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+  .tour-action-btn.primary {
+    background: var(--luna-teal-500); border-color: var(--luna-teal-500); color: #fff;
+  }
+  .tour-action-btn.primary:hover { background: var(--luna-teal-600); border-color: var(--luna-teal-600); }
+  .tour-skip-btn {
+    background: transparent; border: 0; color: var(--luna-gray-500);
+    font-size: 12px; cursor: pointer; padding: 0 6px; font: inherit;
+  }
+  .tour-skip-btn:hover { color: var(--luna-gray-900); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* Pulsing highlight on the active target */
+  .tour-highlight {
+    position: relative; z-index: 5;
+    animation: tour-highlight-pulse 2.4s ease-in-out infinite;
+    border-radius: inherit;
+  }
+  @keyframes tour-highlight-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(38, 108, 146, 0.45), 0 0 14px rgba(38, 108, 146, 0.22); }
+    50%      { box-shadow: 0 0 0 5px rgba(38, 108, 146, 0.65), 0 0 28px rgba(38, 108, 146, 0.36); }
+  }
+
+  /* Floating "Product tour" relauncher pill (bottom-right) */
+  body.tour-active .tour-restart { display: none; }
+  .tour-restart {
+    position: fixed; bottom: 24px; left: 24px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px 7px 8px;
+    background: linear-gradient(135deg, rgba(10, 54, 85, 0.08), rgba(38, 108, 146, 0.08));
+    border: 1px solid rgba(10, 54, 85, 0.35);
+    color: #0A3655;
+    font-size: 12.5px; font-weight: 600;
+    border-radius: 999px; cursor: pointer;
+    box-shadow: 0 1px 2px rgba(10, 54, 85, 0.06);
+    transition: all 150ms ease;
+    z-index: 1400;
+  }
+  .tour-restart:hover {
+    background: linear-gradient(135deg, rgba(10, 54, 85, 0.14), rgba(38, 108, 146, 0.14));
+    border-color: rgba(10, 54, 85, 0.5);
+    transform: translateY(-1px);
+  }
+  .tour-restart-avatar {
+    width: 22px; height: 22px; border-radius: 999px;
+    display: inline-grid; place-items: center;
+    background: #fff;
+    font-size: 13px; line-height: 1;
+  }
+
+  /* Slack app Messages / About tab strip (sits between the header and the messages) */
+  .slack-main .app-tabs {
+    display: flex;
+    align-items: stretch;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--luna-gray-200);
+    background: var(--luna-white);
+    flex-shrink: 0;
+  }
+  .slack-main .app-tab {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    padding: 9px 4px 8px;
+    margin-right: 18px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--luna-gray-600);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    line-height: 1.4;
+  }
+  .slack-main .app-tab:hover { color: var(--luna-gray-900); }
+  .slack-main .app-tab.is-active {
+    color: var(--luna-gray-900);
+    font-weight: 600;
+    border-bottom-color: #0A3655;
+  }
+
+  /* Q2 reference inline link inside the bot's intro prose */
+  .prior-link {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    color: var(--luna-teal-500);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .prior-link:hover { color: var(--luna-teal-700); }
+
+  .slack-inline-panel .prior-ref-note,
+  .slack-inline-panel .prior-ref-meta {
+    font-size: 11.5px;
+    color: var(--luna-gray-600);
+    line-height: 1.5;
+    margin: 0 0 8px;
+  }
+  .slack-inline-panel .prior-ref-meta {
+    margin: 8px 0 0;
+    font-style: italic;
+    color: var(--luna-gray-500);
+  }
+
+  /* Pre/post-fil state swaps */
+  .slack-evidence-card .state-post { display: none; }
+  .slack-evidence-card.is-resolved .state-pre { display: none; }
+  .slack-evidence-card.is-resolved .state-post { display: inline; }
+  /* head titles are inline-flex links so the arrow icon aligns; specificity beats the generic state-* rules above */
+  .slack-evidence-card .head a.state-pre { display: inline-flex; }
+  .slack-evidence-card.is-resolved .head a.state-pre { display: none; }
+  .slack-evidence-card .head a.state-post { display: none; }
+  .slack-evidence-card.is-resolved .head a.state-post { display: inline-flex; }
+  .slack-evidence-card.is-resolved .row-review-link { display: none; }
+  .slack-evidence-card.is-resolved {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-200);
+  }
+  .slack-evidence-card.is-flagged .resolved-status::after {
+    content: "Flagged for Marie's attention";
+    margin-left: auto;
+    padding: 2px 8px;
+    background: #fff8eb;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  /* Review the evidence: single text link, left-aligned under the card meta */
+  .slack-evidence-card .review-evidence-link {
+    appearance: none; background: none; border: 0; padding: 0;
+    margin-top: 10px;
+    font: inherit; font-size: 12px; font-weight: 600;
+    color: var(--luna-teal-500);
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 4px;
+    transition: color 0.15s;
+  }
+  .slack-evidence-card .review-evidence-link:hover {
+    color: var(--luna-teal-700);
+    text-decoration: underline; text-underline-offset: 2px;
+  }
+  .slack-evidence-card .review-evidence-link .rev-arrow {
+    width: 12px; height: 12px;
+    transition: transform 0.15s;
+  }
+  .slack-evidence-card .review-evidence-link:hover .rev-arrow {
+    transform: translateX(2px);
+  }
+  .slack-evidence-card.is-resolved .review-evidence-link,
+  .slack-evidence-card.is-deferred .review-evidence-link,
+  .slack-evidence-card.is-needs-redraft .review-evidence-link,
+  .slack-evidence-card.is-pending-marie .review-evidence-link { display: none; }
+
+  /* Delta-first UI (slack-d) */
+  .slack-evidence-card .delta-hero {
+    display: flex;
+    align-items: stretch;
+    margin: 12px 0 10px;
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--luna-white);
+  }
+  .slack-evidence-card .delta-hero .dh-unchanged,
+  .slack-evidence-card .delta-hero .dh-changed {
+    flex: 1;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .slack-evidence-card .delta-hero .dh-unchanged {
+    background: var(--luna-gray-50);
+  }
+  .slack-evidence-card .delta-hero .dh-changed {
+    background: #fffbeb;
+  }
+  .slack-evidence-card .delta-hero .dh-divider {
+    width: 1px;
+    background: var(--luna-gray-200);
+  }
+  .slack-evidence-card .delta-hero .dh-stat {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--luna-gray-900);
+  }
+  .slack-evidence-card .delta-hero .dh-changed .dh-stat { color: #92400e; }
+  .slack-evidence-card .delta-hero .dh-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--luna-gray-700);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .slack-evidence-card .delta-hero .dh-sub {
+    font-size: 11px;
+    color: var(--luna-gray-500);
+    line-height: 1.3;
+    margin-top: 2px;
+  }
+
+  .slack-evidence-card .delta-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 10px;
+    font-size: 11.5px;
+  }
+  .slack-evidence-card .delta-table th {
+    text-align: left;
+    padding: 5px 8px;
+    background: var(--luna-gray-50);
+    color: var(--luna-gray-600);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--luna-gray-200);
+  }
+  .slack-evidence-card .delta-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--luna-gray-100);
+    color: var(--luna-gray-800);
+    vertical-align: middle;
+  }
+  .slack-evidence-card .delta-table tr:last-child td { border-bottom: 0; }
+  .slack-evidence-card .delta-table .delta-pill {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin-right: 6px;
+  }
+  .slack-evidence-card .delta-table .delta-pill.is-add {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+  }
+  .slack-evidence-card .delta-table .delta-pill.is-remove {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+  }
+  .slack-evidence-card .delta-table .delta-pill.is-carry {
+    background: #fffbeb;
+    color: #92400e;
+    border: 1px solid #fde68a;
+  }
+  .slack-evidence-card .delta-table .delta-was {
+    font-size: 10.5px;
+    color: var(--luna-gray-500);
+  }
+  .slack-evidence-card .delta-table .ai-citation {
+    font-size: 10.5px;
+  }
+
+  .slack-evidence-card .show-all-toggle {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 8px 0 0;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--luna-gray-500);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.15s;
+  }
+  .slack-evidence-card .show-all-toggle .sa-chev {
+    width: 10px; height: 10px;
+    stroke: currentColor;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .slack-evidence-card .show-all-toggle.is-open .sa-chev { transform: rotate(180deg); }
+  .slack-evidence-card .show-all-toggle:hover { color: var(--luna-gray-900); }
+  .slack-evidence-card .show-all-panel[hidden] { display: none; }
+  .slack-evidence-card .show-all-panel {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
+  }
+  .slack-evidence-card .show-all-panel .show-all-note {
+    margin: 0 0 8px;
+    font-size: 11.5px;
+    color: var(--luna-gray-600);
+    line-height: 1.45;
+  }
+  .slack-evidence-card.is-resolved .show-all-toggle,
+  .slack-evidence-card.is-deferred .show-all-toggle,
+  .slack-evidence-card.is-needs-redraft .show-all-toggle,
+  .slack-evidence-card.is-pending-marie .show-all-toggle,
+  .slack-evidence-card.is-resolved .show-all-panel,
+  .slack-evidence-card.is-deferred .show-all-panel,
+  .slack-evidence-card.is-needs-redraft .show-all-panel,
+  .slack-evidence-card.is-pending-marie .show-all-panel { display: none; }
+
+  .slack-evidence-card .actions { display: flex; gap: 6px; margin-top: 8px; }
+  .slack-evidence-card .approve-wrap {
+    position: relative;
+    display: inline-flex;
+  }
+  .slack-evidence-card .approve-tip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    background: #0A3655;
+    color: #fff;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    line-height: 1.4;
+    width: 240px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    display: flex; flex-direction: column; gap: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .slack-evidence-card .approve-tip strong {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 4px;
+  }
+  .slack-evidence-card .approve-tip .at-rule {
+    font-size: 12px;
+    color: #fff;
+    line-height: 1.4;
+  }
+  .slack-evidence-card .approve-tip::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 18px;
+    width: 10px; height: 10px;
+    background: #0A3655;
+    transform: rotate(45deg);
+  }
+  .slack-evidence-card .approve-wrap:hover .approve-tip,
+  .slack-evidence-card .approve-wrap:focus-within .approve-tip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .slack-evidence-card .card-sec-row {
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .slack-evidence-card .card-sec-row[hidden] { display: none; }
+
+  .slack-evidence-card .more-options-toggle {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 8px 0 0;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--luna-gray-500);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.15s;
+  }
+  .slack-evidence-card .more-options-toggle .mo-chev {
+    width: 10px; height: 10px;
+    stroke: currentColor;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .slack-evidence-card .more-options-toggle.is-open .mo-chev {
+    transform: rotate(180deg);
+  }
+  .slack-evidence-card .more-options-toggle:hover {
+    color: var(--luna-gray-900);
+  }
+  .slack-evidence-card.is-resolved .more-options-toggle,
+  .slack-evidence-card.is-deferred .more-options-toggle,
+  .slack-evidence-card.is-needs-redraft .more-options-toggle { display: none; }
+  .slack-evidence-card .card-sec-link {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--luna-gray-600);
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .slack-evidence-card .card-sec-link:hover {
+    color: var(--luna-teal-500);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .slack-evidence-card .card-sec-sep {
+    color: var(--luna-gray-400);
+    font-size: 11.5px;
+    user-select: none;
+  }
+
+  /* Note-attached chip */
+  .slack-evidence-card .note-attached {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 8px;
+    padding: 7px 12px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-left: 3px solid var(--luna-blue-500, #3172e3);
+    border-radius: 5px;
+    font-size: 12px;
+    color: var(--luna-gray-700);
+    line-height: 1.4;
+  }
+  .slack-evidence-card .note-attached[hidden] { display: none; }
+  .slack-evidence-card .note-attached-ic {
+    width: 13px; height: 13px;
+    color: var(--luna-blue-700, #0e48a1);
+    flex-shrink: 0;
+    stroke: currentColor;
+  }
+  .slack-evidence-card .note-attached-text {
+    flex: 1; min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .slack-evidence-card .note-attached-text .note-attached-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--luna-gray-500);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .slack-evidence-card .note-attached-text #note-preview {
+    color: var(--luna-gray-900);
+  }
+  .slack-evidence-card .note-edit {
+    background: none; border: 0; padding: 0;
+    font: inherit; font-size: 11.5px;
+    color: var(--luna-blue-700, #0e48a1);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .slack-evidence-card .note-edit:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .slack-evidence-card.is-resolved .note-attached {
+    border-left-color: var(--luna-gray-300);
+  }
+  .slack-evidence-card.is-resolved .note-attached-ic {
+    color: var(--luna-gray-500);
+  }
+
+  /* Defer panel */
+  .slack-inline-panel .defer-help,
+  .slack-inline-panel .note-help {
+    font-size: 11.5px;
+    color: var(--luna-gray-600);
+    line-height: 1.5;
+    margin: 6px 0 10px;
+    font-style: italic;
+  }
+  .slack-inline-panel .defer-field-label {
+    display: block;
+    font-size: 10px; font-weight: 700;
+    color: var(--luna-gray-500);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin: 8px 0 4px;
+  }
+  .slack-inline-panel .defer-select {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid var(--luna-gray-300);
+    border-radius: 5px;
+    background: var(--luna-white);
+    font: inherit;
+    font-size: 12.5px;
+    color: var(--luna-gray-900);
+    cursor: pointer;
+  }
+  .slack-inline-panel .defer-options {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-top: 2px;
+  }
+  .slack-inline-panel .defer-pick {
+    padding: 5px 11px;
+    font-size: 12px; font-weight: 500;
+    border-radius: 5px;
+    border: 1px solid var(--luna-gray-300);
+    background: var(--luna-white); color: var(--luna-gray-800);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .slack-inline-panel .defer-pick:hover {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-400);
+  }
+  .slack-inline-panel .defer-pick.is-selected {
+    background: var(--luna-teal-50);
+    border-color: var(--luna-teal-500);
+    color: var(--luna-teal-700);
+    font-weight: 600;
+  }
+
+  /* Deferred card state */
+  .slack-evidence-card.is-deferred {
+    background: var(--luna-blue-50, #f2f8ff);
+    border-color: var(--luna-blue-300, #93c5fd);
+  }
+  .slack-evidence-card.is-deferred .actions,
+  .slack-evidence-card.is-deferred .card-sec-row,
+  .slack-evidence-card.is-deferred #note-panel,
+  .slack-evidence-card.is-deferred #defer-panel,
+  .slack-evidence-card.is-deferred #row-review-panel { display: none !important; }
+  .slack-evidence-card.is-deferred .resolved-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--luna-gray-200);
+    font-size: 12px;
+    color: var(--luna-blue-700, #0e48a1);
+  }
+  .slack-evidence-card.is-deferred .resolved-status .check {
+    background: var(--luna-blue-500, #3172e3);
+  }
+  .slack-evidence-card.is-deferred .resolved-status .meta {
+    color: var(--luna-blue-700, #0e48a1);
+    opacity: 0.75;
+    margin-left: 4px;
+  }
+
+  /* Needs-redraft state (after Send back to ECM) */
+  .slack-evidence-card.is-needs-redraft {
+    background: #fffbeb;
+    border-color: #fde68a;
+  }
+  .slack-evidence-card.is-needs-redraft .actions,
+  .slack-evidence-card.is-needs-redraft .card-sec-row,
+  .slack-evidence-card.is-needs-redraft #note-panel,
+  .slack-evidence-card.is-needs-redraft #defer-panel,
+  .slack-evidence-card.is-needs-redraft #sendback-panel,
+  .slack-evidence-card.is-needs-redraft #row-review-panel { display: none !important; }
+  .slack-evidence-card.is-needs-redraft .resolved-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #fde68a;
+    font-size: 12px;
+    color: #92400e;
+  }
+  .slack-evidence-card.is-needs-redraft .resolved-status .check {
+    background: #f59e0b;
+  }
+  .slack-evidence-card.is-needs-redraft .resolved-status .meta {
+    color: #92400e;
+    opacity: 0.75;
+    margin-left: 4px;
+  }
+
+  /* Flagged-for-Marie: routed to her for the decision; not approved by Weston */
+  .slack-evidence-card.is-pending-marie {
+    background: #fffbeb;
+    border-color: #fde68a;
+  }
+  .slack-evidence-card.is-pending-marie .actions,
+  .slack-evidence-card.is-pending-marie .more-options-toggle,
+  .slack-evidence-card.is-pending-marie .card-sec-row,
+  .slack-evidence-card.is-pending-marie #note-panel,
+  .slack-evidence-card.is-pending-marie #defer-panel,
+  .slack-evidence-card.is-pending-marie #sendback-panel,
+  .slack-evidence-card.is-pending-marie #row-review-panel { display: none !important; }
+  .slack-evidence-card.is-pending-marie .resolved-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #fde68a;
+    font-size: 12px;
+    color: #92400e;
+  }
+  .slack-evidence-card.is-pending-marie .resolved-status .check {
+    background: #f59e0b;
+  }
+  .slack-evidence-card.is-pending-marie .resolved-status .meta {
+    color: #92400e;
+    opacity: 0.75;
+    margin-left: 4px;
+  }
+
+  /* Send-back panel preset checkboxes */
+  .slack-inline-panel .sendback-options {
+    display: flex; flex-direction: column; gap: 4px;
+    margin: 4px 0 0;
+  }
+  .slack-inline-panel .sendback-opt {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 10px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 5px;
+    font-size: 12px;
+    color: var(--luna-gray-800);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .slack-inline-panel .sendback-opt:hover {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-300);
+  }
+  .slack-inline-panel .sendback-opt input {
+    margin: 0;
+    accent-color: var(--luna-teal-500);
+    flex-shrink: 0;
+  }
+  .slack-inline-panel .row-review-intro,
+  .slack-inline-panel .row-review-note {
+    font-size: 12px;
+    color: var(--luna-gray-700);
+    line-height: 1.5;
+    margin: 0 0 8px;
+  }
+  .slack-inline-panel .row-review-note { margin-top: 8px; margin-bottom: 0; font-style: italic; color: var(--luna-gray-600); }
+  .slack-inline-panel .rr-section-label {
+    font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--luna-gray-500);
+    margin: 0 0 6px;
+    display: flex; align-items: center; gap: 6px;
+    flex-wrap: wrap;
+  }
+  .slack-inline-panel .rr-section-label-spaced { margin-top: 14px; }
+  .slack-inline-panel .rr-section-label .ai-citation { text-transform: none; letter-spacing: 0; font-weight: 600; }
+  .slack-inline-panel .rr-artifact-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    text-decoration: none;
+    color: inherit;
+    vertical-align: middle;
+  }
+  .slack-inline-panel .rr-artifact-link:hover .ai-citation {
+    background: var(--luna-teal-100);
+    box-shadow: 0 0 0 1px var(--luna-teal-300);
+  }
+  .slack-inline-panel .rr-artifact-arrow {
+    width: 11px; height: 11px;
+    color: var(--luna-gray-500);
+    flex-shrink: 0;
+    transition: color 0.15s;
+  }
+  .slack-inline-panel .rr-artifact-link:hover .rr-artifact-arrow {
+    color: var(--luna-teal-600);
+  }
+  .slack-inline-panel .row-warn .row-flag,
+  .slack-inline-panel .q2-flag {
+    font-size: 9.5px;
+    margin-left: 6px;
+    padding: 1px 6px;
+    background: #fff8eb;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+  }
+  .slack-inline-panel .csv-preview tr.q2-changed-row { background: #fffbeb; }
+  .slack-evidence-card .actions button {
+    padding: 6px 12px; font-size: 12px; font-weight: 600;
+    border-radius: 5px; border: 1px solid var(--luna-gray-300);
+    background: var(--luna-white); color: var(--luna-gray-800);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+    line-height: 1.25;
+  }
+  .slack-evidence-card .actions button:hover {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-400);
+  }
+  .slack-evidence-card .actions button.primary {
+    background: var(--luna-teal-500); color: var(--luna-white);
+    border-color: var(--luna-teal-500);
+  }
+  .slack-evidence-card .actions button.primary:hover {
+    background: var(--luna-teal-600);
+    border-color: var(--luna-teal-600);
+  }
+  .slack-typing-bubble {
+    display: inline-flex; gap: 3px;
+    padding: 6px 10px;
+    background: var(--luna-gray-100);
+    border-radius: 12px;
+    margin-top: 2px;
+  }
+  .slack-typing-bubble span {
+    width: 6px; height: 6px;
+    background: var(--luna-gray-500);
+    border-radius: 50%;
+    animation: blink 1.2s infinite ease-in-out;
+  }
+  .slack-typing-bubble span:nth-child(2) { animation-delay: 0.15s; }
+  .slack-typing-bubble span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+
+  .slack-inline-panel {
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
+    font-size: 12px;
+    max-width: 520px;
+    box-sizing: border-box;
+  }
+  /* Top-level panels (siblings of the evidence card) share its blue accent so they read as the same app speaking */
+  .body > .slack-inline-panel {
+    border-left: 3px solid var(--luna-blue-500);
+  }
+  .slack-inline-panel .panel-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--luna-gray-500); margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+    flex-wrap: wrap;
+  }
+  .slack-inline-panel textarea {
+    width: 100%; min-height: 64px;
+    padding: 8px 10px;
+    font-family: ui-monospace, monospace;
+    font-size: 11.5px; line-height: 1.5;
+    color: var(--luna-gray-800);
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-300);
+    border-radius: 4px;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+  .slack-inline-panel textarea:focus {
+    outline: none;
+    border-color: var(--luna-teal-500);
+    box-shadow: 0 0 0 2px var(--luna-teal-100);
+  }
+  .slack-inline-panel .panel-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .slack-inline-panel .panel-actions button {
+    padding: 4px 11px; font-size: 12.5px; font-weight: 500;
+    border-radius: 4px; cursor: pointer;
+    border: 1px solid var(--luna-gray-300);
+    background: var(--luna-white); color: var(--luna-gray-800);
+    white-space: nowrap;
+    line-height: 1.5;
+  }
+  .slack-inline-panel .panel-actions button.primary {
+    background: var(--luna-teal-500); color: var(--luna-white); border-color: var(--luna-teal-500);
+  }
+  .slack-inline-panel .panel-actions button.primary:hover { background: var(--luna-teal-600); }
+  .slack-dropzone {
+    border: 1.5px dashed var(--luna-gray-300);
+    border-radius: 6px;
+    padding: 18px 16px;
+    text-align: center;
+    color: var(--luna-gray-600);
+    font-size: 12px;
+    background: var(--luna-white);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .slack-dropzone:hover, .slack-dropzone.is-hover {
+    border-color: var(--luna-teal-500);
+    background: var(--luna-teal-50);
+    color: var(--luna-teal-700);
+  }
+  .slack-dropzone .picker-link { color: var(--luna-teal-500); font-weight: 600; cursor: pointer; text-decoration: underline; }
+  .slack-upload-preview {
+    margin-top: 8px;
+    padding: 9px 12px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--luna-gray-800);
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+  .slack-upload-preview.is-shown { display: flex; }
+  .slack-upload-preview .check {
+    width: 16px; height: 16px;
+    display: inline-grid; place-items: center;
+    background: var(--luna-green-500);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 9px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .slack-upload-preview .fname { font-weight: 600; font-size: 12px; color: var(--luna-gray-900); }
+  .slack-upload-preview .size { color: var(--luna-gray-500); font-size: 11px; margin-left: auto; }
+  .slack-sidebar .channel.is-app {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .slack-sidebar .channel .app-icon {
+    width: 18px; height: 18px;
+    background: #0A3655;
+    border-radius: 3px;
+    display: inline-grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .slack-sidebar .channel .app-icon img {
+    width: 62%; height: auto; display: block;
+  }
+  .slack-msg.is-hidden { display: none; }
+  .slack-msg.is-revealing { animation: msgFadeIn 0.4s ease-out forwards; }
+  @keyframes msgFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .slack-evidence-card.is-resolved .actions { display: none; }
+  .slack-evidence-card.is-resolved .slack-inline-panel { display: none !important; }
+  .slack-evidence-card .resolved-status { display: none; }
+  .slack-evidence-card.is-resolved .resolved-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--luna-gray-200);
+    font-size: 12px;
+    color: var(--luna-gray-700);
+    line-height: 1.4;
+  }
+  .slack-evidence-card .resolved-status .check {
+    width: 14px; height: 14px;
+    background: var(--luna-green-500);
+    color: #fff;
+    border-radius: 50%;
+    display: inline-grid;
+    place-items: center;
+    font-size: 9px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .slack-evidence-card .resolved-status .msg {
+    flex: 1;
+    min-width: 0;
+  }
+  .slack-evidence-card .resolved-status .meta {
+    color: var(--luna-gray-500);
+    margin-left: 4px;
+  }
+  .csv-preview {
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+  .csv-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+  }
+  .csv-preview th, .csv-preview td {
+    padding: 5px 9px;
+    text-align: left;
+    border-bottom: 1px solid var(--luna-gray-100);
+  }
+  .csv-preview th {
+    background: var(--luna-gray-50);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--luna-gray-600);
+  }
+  .csv-preview tr.row-warn { background: var(--luna-orange-50); }
+  .csv-preview tr.row-more td { font-style: italic; color: var(--luna-gray-500); }
+  .email-preview {
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 4px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: var(--luna-gray-800);
+  }
+  .email-preview .em-row { display: flex; gap: 8px; margin-bottom: 3px; font-size: 11.5px; }
+  .email-preview .em-k { color: var(--luna-gray-500); min-width: 56px; font-weight: 600; }
+  .email-preview .em-v { color: var(--luna-gray-800); }
+  .email-preview .em-body { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--luna-gray-200); line-height: 1.5; }
+  .email-preview .em-body p { margin: 0 0 8px; font-size: 12px; }
+  .email-preview .em-body ul { margin: 6px 0 8px 18px; padding: 0; font-size: 12px; }
+  .email-preview .em-body code { background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-size: 10.5px; }
+  .slack-inline-panel .receipt-grid {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 4px 14px;
+    margin: 2px 0 8px;
+  }
+  .slack-inline-panel .receipt-grid .r-k {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--luna-gray-500);
+    padding-top: 3px;
+  }
+  .slack-inline-panel .receipt-grid .r-v {
+    font-size: 12px;
+    color: var(--luna-gray-800);
+    line-height: 1.45;
+  }
+  .slack-inline-panel .receipt-note {
+    font-size: 11px;
+    color: var(--luna-gray-600);
+    line-height: 1.5;
+    margin: 8px 0 0;
+    padding: 8px 10px;
+    background: var(--luna-white);
+    border-left: 2px solid var(--luna-teal-300);
+    border-radius: 0 4px 4px 0;
+  }
+  .panel-actions .open-external {
+    padding: 5px 10px; font-size: 12px; font-weight: 600;
+    border-radius: 4px;
+    background: var(--luna-white);
+    color: var(--luna-teal-500);
+    border: 1px solid var(--luna-teal-500);
+    text-decoration: none;
+    margin-right: auto;
+    cursor: pointer;
+  }
+  .panel-actions .open-external:hover { background: var(--luna-teal-50); }
+  .optro-link {
+    display: inline-block;
+    width: 12px; height: 12px;
+    margin-left: 4px;
+    color: var(--luna-gray-500);
+    text-decoration: none;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+    transition: color 0.15s;
+    flex-shrink: 0;
+  }
+  .optro-link svg {
+    width: 12px; height: 12px;
+    display: block;
+    stroke: currentColor;
+  }
+  .optro-link:hover {
+    color: var(--luna-teal-500);
+    text-decoration: none;
+  }
+  .slack-evidence-card .record-title-link {
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .slack-evidence-card .record-title-link:hover {
+    color: var(--luna-blue-600);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .slack-evidence-card .record-title-arrow {
+    width: 12px; height: 12px;
+    color: var(--luna-gray-500);
+    flex-shrink: 0;
+  }
+  .slack-evidence-card .record-title-link:hover .record-title-arrow {
+    color: var(--luna-blue-600);
+  }
+  .success-check {
+    display: inline-block;
+    width: 16px; height: 16px;
+    background: var(--luna-green-500);
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 16px;
+    font-size: 10px;
+    font-weight: 700;
+    vertical-align: middle;
+    margin-right: 4px;
+    position: relative;
+    top: -1px;
+  }
+  /* What's-next queue panel — expandable items + show-more */
+  .slack-inline-panel .queue-list { display: flex; flex-direction: column; gap: 6px; }
+  .slack-inline-panel .q-wrap { display: flex; flex-direction: column; }
+  .slack-inline-panel .q-wrap.is-extra { display: none; }
+  .slack-inline-panel .q-wrap.is-extra.is-shown { display: flex; }
+  .slack-inline-panel .queue-item {
+    appearance: none;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .slack-inline-panel .queue-item:hover {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-300);
+  }
+  .slack-inline-panel .q-wrap.is-expanded .queue-item {
+    border-radius: 6px 6px 0 0;
+    border-bottom-color: var(--luna-gray-100);
+  }
+  .slack-inline-panel .q-due {
+    flex-shrink: 0;
+    min-width: 44px;
+    text-align: center;
+    padding: 4px 6px;
+    background: var(--luna-blue-50);
+    color: var(--luna-blue-700);
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.2;
+    gap: 1px;
+  }
+  .slack-inline-panel .q-due .q-due-day {
+    font-size: 9.5px;
+    color: var(--luna-blue-600);
+    font-weight: 600;
+  }
+  .slack-inline-panel .q-due .q-due-date {
+    font-size: 11px;
+  }
+  .slack-inline-panel .q-text { flex: 1; min-width: 0; }
+  .slack-inline-panel .q-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--luna-gray-900);
+    line-height: 1.3;
+  }
+  .slack-inline-panel .q-meta {
+    font-size: 11px;
+    color: var(--luna-gray-500);
+    margin-top: 1px;
+    line-height: 1.3;
+  }
+  .slack-inline-panel .q-chevron {
+    width: 12px; height: 12px;
+    color: var(--luna-gray-400);
+    flex-shrink: 0;
+    transition: transform 0.2s, color 0.15s;
+  }
+  .slack-inline-panel .queue-item:hover .q-chevron { color: var(--luna-teal-500); }
+  .slack-inline-panel .q-wrap.is-expanded .q-chevron { transform: rotate(180deg); }
+  .slack-inline-panel .q-detail {
+    display: none;
+    padding: 10px 14px 12px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-top: 0;
+    border-radius: 0 0 6px 6px;
+    font-size: 12px;
+  }
+  .slack-inline-panel .q-wrap.is-expanded .q-detail { display: block; }
+  .slack-inline-panel .q-detail p { margin: 0 0 8px; color: var(--luna-gray-800); line-height: 1.5; }
+  .slack-inline-panel .qd-meta { display: flex; flex-direction: column; gap: 3px; font-size: 11.5px; color: var(--luna-gray-600); margin-bottom: 10px; }
+  .slack-inline-panel .qd-meta strong { color: var(--luna-gray-800); font-weight: 600; }
+  .slack-inline-panel .qd-actions { display: flex; gap: 6px; }
+  .slack-inline-panel .qd-actions a,
+  .slack-inline-panel .qd-actions button {
+    padding: 5px 10px;
+    font-size: 11.5px;
+    font-weight: 600;
+    border-radius: 4px;
+    border: 1px solid var(--luna-gray-300);
+    background: var(--luna-white);
+    color: var(--luna-gray-800);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .slack-inline-panel .qd-actions a:first-child {
+    background: var(--luna-teal-500);
+    color: var(--luna-white);
+    border-color: var(--luna-teal-500);
+  }
+  .slack-inline-panel .qd-actions a:first-child:hover { background: var(--luna-teal-600); border-color: var(--luna-teal-600); }
+  .slack-inline-panel .qd-actions .qd-defer:hover {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-400);
+  }
+  /* Multi-channel reviewer notification row */
+  .notify-row {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 6px; margin-top: 6px; font-size: 12px;
+  }
+  .notify-row .notify-label { font-size: 11px; color: var(--luna-gray-500); margin-right: 2px; }
+  .channel-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 12px;
+    font-size: 11px; font-weight: 600;
+    color: var(--luna-gray-700);
+  }
+  .channel-chip.is-active {
+    background: var(--luna-teal-50);
+    border-color: var(--luna-teal-300, #c9ecee);
+    color: var(--luna-teal-700);
+  }
+  .channel-chip.is-active::after {
+    content: '✓';
+    display: inline-grid;
+    place-items: center;
+    width: 12px; height: 12px;
+    background: var(--luna-green-500);
+    color: #fff;
+    border-radius: 50%;
+    margin-left: 2px;
+    font-size: 8.5px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .channel-chip.is-add {
+    background: transparent;
+    border-style: dashed;
+    color: var(--luna-gray-600);
+    cursor: pointer;
+    font: inherit; font-size: 11px; font-weight: 600;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .channel-chip.is-add:hover {
+    background: var(--luna-gray-50);
+    color: var(--luna-gray-900);
+    border-color: var(--luna-gray-400);
+  }
+  .channel-chip[hidden] { display: none; }
+
+  .slack-inline-panel .channel-options { display: flex; flex-direction: column; gap: 6px; }
+  .slack-inline-panel .channel-opt {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 9px 12px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .slack-inline-panel .channel-opt:hover {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-300);
+  }
+  .slack-inline-panel .channel-opt input { margin-top: 2px; flex-shrink: 0; accent-color: var(--luna-teal-500); }
+  .slack-inline-panel .channel-opt .opt-text { flex: 1; min-width: 0; }
+  .slack-inline-panel .channel-opt .opt-title {
+    font-size: 12.5px; font-weight: 600;
+    color: var(--luna-gray-900); line-height: 1.3;
+  }
+  .slack-inline-panel .channel-opt .opt-meta {
+    font-weight: 500; color: var(--luna-gray-500); margin-left: 4px;
+    font-family: ui-monospace, monospace; font-size: 11px;
+  }
+  .slack-inline-panel .channel-opt .opt-sub {
+    font-size: 11px; color: var(--luna-gray-600);
+    margin-top: 2px; line-height: 1.4;
+  }
+
+  /* Marie's review status indicator + peek panel */
+  .marie-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 7px 10px;
+    background: var(--luna-gray-50);
+    border: 1px solid var(--luna-gray-200);
+    border-left: 3px solid var(--luna-blue-500);
+    border-radius: 6px;
+    font-size: 12px;
+    flex-wrap: wrap;
+    max-width: 520px;
+    box-sizing: border-box;
+  }
+  .marie-status-label {
+    font-size: 10.5px; font-weight: 700;
+    color: var(--luna-gray-500);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-right: 2px;
+  }
+  .marie-status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--luna-gray-400);
+    flex-shrink: 0;
+  }
+  .marie-status-dot[data-state="queued"]   { background: var(--luna-gray-400); }
+  .marie-status-dot[data-state="viewing"]  { background: #f59e0b; }
+  .marie-status-dot[data-state="approved"] { background: var(--luna-green-500); }
+  .marie-status-dot[data-state="bounced"]  { background: var(--luna-red-500); }
+  .marie-status-text { font-size: 11.5px; color: var(--luna-gray-700); }
+  .marie-peek {
+    appearance: none; background: none; border: 0; padding: 0;
+    font: inherit; font-size: 11.5px;
+    color: var(--luna-teal-500);
+    cursor: pointer;
+    text-decoration: underline; text-underline-offset: 2px;
+    margin-left: auto;
+  }
+  .marie-peek:hover { color: var(--luna-teal-700); }
+
+  .post-flow-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding-left: 2px;
+  }
+  .post-flow-links .flow-link {
+    appearance: none; background: none; border: 0; padding: 0;
+    font: inherit; font-size: 11.5px;
+    color: var(--luna-teal-500);
+    cursor: pointer;
+    text-decoration: underline; text-underline-offset: 2px;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.15s, color 0.15s;
+  }
+  .post-flow-links .flow-link:hover {
+    color: var(--luna-teal-700);
+    text-decoration-color: currentColor;
+  }
+  .post-flow-links .flow-link-sep { color: var(--luna-gray-400); font-size: 11.5px; }
+
+  .slack-inline-panel .peek-note {
+    font-size: 11.5px;
+    color: var(--luna-gray-600);
+    line-height: 1.5;
+    margin: 0 0 10px;
+    font-style: italic;
+  }
+  .marie-view {
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-left: 3px solid var(--luna-teal-500);
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+  .marie-view-head {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600; color: var(--luna-gray-900);
+    margin-bottom: 4px;
+  }
+  .marie-view-meta {
+    font-size: 11.5px; color: var(--luna-gray-600);
+    margin-bottom: 10px;
+  }
+  .marie-view-summary {
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    background: var(--luna-gray-50);
+    border-radius: 5px;
+  }
+  .marie-summary-label {
+    font-size: 10px; font-weight: 700;
+    color: var(--luna-gray-500);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .marie-view-summary p {
+    font-size: 12.5px; color: var(--luna-gray-800);
+    line-height: 1.5; margin: 0;
+  }
+  .marie-view-summary strong { color: #92400e; }
+  .marie-view-actions { display: flex; gap: 6px; }
+  .marie-view-actions button {
+    padding: 4px 11px;
+    font-size: 12.5px; font-weight: 500;
+    border-radius: 4px; cursor: pointer;
+    border: 1px solid var(--luna-gray-300);
+    background: var(--luna-white); color: var(--luna-gray-800);
+    white-space: nowrap;
+    line-height: 1.5;
+  }
+  .marie-view-actions button:disabled { opacity: 0.6; cursor: default; }
+  .marie-view-actions button.primary {
+    background: var(--luna-teal-500); color: var(--luna-white);
+    border-color: var(--luna-teal-500);
+  }
+
+  /* Tour: "Why:" rationale block inside step body */
+  .tour-card-text .tour-why {
+    display: block;
+    margin-top: 10px;
+    padding: 7px 10px;
+    background: var(--luna-gray-50);
+    border-left: 2px solid var(--luna-teal-500);
+    border-radius: 0 4px 4px 0;
+    font-size: 11.5px;
+    color: var(--luna-gray-700);
+    font-style: normal;
+    line-height: 1.45;
+  }
+  .tour-card-text .tour-why strong {
+    color: var(--luna-gray-900);
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a href="index.html">ECM options</a> · Slack &amp; Teams
+      </div>
+      <h1 class="luna-heading-600">The delta is the work.</h1>
+      <p class="subtitle">Most owners upload from scratch every quarter. A few have Jira or ServiceNow automation. Slack is the third channel, and unlike both, it remembers what you filed last time.</p>
+    </div>
+  </div>
+
+  <div class="page-content">
+
+    <div class="slack-window" role="region">
+      <aside class="slack-sidebar">
+        <div class="workspace">
+          <span style="width:24px;height:24px;background:#266c92;border-radius:4px;display:grid;place-items:center;font-size:11px;color:#fff;">H</span>
+          Helios Robotics
+        </div>
+        <div class="section">Channels</div>
+        <div class="channel"># sox-q3-close</div>
+        <div class="channel"># it-security</div>
+        <div class="channel"># dba-team</div>
+        <div class="section">Direct messages</div>
+        <div class="channel is-dm">
+          <span class="dm-avatar" style="background:var(--luna-teal-500);">M</span>
+          Marie Curie
+        </div>
+        <div class="channel is-dm">
+          <span class="dm-avatar" style="background:var(--luna-blue-500);">A</span>
+          Ada Lovelace
+        </div>
+        <div class="section">Apps</div>
+        <div class="channel is-active is-app">
+          <span class="app-icon"><img src="optro-mark.svg" alt="" /></span>
+          Optro
+        </div>
+      </aside>
+
+      <main class="slack-main">
+        <header class="slack-header">
+          <span style="width:24px;height:24px;border-radius:4px;background:#0A3655;display:grid;place-items:center;"><img src="optro-mark.svg" alt="Optro Evidence" style="width:62%;height:auto;display:block;filter:brightness(0) invert(1);" /></span>
+          Optro Evidence
+          <span style="font-size:11px;color:var(--luna-gray-500);font-weight:500;margin-left:4px;">App</span>
+        </header>
+
+        <nav class="app-tabs" aria-label="App tabs">
+          <button class="app-tab is-active" type="button">Messages</button>
+          <button class="app-tab" type="button">About</button>
+        </nav>
+
+        <div class="slack-messages" id="slack-thread">
+          <!-- 1. Bot DM with evidence card -->
+          <div class="slack-msg">
+            <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;filter:brightness(0) invert(1);" /></div>
+            <div class="body">
+              <div class="head">
+                <span class="name">Optro Evidence</span>
+                <span class="bot-tag">APP</span>
+                <span class="ts">Friday · 2:48 PM</span>
+              </div>
+              <p>Hi Weston. Your quarterly access check is due Monday. <strong>94 of 100 rows haven't changed</strong> since <button type="button" class="prior-link" onclick="toggleQ2Ref(); return false;">your Q2 filing →</button>. Here are the <strong>6 that did</strong>.</p>
+
+              <div class="slack-inline-panel" id="q2-ref" style="display:none;">
+                <div class="panel-label">
+                  <span class="ai-chip">Reference</span>
+                  Q2 FY26 filing · read-only
+                </div>
+                <div class="csv-preview">
+                  <table>
+                    <thead><tr><th>user</th><th>role</th><th>last_login</th><th>signed off</th></tr></thead>
+                    <tbody>
+                      <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-06-25</td><td>✓</td></tr>
+                      <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-06-22</td><td>✓</td></tr>
+                      <tr><td>contractor-svc-09</td><td>dba-admin</td><td>2026-04-12</td><td>— (open, HEL-3471)</td></tr>
+                      <tr><td>k.singh@helios.com</td><td>dba-read</td><td>2026-06-19</td><td>✓</td></tr>
+                      <tr class="q2-changed-row"><td>r.taylor@helios.com</td><td>dba-read</td><td>2026-06-11</td><td>✓ <span class="q2-flag">now dba-admin in Q3</span></td></tr>
+                      <tr><td>app-svc-prod</td><td>app-svc</td><td>2026-06-25</td><td>✓ (auto)</td></tr>
+                      <tr><td>backups-svc</td><td>backups</td><td>2026-06-25</td><td>✓ (auto)</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p class="prior-ref-meta">21 accounts · filed by you, signed adequate by Marie · Jun 17 2026</p>
+                <div class="panel-actions">
+                  <a class="open-external" title="Opens this record in the Optro platform">Open in full ↗</a>
+                  <button onclick="toggleQ2Ref(); return false;">Close</button>
+                </div>
+              </div>
+
+              <div class="slack-evidence-card">
+                <div class="head">
+                  <a class="record-title-link state-pre" href="chain-a.html" target="_blank" rel="noopener" title="Open draft record in Optro">Access list deltas · prod-db-01<svg class="record-title-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
+                  <a class="record-title-link state-post" href="chain-a.html" target="_blank" rel="noopener" title="Open filed record in Optro">Filed access list · prod-db-01<svg class="record-title-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
+                </div>
+                <div class="meta">Compliance Assessment · SOC 2 CC6.1 · quarterly · Reviewer: Marie Curie</div>
+
+                <div class="delta-hero">
+                  <div class="dh-unchanged">
+                    <div class="dh-stat">94</div>
+                    <div class="dh-label">unchanged</div>
+                    <div class="dh-sub">since Q2 filing (Jun 17)</div>
+                  </div>
+                  <div class="dh-divider"></div>
+                  <div class="dh-changed">
+                    <div class="dh-stat">6</div>
+                    <div class="dh-label">need your review</div>
+                    <div class="dh-sub">HEL-3482, HEL-3471, OPS-2208 …</div>
+                  </div>
+                </div>
+
+                <table class="delta-table">
+                  <thead><tr><th>user</th><th>change</th><th>signed off</th><th>ticket</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td>r.taylor@helios.com</td>
+                      <td><span class="delta-pill is-add">+ dba-admin</span> <span class="delta-was">was dba-read</span></td>
+                      <td>✓</td>
+                      <td><span class="ai-citation">HEL-3482</span></td>
+                    </tr>
+                    <tr>
+                      <td>contractor-svc-09</td>
+                      <td><span class="delta-pill is-carry">carryover</span> dba-admin</td>
+                      <td>—</td>
+                      <td><span class="ai-citation">HEL-3471</span></td>
+                    </tr>
+                    <tr>
+                      <td>n.lee@helios.com</td>
+                      <td><span class="delta-pill is-add">+ dba-read</span> <span class="delta-was">new hire</span></td>
+                      <td>✓</td>
+                      <td><span class="ai-citation">OPS-2208</span></td>
+                    </tr>
+                    <tr>
+                      <td>s.park@helios.com</td>
+                      <td><span class="delta-pill is-remove">− dba-admin</span> <span class="delta-was">revoked Aug 8</span></td>
+                      <td>✓</td>
+                      <td><span class="ai-citation">OPS-2199</span></td>
+                    </tr>
+                    <tr>
+                      <td>deploy-svc</td>
+                      <td><span class="delta-pill is-add">+ deploy</span> <span class="delta-was">new service account</span></td>
+                      <td>auto</td>
+                      <td><span class="ai-citation">OPS-2211</span></td>
+                    </tr>
+                    <tr>
+                      <td>etl-old</td>
+                      <td><span class="delta-pill is-remove">− etl</span> <span class="delta-was">decommissioned</span></td>
+                      <td>—</td>
+                      <td><span class="ai-citation">OPS-2188</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="conf-row">
+                  <span>Sufficiency check:</span>
+                  <span class="suff-verdict">
+                    <span class="suff-check" aria-hidden="true">✓</span>
+                    <strong>All 6 deltas have explanations</strong>
+                  </span>
+                  <span class="conf-why-wrap" tabindex="0">
+                    <button class="conf-why" type="button" aria-label="What ECM evaluated" aria-expanded="false" onclick="toggleConfWhy(this); return false;">?</button>
+                    <span class="conf-tooltip" role="tooltip">
+                      <strong>What ECM checked on the deltas</strong>
+                      <span class="tt-rule">✓ Every privilege escalation has a linked approval ticket</span>
+                      <span class="tt-rule">✓ Every revocation has a termination or role-change record</span>
+                      <span class="tt-rule">✓ Every new account has an onboarding ticket</span>
+                      <span class="tt-rule">✓ Carryover (HEL-3471) acknowledged from Q2 filing</span>
+                      <span class="tt-rule">✓ 94 unchanged rows match the Q2-filed roster byte-for-byte</span>
+                      <span class="tt-footer">Model card · v2026.06 · <a href="gov-a.html" target="_blank" rel="noopener">view ↗</a></span>
+                    </span>
+                  </span>
+                </div>
+
+                <div class="actions">
+                  <span class="approve-wrap">
+                    <button class="primary" onclick="runFlow(); return false;" aria-describedby="approve-tip">Confirm the deltas</button>
+                    <span class="approve-tip" id="approve-tip" role="tooltip">
+                      <strong>What happens on confirm</strong>
+                      <span class="at-rule">All 6 deltas + 94 unchanged rows filed</span>
+                      <span class="at-rule">Audit-trail entry written</span>
+                      <span class="at-rule">Marie notified · 2-business-day SLA starts</span>
+                    </span>
+                  </span>
+                </div>
+
+                <button class="show-all-toggle" id="show-all-toggle" type="button" onclick="toggleShowAll(); return false;" aria-expanded="false">Show all 100 rows<svg class="sa-chev" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                <div class="show-all-panel" id="show-all-panel" hidden>
+                  <p class="show-all-note">All 100 rows in the Q3 roster. The 6 changed rows are highlighted; the rest match your Q2 filing exactly.</p>
+                  <div class="csv-preview">
+                    <table>
+                      <thead><tr><th>user</th><th>role</th><th>last_login</th><th>signed off</th></tr></thead>
+                      <tbody>
+                        <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-09-25</td><td>✓</td></tr>
+                        <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-09-22</td><td>✓</td></tr>
+                        <tr class="row-warn"><td>contractor-svc-09</td><td>dba-admin</td><td>2026-04-12</td><td>—</td></tr>
+                        <tr><td>k.singh@helios.com</td><td>dba-read</td><td>2026-09-19</td><td>✓</td></tr>
+                        <tr class="row-warn"><td>r.taylor@helios.com</td><td><strong>dba-admin</strong></td><td>2026-09-11</td><td>✓</td></tr>
+                        <tr class="row-warn"><td>n.lee@helios.com</td><td>dba-read</td><td>2026-09-23</td><td>✓</td></tr>
+                        <tr class="row-warn"><td>s.park@helios.com</td><td><em>removed</em></td><td>2026-08-08</td><td>✓</td></tr>
+                        <tr><td>app-svc-prod</td><td>app-svc</td><td>2026-09-25</td><td>auto</td></tr>
+                        <tr><td>backups-svc</td><td>backups</td><td>2026-09-25</td><td>auto</td></tr>
+                        <tr class="row-warn"><td>deploy-svc</td><td>deploy</td><td>2026-09-25</td><td>auto</td></tr>
+                        <tr><td>etl-svc</td><td>etl</td><td>2026-09-25</td><td>auto</td></tr>
+                        <tr class="row-warn"><td>etl-old</td><td><em>removed</em></td><td>2026-08-15</td><td>—</td></tr>
+                        <tr class="row-more"><td colspan="4">… 88 more unchanged rows</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <button class="more-options-toggle" id="more-options-toggle" type="button" onclick="toggleMoreOptions(); return false;" aria-expanded="false" aria-controls="card-sec-row">More options<svg class="mo-chev" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                <div class="card-sec-row" id="card-sec-row" hidden>
+                  <button class="card-sec-link" type="button" onclick="toggleNotePanel(); return false;">+ Add a note</button>
+                  <span class="card-sec-sep">·</span>
+                  <button class="card-sec-link" type="button" onclick="toggleDeferPanel(); return false;">Defer</button>
+                  <span class="card-sec-sep">·</span>
+                  <button class="card-sec-link" type="button" onclick="toggleSendBackPanel(); return false;">Send back to ECM</button>
+                </div>
+
+                <div class="note-attached" id="note-attached" hidden>
+                  <svg class="note-attached-ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="9" y1="13" x2="15" y2="13"></line><line x1="9" y1="17" x2="13" y2="17"></line></svg>
+                  <span class="note-attached-text"><span class="note-attached-label">Note</span><span id="note-preview"></span></span>
+                  <button type="button" class="note-edit" onclick="toggleNotePanel(); return false;">Edit</button>
+                </div>
+
+                <div class="slack-inline-panel" id="note-panel" style="display:none;">
+                  <div class="panel-label">Add a note for the auditor</div>
+                  <textarea id="note-text" placeholder="Context that should travel with this filing. Example: contractor-svc-09 is on severance through Q3, see #procurement-q3-close."></textarea>
+                  <p class="note-help">The note attaches to the audit-trail entry and shows up in Marie's review surface.</p>
+                  <div class="panel-actions">
+                    <button class="primary" type="button" onclick="saveNote(); return false;">Save note</button>
+                    <button type="button" onclick="toggleNotePanel(); return false;">Cancel</button>
+                  </div>
+                </div>
+
+                <div class="slack-inline-panel" id="defer-panel" style="display:none;">
+                  <div class="panel-label">Defer this filing</div>
+                  <p class="defer-help">Use this if you genuinely can't file by Monday. A defer creates an audit-trail entry with your reason and a new due date. Marie and the PMO will see it.</p>
+                  <label class="defer-field-label">Reason</label>
+                  <select id="defer-reason" class="defer-select">
+                    <option value="">Pick one…</option>
+                    <option>Waiting on vendor response</option>
+                    <option>Source system unavailable</option>
+                    <option>Out of office</option>
+                    <option>Need PMO clarification on scope</option>
+                    <option>Other (write below)</option>
+                  </select>
+                  <label class="defer-field-label">New due date</label>
+                  <div class="defer-options">
+                    <button type="button" class="defer-pick" data-defer="1 week">1 week (Oct 2)</button>
+                    <button type="button" class="defer-pick" data-defer="2 weeks">2 weeks (Oct 9)</button>
+                    <button type="button" class="defer-pick" data-defer="next quarter">Next quarter close</button>
+                  </div>
+                  <div class="panel-actions">
+                    <button class="primary" type="button" onclick="confirmDefer(); return false;">Confirm defer</button>
+                    <button type="button" onclick="toggleDeferPanel(); return false;">Cancel</button>
+                  </div>
+                </div>
+
+                <div class="slack-inline-panel" id="sendback-panel" style="display:none;">
+                  <div class="panel-label">Send this back to ECM</div>
+                  <p class="defer-help">ECM doesn't always get the draft right. Tell it what to change and you'll get a new draft. The send-back is logged so the iteration is audit-defensible.</p>
+                  <label class="defer-field-label">What's wrong?</label>
+                  <textarea id="sendback-text" placeholder="Example: contractor-svc-09 should not be in scope — it was decommissioned in Aug per OPS-2199."></textarea>
+                  <label class="defer-field-label">Specific changes ECM should make</label>
+                  <div class="sendback-options">
+                    <label class="sendback-opt"><input type="checkbox" /> Wrong reporting period</label>
+                    <label class="sendback-opt"><input type="checkbox" /> Wrong scope (system or control)</label>
+                    <label class="sendback-opt"><input type="checkbox" /> Missing accounts</label>
+                    <label class="sendback-opt"><input type="checkbox" /> Should exclude certain rows</label>
+                    <label class="sendback-opt"><input type="checkbox" /> Verdict is wrong</label>
+                  </div>
+                  <div class="panel-actions">
+                    <button class="primary" type="button" onclick="confirmSendBack(); return false;">Send back to ECM</button>
+                    <button type="button" onclick="toggleSendBackPanel(); return false;">Cancel</button>
+                  </div>
+                </div>
+
+                <div class="resolved-status">
+                  <span class="check">✓</span>
+                  <span class="msg">Approved &amp; filed by Weston <span class="meta">· Sep 25 · 3:11 PM PT</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Bot confirms filed (hidden until Approve & file is clicked) -->
+          <div class="slack-msg is-hidden" id="filed-msg">
+            <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;filter:brightness(0) invert(1);" /></div>
+            <div class="body">
+              <div class="head">
+                <span class="name">Optro Evidence</span>
+                <span class="bot-tag">APP</span>
+                <span class="ts">Friday · 3:11 PM</span>
+              </div>
+              <p>Marie has <strong>2 business days</strong> to review. I'll DM you if she comes back with questions.</p>
+
+              <div class="notify-row">
+                <span class="notify-label">Notified Marie via</span>
+                <span class="channel-chip is-active" id="chip-slack">Slack DM</span>
+                <span class="channel-chip" id="chip-email" hidden>Email</span>
+                <span class="channel-chip" id="chip-teams" hidden>Teams</span>
+                <span class="channel-chip" id="chip-calendar" hidden>Calendar</span>
+                <span class="channel-chip" id="chip-servicenow" hidden>ServiceNow</span>
+                <span class="channel-chip" id="chip-jira" hidden>Jira</span>
+                <button type="button" class="channel-chip is-add" id="add-channel-btn" onclick="toggleNotifyPanel(); return false;" title="For escalation or audit-committee visibility">+ Add channel</button>
+              </div>
+
+              <div class="slack-inline-panel" id="notify-panel" style="display:none;margin-top:10px;">
+                <div class="panel-label">Add a notification channel</div>
+                <p class="prior-ref-note">Use this if you want extra visibility — escalation, audit committee, or a record outside Slack.</p>
+                <div class="channel-options">
+                  <label class="channel-opt">
+                    <input type="checkbox" id="opt-email" />
+                    <div class="opt-text">
+                      <div class="opt-title">Email <span class="opt-meta">mcurie@helios.com</span></div>
+                      <div class="opt-sub">Structured email with the receipt link.</div>
+                    </div>
+                  </label>
+                  <label class="channel-opt">
+                    <input type="checkbox" id="opt-teams" />
+                    <div class="opt-text">
+                      <div class="opt-title">Microsoft Teams <span class="opt-meta">@Marie Curie · #helios-audit</span></div>
+                      <div class="opt-sub">Card in her DM + a post in the audit channel.</div>
+                    </div>
+                  </label>
+                  <label class="channel-opt">
+                    <input type="checkbox" id="opt-calendar" />
+                    <div class="opt-text">
+                      <div class="opt-title">Calendar block <span class="opt-meta">Marie's calendar · 30 min</span></div>
+                      <div class="opt-sub">30-min hold linked to this filing.</div>
+                    </div>
+                  </label>
+                  <label class="channel-opt">
+                    <input type="checkbox" id="opt-servicenow" />
+                    <div class="opt-text">
+                      <div class="opt-title">ServiceNow ticket <span class="opt-meta">AUDIT-REVIEW queue · auto-assigned to Marie</span></div>
+                      <div class="opt-sub">Review ticket in Marie's SN queue, linked to control 4.2.1.</div>
+                    </div>
+                  </label>
+                  <label class="channel-opt">
+                    <input type="checkbox" id="opt-jira" />
+                    <div class="opt-text">
+                      <div class="opt-title">Jira ticket <span class="opt-meta">SOX-Q3 project · assigned to Marie</span></div>
+                      <div class="opt-sub">Audit-review issue on her Q3 SOX board.</div>
+                    </div>
+                  </label>
+                </div>
+                <div class="panel-actions">
+                  <button type="button" class="primary" onclick="confirmAddChannels(); return false;">Send to selected</button>
+                  <button type="button" onclick="toggleNotifyPanel(); return false;">Cancel</button>
+                </div>
+              </div>
+
+              <div class="marie-status" id="marie-status">
+                <span class="marie-status-label">Marie's review</span>
+                <span class="marie-status-dot" data-state="queued" aria-hidden="true"></span>
+                <span class="marie-status-text">queued · since 3:11 PM</span>
+                <button class="marie-peek" type="button" onclick="togglePeek(); return false;">peek at what Marie sees →</button>
+              </div>
+
+              <div class="slack-inline-panel" id="peek-panel" style="display:none;margin-top:10px;">
+                <div class="panel-label">What Marie sees in her DM</div>
+                <p class="peek-note">Read-only preview. Marie reviews in her own DM with the same artifact, an AI summary, and accept/send-back controls.</p>
+                <div class="marie-view">
+                  <div class="marie-view-head">
+                    <span class="ai-chip">For Marie</span>
+                    Review request · AR-Q3FY26-prod-db
+                  </div>
+                  <div class="marie-view-meta">Submitted by Weston · 3:11 PM PT · SLA: 2 business days</div>
+                  <div class="marie-view-summary">
+                    <div class="marie-summary-label">AI summary for reviewer</div>
+                    <p>22 accounts. Pattern matches Q2 closely. <strong>1 unexplained drift</strong> needs your attention. r.taylor escalated from dba-read to dba-admin on Sep 11. Weston linked approval ticket HEL-3482. One carryover (contractor-svc-09, HEL-3471) is unchanged from your Q2 sign-off.</p>
+                  </div>
+                  <div class="marie-view-actions">
+                    <button class="primary" type="button" disabled>Accept</button>
+                    <button type="button" disabled>Send back with note</button>
+                  </div>
+                </div>
+                <div class="panel-actions">
+                  <button type="button" onclick="togglePeek(); return false;">Close</button>
+                </div>
+              </div>
+
+              <div class="post-flow-links">
+                <button type="button" class="flow-link" onclick="toggleQueue(); return false;">What's next →</button>
+                <span class="flow-link-sep">·</span>
+                <button type="button" class="flow-link" onclick="toggleReceipt(); return false;">View filing details</button>
+              </div>
+
+              <div class="slack-inline-panel" id="queue-panel" style="display:none;margin-top:10px;">
+                <div class="panel-label">Up next on your SOX queue · <span id="queue-count">2</span> due in the next <span id="queue-window">2 weeks</span></div>
+                <div class="queue-list">
+                  <div class="q-wrap" id="qw-q1">
+                    <button type="button" class="queue-item" onclick="toggleQueueItem('q1'); return false;">
+                      <span class="q-due"><span class="q-due-day">Thu</span><span class="q-due-date">Oct 1</span></span>
+                      <div class="q-text">
+                        <div class="q-title">Q3 segregation-of-duties review</div>
+                        <div class="q-meta">SOX control 5.1.1 · prod-payroll-svc · reviewed by Marie Curie</div>
+                      </div>
+                      <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="q-detail" id="qd-q1">
+                      <p>Confirm no single user has both 'create' and 'approve' rights on payroll service accounts.</p>
+                      <div class="qd-meta">
+                        <span><strong>Last filed:</strong> Jun 14 (Q2) by you · 92% match to Q1 pattern</span>
+                        <span><strong>Reviewer SLA:</strong> 2 business days</span>
+                      </div>
+                      <div class="qd-actions">
+                        <a href="ipad-b.html" target="_blank" rel="noopener">Start review →</a>
+                        <button type="button" class="qd-defer">Defer 1 week</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="q-wrap" id="qw-q2">
+                    <button type="button" class="queue-item" onclick="toggleQueueItem('q2'); return false;">
+                      <span class="q-due"><span class="q-due-day">Mon</span><span class="q-due-date">Sep 28</span></span>
+                      <div class="q-text">
+                        <div class="q-title">Q3 deployment review</div>
+                        <div class="q-meta">SOX control 4.2.2 · helios-deploy-pipeline · reviewed by Ada Lovelace</div>
+                      </div>
+                      <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="q-detail" id="qd-q2">
+                      <p>Confirm every prod deployment in the quarter was tied to an approved change ticket.</p>
+                      <div class="qd-meta">
+                        <span><strong>Last filed:</strong> Jun 12 (Q2) by you · 88% match to Q1 pattern</span>
+                        <span><strong>Reviewer SLA:</strong> 2 business days</span>
+                      </div>
+                      <div class="qd-actions">
+                        <a href="ipad-b.html" target="_blank" rel="noopener">Start review →</a>
+                        <button type="button" class="qd-defer">Defer 1 week</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="q-wrap is-extra" id="qw-q3">
+                    <button type="button" class="queue-item" onclick="toggleQueueItem('q3'); return false;">
+                      <span class="q-due"><span class="q-due-day">Tue</span><span class="q-due-date">Sep 30</span></span>
+                      <div class="q-text">
+                        <div class="q-title">Q3 break-glass access review</div>
+                        <div class="q-meta">SOX control 4.2.5 · prod-db-01 · reviewed by Marie Curie</div>
+                      </div>
+                      <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="q-detail" id="qd-q3">
+                      <p>Confirm every emergency-access elevation was reviewed and rolled back within the SLA.</p>
+                      <div class="qd-meta">
+                        <span><strong>Last filed:</strong> Jun 18 (Q2) by you · no findings carried over</span>
+                        <span><strong>Reviewer SLA:</strong> 2 business days</span>
+                      </div>
+                      <div class="qd-actions">
+                        <a href="ipad-b.html" target="_blank" rel="noopener">Start review →</a>
+                        <button type="button" class="qd-defer">Defer 1 week</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="q-wrap is-extra" id="qw-q4">
+                    <button type="button" class="queue-item" onclick="toggleQueueItem('q4'); return false;">
+                      <span class="q-due"><span class="q-due-day">Fri</span><span class="q-due-date">Oct 2</span></span>
+                      <div class="q-text">
+                        <div class="q-title">Q3 backup-restore verification</div>
+                        <div class="q-meta">SOX control 4.3.1 · prod-db-01 · reviewed by Ada Lovelace</div>
+                      </div>
+                      <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="q-detail" id="qd-q4">
+                      <p>Confirm Q3 nightly backups completed and a sample restore was run successfully.</p>
+                      <div class="qd-meta">
+                        <span><strong>Last filed:</strong> Jun 22 (Q2) by you · clean</span>
+                        <span><strong>Reviewer SLA:</strong> 2 business days</span>
+                      </div>
+                      <div class="qd-actions">
+                        <a href="ipad-b.html" target="_blank" rel="noopener">Start review →</a>
+                        <button type="button" class="qd-defer">Defer 1 week</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="q-wrap is-extra" id="qw-q5">
+                    <button type="button" class="queue-item" onclick="toggleQueueItem('q5'); return false;">
+                      <span class="q-due"><span class="q-due-day">Mon</span><span class="q-due-date">Oct 5</span></span>
+                      <div class="q-text">
+                        <div class="q-title">Q3 schema-change approval</div>
+                        <div class="q-meta">SOX control 4.4.2 · prod-db-01 · reviewed by Marie Curie</div>
+                      </div>
+                      <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="q-detail" id="qd-q5">
+                      <p>Confirm every schema change was approved in a PR before being applied to prod.</p>
+                      <div class="qd-meta">
+                        <span><strong>Last filed:</strong> Jun 25 (Q2) by you · 1 carryover (HEL-3402)</span>
+                        <span><strong>Reviewer SLA:</strong> 2 business days</span>
+                      </div>
+                      <div class="qd-actions">
+                        <a href="ipad-b.html" target="_blank" rel="noopener">Start review →</a>
+                        <button type="button" class="qd-defer">Defer 1 week</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel-actions">
+                  <button type="button" id="more-queue-btn" onclick="toggleMoreQueue(); return false;">Show 3 more ↓</button>
+                  <button type="button" onclick="toggleQueue(); return false;">Close</button>
+                </div>
+              </div>
+
+              <div class="slack-inline-panel" id="receipt-panel" style="display:none;margin-top:10px;">
+                <div class="panel-label">Filing details · AR-Q3FY26-prod-db</div>
+                <div class="receipt-grid">
+                  <span class="r-k">Artifact</span><span class="r-v">AR-Q3FY26-prod-db.png · 1.2 MB</span>
+                  <span class="r-k">Filed by</span><span class="r-v">Weston Prohaska · @weston</span>
+                  <span class="r-k">Control</span><span class="r-v">4.2.1<a class="optro-link" href="ipad-b.html" target="_blank" rel="noopener" title="Open control 4.2.1 in Optro" aria-label="Open in new tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a> · quarterly user-access review · prod-db-01</span>
+                  <span class="r-k">Classifier</span><span class="r-v">93% match to Q2 sign-off pattern</span>
+                  <span class="r-k">Routed to</span><span class="r-v">Marie Curie · Internal Audit</span>
+                  <span class="r-k">Notified via</span><span class="r-v" id="detail-channels">Slack DM</span>
+                  <span class="r-k">Review SLA</span><span class="r-v">2 business days</span>
+                  <span class="r-k">Filed at</span><span class="r-v">Friday Sep 25 · 3:11 PM PT</span>
+                  <span class="r-k">Signed by</span><span class="r-v">Optro Evidence · model card v2026.06</span>
+                  <span class="r-k">Tamper seal</span><span class="r-v">signed-block #4,180,221<a class="optro-link" href="chain-a.html" target="_blank" rel="noopener" title="Open audit-trail block in Optro" aria-label="Open in new tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a> · sha 0x7f3e&hellip;a3e</span>
+                </div>
+                <p class="receipt-note">This is what the external auditor sees during Q3 testing. Every row is signed and locked.</p>
+                <div class="panel-actions">
+                  <a class="open-external" title="Opens the audit trail in the Optro platform">Open full audit trail ↗</a>
+                  <button onclick="toggleReceipt(); return false;">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slack-input">Message Optro Evidence…</div>
+      </main>
+    </div>
+
+    </div>
+</div>
+
+<script>
+  let flowStarted = false;
+
+  // === Tour runtime — floating draggable card + pulsing highlight ===
+  window.TOUR = {
+    title: 'Optro Evidence',
+    intro: 'Delta-first SOX evidence review in Slack.',
+    steps: [
+      {
+        title: 'Why the delta',
+        body: 'Quarter on quarter, most of an access roster doesn\'t change. Customer data backs this up: heavy completers re-upload from scratch every quarter, even though 90% of the data is identical to last time. The bot draws that line for you.',
+      },
+      {
+        title: 'Slack as the third channel',
+        body: 'About 93% of teams upload evidence manually. Around 7% have automation through Jira or ServiceNow. Slack is the third path, and unlike the manual slog, it remembers what you filed last time.',
+        selector: '.page-header .subtitle',
+      },
+      {
+        title: 'The hero stat carries the wedge',
+        body: 'Before any list, Weston sees the numbers. <strong>94 unchanged · 6 changes need review.</strong> The work shrinks from re-validating a hundred rows to checking six.<span class="tour-why"><strong>Why:</strong> Recognition over recall. The split is the design, not a hidden tooltip.</span>',
+        selector: '.slack-evidence-card .delta-hero',
+      },
+      {
+        title: 'Compare with last quarter',
+        body: 'The Q2 filing link is right where Weston is already reading. No portal hop.<span class="tour-why"><strong>Why:</strong> The delta only makes sense against what came before. Make the prior easy to glance at.</span>',
+        selector: '.prior-link',
+      },
+      {
+        title: 'Six rows, in plain English',
+        body: 'Each change is named with what kind (+, −, carryover), what it was before, and the ticket that approved it. No code-review jargon: ordinary words for an auditor or a manager.<span class="tour-why"><strong>Why:</strong> An auditor needs the why on every change. Inline beats a separate review panel.</span>',
+        selector: '.slack-evidence-card .delta-table',
+      },
+      {
+        title: 'Sufficiency, focused on the deltas',
+        body: 'The verdict checks the six changes, not the whole filing. Every escalation has an approval ticket, every revocation has a record, every new account has an onboarding ticket. Hover the (?) to see the full rule list.<span class="tour-why"><strong>Why:</strong> The AI judges what changed. The 94 unchanged rows don\'t need re-judgment — they were already adequate when Marie signed off in June.</span>',
+        selector: '.slack-evidence-card .suff-verdict',
+      },
+      {
+        title: 'Confirm the deltas',
+        body: 'One primary action. Hover to see what happens: deltas plus the 94 unchanged rows are filed together, audit-trail entry written, Marie notified, SLA starts.<span class="tour-why"><strong>Why:</strong> A reuse-aware workflow still files a complete roster. Marie sees the full 100 rows in her view, even though Weston only reviewed 6.</span>',
+        selector: '.slack-evidence-card .approve-wrap',
+      },
+      {
+        title: 'The cautious can still see all 100',
+        body: 'Show all 100 rows expands the full Q3 roster with the 6 changes highlighted. The 94 match the Q2 filing byte-for-byte.<span class="tour-why"><strong>Why:</strong> Some reviewers will want to verify the delta detector didn\'t miss anything. The recoverability path stays visible without cluttering the default.</span>',
+        selector: '.slack-evidence-card .show-all-toggle',
+        before: function () { try { toggleShowAll(); } catch (e) {} },
+        after: function () { try { toggleShowAll(); } catch (e) {} },
+      },
+      {
+        title: 'Add a note, or defer',
+        body: 'Behind <strong>More options</strong> are the same secondary paths as the bot-DM take. <strong>+ Add a note</strong> for context the data doesn\'t carry. <strong>Defer</strong> with a logged reason. <strong>Send back to ECM</strong> if the delta detection itself looks wrong.',
+        selector: '.slack-evidence-card .card-sec-row',
+        before: function () { try { toggleMoreOptions(true); } catch (e) {} },
+      },
+      {
+        title: 'The card becomes the receipt',
+        body: 'After Approve, the same card updates in place. The title shifts from <strong>Access list draft</strong> to <strong>Filed access list</strong>, and a green row appears showing who filed and when. The title still links to the Optro record, so the card itself is the citation.<span class="tour-why"><strong>Why:</strong> The card updates in place so filed reads at a glance. One card, one canonical record.</span>',
+        selector: '.slack-evidence-card',
+        before: function () {
+          var card = document.querySelector('.slack-evidence-card');
+          if (card) card.classList.add('is-resolved');
+          var filed = document.getElementById('filed-msg');
+          if (filed) { filed.classList.remove('is-hidden'); filed.classList.add('is-revealing'); }
+          if (typeof flowStarted !== 'undefined') flowStarted = true;
+        },
+      },
+      {
+        title: 'What happens next',
+        body: 'After filing, the bot tells Weston what\'s next. Marie has two business days, and Slack will DM him if she has questions. Each chip shows how she was notified, with a green check for delivered. <strong>+ Add channel</strong> sends the review via Email, Teams, a Calendar block, a ServiceNow ticket, or a Jira issue.<span class="tour-why"><strong>Why:</strong> A post-action message should help Weston decide what\'s next, not echo the card. The delivery check makes notification state visible at a glance.</span>',
+        selector: '#filed-msg .notify-row',
+      },
+      {
+        title: "Marie's review, visible",
+        body: 'Once filed, Weston can see where Marie is in her review without joining her thread. <strong>peek at what Marie sees →</strong> previews her surface: the same artifact, a short AI summary, and her accept/send-back controls.<span class="tour-why"><strong>Why:</strong> Marie reviews around 50 controls a quarter. She needs a queue of her own, not 50 multi-person DMs. Separate threads also let her keep private review notes the owner shouldn\'t see. The status row gives Weston visibility without joining her work.</span>',
+        selector: '#marie-status',
+        before: function () {
+          var p = document.getElementById('peek-panel');
+          if (p) p.style.display = 'block';
+        },
+        after: function () {
+          var p = document.getElementById('peek-panel');
+          if (p) p.style.display = 'none';
+        },
+      },
+            {
+        title: "What's next",
+        body: '<strong>What\'s next →</strong> opens Weston\'s upcoming SOX queue inline. Each item expands to show the control, the last filing, the reviewer, and a Start review action.<span class="tour-why"><strong>Why:</strong> After a filing, the useful next move is forward. The queue gives Weston his next task without leaving the thread.</span>',
+        selector: '#queue-panel',
+        before: function () {
+          ['receipt-panel', 'peek-panel'].forEach(function (id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
+          var p = document.getElementById('queue-panel');
+          if (p) p.style.display = 'block';
+        },
+        after: function () {
+          var p = document.getElementById('queue-panel');
+          if (p) p.style.display = 'none';
+        },
+      },
+      {
+        title: 'Filing details, opened',
+        body: '<strong>View filing details</strong> opens the audit-trail entry inline. It lists the artifact, the verdict, who reviews it, the SLA, when it was filed, the model signature, and the tamper seal. Any note Weston attached shows up here too.<span class="tour-why"><strong>Why:</strong> Forward intent (the queue) and backward intent (the audit trail) shouldn\'t share a UI. This panel is what the external auditor sees during Q3 testing.</span>',
+        selector: '#receipt-panel',
+        before: function () {
+          ['queue-panel', 'peek-panel'].forEach(function (id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
+          var p = document.getElementById('receipt-panel');
+          if (p) p.style.display = 'block';
+        },
+        after: function () {
+          var p = document.getElementById('receipt-panel');
+          if (p) p.style.display = 'none';
+        },
+      },
+      {
+        title: "That's the tour",
+        body: 'Optro Evidence judges filings the way an auditor would. Click around to explore the rest.',
+      },
+    ],
+  };
+
+  (function () {
+    var SEEN_KEY = 'ecm-tour-seen-slack-d';
+    var POS_KEY = 'ecm-tour-pos-v1';
+    var HIGHLIGHT_CLASS = 'tour-highlight';
+    var cardEl = null;
+    var highlightedEl = null;
+    var stepIdx = 0;
+    var active = false;
+
+    function $$(sel, root) {
+      if (!sel) return null;
+      try { return (root || document).querySelector(sel); } catch (e) { return null; }
+    }
+    function clearHighlight() {
+      if (highlightedEl) { highlightedEl.classList.remove(HIGHLIGHT_CLASS); highlightedEl = null; }
+    }
+    function applyHighlight(selector) {
+      clearHighlight();
+      if (!selector) return;
+      var el = $$(selector);
+      if (!el) return;
+      el.classList.add(HIGHLIGHT_CLASS);
+      try { el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' }); } catch (e) {}
+      highlightedEl = el;
+    }
+    function waitFor(sel, timeoutMs) {
+      if (!sel) return Promise.resolve(null);
+      return new Promise(function (resolve) {
+        var t0 = performance.now();
+        (function poll() {
+          var node = $$(sel);
+          if (node) return resolve(node);
+          if (performance.now() - t0 > (timeoutMs || 1200)) return resolve(null);
+          requestAnimationFrame(poll);
+        })();
+      });
+    }
+
+    function render() {
+      var steps = (window.TOUR && window.TOUR.steps) || [];
+      var total = steps.length;
+      var step = steps[stepIdx];
+      if (!step) { end(); return; }
+      var isFirst = stepIdx === 0;
+      var isLast = stepIdx === total - 1;
+      var name = (window.TOUR && window.TOUR.title) || 'Product tour';
+
+      var beforeP = Promise.resolve(typeof step.before === 'function' ? step.before() : null);
+      beforeP.then(function () { return waitFor(step.selector, 1200); }).then(function () {
+        if (!cardEl) {
+          cardEl = document.createElement('div');
+          cardEl.className = 'tour-card';
+          cardEl.setAttribute('role', 'dialog');
+          cardEl.setAttribute('aria-label', 'Product tour');
+          document.body.appendChild(cardEl);
+          applySavedPosition(cardEl);
+        }
+        cardEl.innerHTML =
+          '<div class="tour-card-header" data-tour-handle>' +
+            '<div class="tour-card-avatar" aria-hidden="true">🧑‍🚀</div>' +
+            '<div class="tour-card-who">' +
+              '<span class="name">' + name + '</span>' +
+              '<span class="meta">' + total + ' stops · drag to move</span>' +
+            '</div>' +
+            '<button class="tour-card-close" data-tour-action="end" aria-label="Close tour">×</button>' +
+          '</div>' +
+          '<div class="tour-card-body">' +
+            '<div class="tour-card-title">' + (step.title || '') + '</div>' +
+            '<p class="tour-card-text">' + (step.body || '') + '</p>' +
+          '</div>' +
+          '<div class="tour-card-footer">' +
+            '<span class="tour-progress">' + String(stepIdx + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0') + '</span>' +
+            '<div class="tour-actions-row">' +
+              '<button class="tour-action-btn" data-tour-action="prev"' + (isFirst ? ' disabled' : '') + '>← Back</button>' +
+              '<button class="tour-skip-btn" data-tour-action="end">Skip</button>' +
+              '<button class="tour-action-btn primary" data-tour-action="next">' + (isLast ? 'Done' : 'Next →') + '</button>' +
+            '</div>' +
+          '</div>';
+
+        cardEl.querySelectorAll('[data-tour-action]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var a = btn.getAttribute('data-tour-action');
+            if (a === 'next') next();
+            else if (a === 'prev') prev();
+            else if (a === 'end') end();
+          });
+        });
+        wireDrag(cardEl);
+        requestAnimationFrame(function () { cardEl.classList.add('visible'); });
+        applyHighlight(step.selector);
+      });
+    }
+
+    function wireDrag(card) {
+      var handle = card.querySelector('[data-tour-handle]');
+      if (!handle || handle.dataset.tourDragWired === '1') return;
+      handle.dataset.tourDragWired = '1';
+      var dragging = false, startX = 0, startY = 0, startLeft = 0, startTop = 0;
+      function getPoint(e) {
+        if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        return { x: e.clientX, y: e.clientY };
+      }
+      function onDown(e) {
+        if (e.target.closest('button')) return;
+        var rect = card.getBoundingClientRect();
+        var pt = getPoint(e);
+        startX = pt.x; startY = pt.y; startLeft = rect.left; startTop = rect.top;
+        card.style.left = startLeft + 'px'; card.style.top = startTop + 'px';
+        card.style.bottom = 'auto'; card.style.right = 'auto';
+        dragging = true; handle.classList.add('grabbing');
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+      }
+      function onMove(e) {
+        if (!dragging) return;
+        var pt = getPoint(e);
+        var dx = pt.x - startX, dy = pt.y - startY;
+        var w = card.offsetWidth, h = card.offsetHeight;
+        var left = Math.max(8, Math.min(window.innerWidth - w - 8, startLeft + dx));
+        var top = Math.max(8, Math.min(window.innerHeight - h - 8, startTop + dy));
+        card.style.left = left + 'px'; card.style.top = top + 'px';
+        e.preventDefault();
+      }
+      function onUp() {
+        if (!dragging) return;
+        dragging = false; handle.classList.remove('grabbing');
+        document.body.style.userSelect = '';
+        try { sessionStorage.setItem(POS_KEY, JSON.stringify({ left: card.style.left, top: card.style.top })); } catch (e) {}
+      }
+      handle.addEventListener('mousedown', onDown);
+      handle.addEventListener('touchstart', onDown, { passive: false });
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('touchmove', onMove, { passive: false });
+      document.addEventListener('mouseup', onUp);
+      document.addEventListener('touchend', onUp);
+    }
+
+    function applySavedPosition(card) {
+      try {
+        var raw = sessionStorage.getItem(POS_KEY);
+        if (!raw) return;
+        var pos = JSON.parse(raw);
+        if (!pos.left || !pos.top) return;
+        var w = card.offsetWidth || 352;
+        var h = card.offsetHeight || 280;
+        var maxLeft = Math.max(0, window.innerWidth - w);
+        var maxTop = Math.max(0, window.innerHeight - h);
+        var left = Math.min(maxLeft, Math.max(0, parseInt(pos.left, 10) || 0));
+        var top = Math.min(maxTop, Math.max(0, parseInt(pos.top, 10) || 0));
+        card.style.left = left + 'px'; card.style.top = top + 'px';
+        card.style.bottom = 'auto'; card.style.right = 'auto';
+      } catch (e) {}
+    }
+
+    function start() {
+      if (!window.TOUR || !Array.isArray(window.TOUR.steps) || !window.TOUR.steps.length) return;
+      active = true; stepIdx = 0; render();
+      document.body.classList.add('tour-active');
+      document.addEventListener('keydown', onKey, true);
+    }
+    function next() {
+      if (!active) return;
+      var step = window.TOUR.steps[stepIdx];
+      if (step && typeof step.after === 'function') { try { step.after(); } catch (e) {} }
+      if (stepIdx >= window.TOUR.steps.length - 1) { end(); return; }
+      stepIdx++; render();
+    }
+    function prev() {
+      if (!active) return;
+      var step = window.TOUR.steps[stepIdx];
+      if (step && typeof step.after === 'function') { try { step.after(); } catch (e) {} }
+      if (stepIdx === 0) return;
+      stepIdx--; render();
+    }
+    function end() {
+      active = false; clearHighlight();
+      if (cardEl) { cardEl.remove(); cardEl = null; }
+      document.body.classList.remove('tour-active');
+      try { sessionStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+      document.removeEventListener('keydown', onKey, true);
+    }
+    function onKey(e) {
+      if (!active) return;
+      if (e.key === 'Escape') { e.preventDefault(); end(); }
+      else if (e.key === 'ArrowRight' || e.key === 'Enter') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+    }
+
+    function injectRestartButton() {
+      if (document.querySelector('.tour-restart')) return;
+      var btn = document.createElement('button');
+      btn.className = 'tour-restart';
+      btn.type = 'button';
+      btn.title = ((window.TOUR && window.TOUR.steps) ? window.TOUR.steps.length : 0) + '-stop product tour';
+      btn.innerHTML = '<span class="tour-restart-avatar" aria-hidden="true">🧑‍🚀</span><span>Take the tour</span>';
+      btn.addEventListener('click', function () { end(); start(); });
+      document.body.appendChild(btn);
+    }
+
+    function boot() {
+      if (!window.TOUR || !Array.isArray(window.TOUR.steps) || !window.TOUR.steps.length) return;
+      injectRestartButton();
+      var params = new URLSearchParams(location.search);
+      if (params.get('tour') === 'off') return;
+      setTimeout(start, 600);
+    }
+
+    window.Tour = { boot: boot, start: start, next: next, prev: prev, end: end };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+    else setTimeout(boot, 0);
+  })();
+
+  // Backward-compat: header button still works
+  function startTour() { if (window.Tour) window.Tour.start(); }
+
+
+  function toggleConfWhy(btn) {
+    var wrap = btn.closest('.conf-why-wrap');
+    if (!wrap) return;
+    var isOpen = wrap.classList.toggle('is-open');
+    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('.conf-why-wrap.is-open').forEach(function (w) {
+      if (!w.contains(e.target)) {
+        w.classList.remove('is-open');
+        var b = w.querySelector('.conf-why');
+        if (b) b.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+
+  function toggleMoreOptions(force) {
+    var btn = document.getElementById('more-options-toggle');
+    var row = document.getElementById('card-sec-row');
+    if (!btn || !row) return;
+    var open;
+    if (typeof force === 'boolean') open = force;
+    else open = row.hasAttribute('hidden');
+    if (open) {
+      row.removeAttribute('hidden');
+      btn.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+    } else {
+      row.setAttribute('hidden', '');
+      btn.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  function toggleShowAll() {
+    var btn = document.getElementById('show-all-toggle');
+    var panel = document.getElementById('show-all-panel');
+    if (!btn || !panel) return;
+    var open = panel.hasAttribute('hidden');
+    if (open) {
+      panel.removeAttribute('hidden');
+      btn.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+    } else {
+      panel.setAttribute('hidden', '');
+      btn.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  function toggleNotePanel() {
+    if (flowStarted) return;
+    toggleMoreOptions(true);
+    var p = document.getElementById('note-panel');
+    if (!p) return;
+    ['defer-panel', 'sendback-panel'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    var willShow = p.style.display === 'none' || !p.style.display;
+    p.style.display = willShow ? 'block' : 'none';
+    if (willShow) {
+      var ta = document.getElementById('note-text');
+      if (ta) ta.focus();
+      p.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
+  }
+
+  function saveNote() {
+    var ta = document.getElementById('note-text');
+    if (!ta) return;
+    var val = ta.value.trim();
+    var att = document.getElementById('note-attached');
+    var prev = document.getElementById('note-preview');
+    if (val && att && prev) {
+      prev.textContent = val.length > 80 ? val.slice(0, 80) + '…' : val;
+      att.hidden = false;
+    } else if (att) {
+      // Empty save = no chip
+      att.hidden = true;
+    }
+    var p = document.getElementById('note-panel');
+    if (p) p.style.display = 'none';
+  }
+
+  function toggleSendBackPanel() {
+    if (flowStarted) return;
+    toggleMoreOptions(true);
+    var p = document.getElementById('sendback-panel');
+    if (!p) return;
+    ['note-panel', 'defer-panel'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    var willShow = p.style.display === 'none' || !p.style.display;
+    p.style.display = willShow ? 'block' : 'none';
+    if (willShow) {
+      var ta = document.getElementById('sendback-text');
+      if (ta) ta.focus();
+      p.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
+  }
+
+  function confirmSendBack() {
+    var ta = document.getElementById('sendback-text');
+    var reason = ta ? ta.value.trim() : '';
+    var preset = Array.prototype.slice.call(
+      document.querySelectorAll('.sendback-opt input:checked')
+    ).map(function (cb) { return cb.parentElement.textContent.trim(); });
+
+    flowStarted = true;
+    var card = document.querySelector('.slack-evidence-card');
+    if (card) {
+      card.classList.add('is-needs-redraft');
+      var status = card.querySelector('.resolved-status');
+      if (status) {
+        var summary;
+        if (preset.length) {
+          summary = preset.slice(0, 2).join(', ') + (preset.length > 2 ? ' and ' + (preset.length - 2) + ' more' : '');
+        } else if (reason) {
+          summary = reason.length > 60 ? reason.slice(0, 60) + '…' : reason;
+        } else {
+          summary = '';
+        }
+        status.innerHTML = '<span class="check">↩</span>' +
+                           '<span class="msg">Sent back to ECM' +
+                           (summary ? ' <span class="meta">· ' + summary + '</span>' : '') + '</span>';
+      }
+    }
+    var p = document.getElementById('sendback-panel');
+    if (p) p.style.display = 'none';
+  }
+
+  function toggleDeferPanel() {
+    if (flowStarted) return;
+    toggleMoreOptions(true);
+    var p = document.getElementById('defer-panel');
+    if (!p) return;
+    ['note-panel', 'sendback-panel'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    var willShow = p.style.display === 'none' || !p.style.display;
+    p.style.display = willShow ? 'block' : 'none';
+    if (willShow) p.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
+  // Wire up defer-pick buttons (selection state)
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.defer-pick');
+    if (!btn) return;
+    document.querySelectorAll('.defer-pick').forEach(function (b) {
+      b.classList.toggle('is-selected', b === btn);
+    });
+  });
+
+  function confirmDefer() {
+    var reason = document.getElementById('defer-reason');
+    var sel = document.querySelector('.defer-pick.is-selected');
+    var reasonVal = reason && reason.value ? reason.value : '';
+    var newDate = sel ? sel.dataset.defer : '1 week';
+
+    flowStarted = true;
+    var card = document.querySelector('.slack-evidence-card');
+    if (card) {
+      card.classList.add('is-deferred');
+      // Inject a deferred status row by reusing .resolved-status
+      var status = card.querySelector('.resolved-status');
+      if (status) {
+        var dueLabel = (sel && sel.textContent) ? sel.textContent.replace(/^\d+ \w+\s*/, '') : newDate;
+        status.innerHTML = '<span class="check">⏸</span>' +
+                           '<span class="msg">Deferred ' + (newDate ? newDate : '') +
+                           (reasonVal ? ' <span class="meta">· ' + reasonVal + '</span>' : '') + '</span>';
+      }
+    }
+    var p = document.getElementById('defer-panel');
+    if (p) p.style.display = 'none';
+  }
+
+  function toggleQ2Ref() {
+    if (flowStarted) return;
+    const p = document.getElementById('q2-ref');
+    if (!p) return;
+    const willShow = p.style.display === 'none' || !p.style.display;
+    p.style.display = willShow ? 'block' : 'none';
+    if (willShow) p.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
+  function reveal(el) {
+    if (!el) return;
+    el.classList.remove('is-hidden');
+    el.classList.add('is-revealing');
+    el.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+  function hide(el) {
+    if (!el) return;
+    el.classList.add('is-hidden');
+    el.classList.remove('is-revealing');
+  }
+
+  function runFlow() {
+    if (flowStarted) return;
+    flowStarted = true;
+    // If a note was attached, surface it in the filing-details + Marie's peek view
+    try {
+      var noteEl = document.getElementById('note-text');
+      var att = document.getElementById('note-attached');
+      if (noteEl && att && !att.hidden && noteEl.value.trim()) {
+        var noteText = noteEl.value.trim();
+        // Add a "Note from filer" row to the filing-details grid
+        var receipt = document.querySelector('#receipt-panel .receipt-grid');
+        if (receipt && !receipt.querySelector('[data-note-row]')) {
+          var k = document.createElement('span');
+          k.className = 'r-k'; k.setAttribute('data-note-row', '');
+          k.textContent = 'Note from filer';
+          var v = document.createElement('span');
+          v.className = 'r-v'; v.setAttribute('data-note-row', '');
+          v.textContent = noteText;
+          receipt.appendChild(k); receipt.appendChild(v);
+        }
+        // Add to Marie's peek view summary
+        var summary = document.querySelector('#peek-panel .marie-view-summary');
+        if (summary && !summary.querySelector('.peek-note-from-filer')) {
+          var p = document.createElement('p');
+          p.className = 'peek-note-from-filer';
+          p.style.marginTop = '8px';
+          p.style.paddingTop = '8px';
+          p.style.borderTop = '1px solid var(--luna-gray-200)';
+          p.style.fontStyle = 'italic';
+          p.innerHTML = '<strong>Note from Weston:</strong> ' + noteText;
+          summary.appendChild(p);
+        }
+      }
+    } catch (e) {}
+
+    // Update the card in place (action buttons hide; ✓ status row appears)
+    const card = document.querySelector('.slack-evidence-card');
+    if (card) card.classList.add('is-resolved');
+    // Bot's filed confirmation lands shortly after the click
+    setTimeout(() => reveal(document.getElementById('filed-msg')), 600);
+  }
+
+
+  function toggleReceipt() {
+    const panel = document.getElementById('receipt-panel');
+    if (!panel) return;
+    const q = document.getElementById('queue-panel');
+    if (q) q.style.display = 'none';
+    const willShow = panel.style.display === 'none' || !panel.style.display;
+    panel.style.display = willShow ? 'block' : 'none';
+    if (willShow) panel.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
+  function toggleNotifyPanel() {
+    const p = document.getElementById('notify-panel');
+    if (!p) return;
+    const willShow = p.style.display === 'none' || !p.style.display;
+    p.style.display = willShow ? 'block' : 'none';
+    if (willShow) p.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
+  function confirmAddChannels() {
+    const CHANNELS = [
+      { id: 'email',       label: 'Email' },
+      { id: 'teams',       label: 'Microsoft Teams' },
+      { id: 'calendar',    label: 'Calendar block' },
+      { id: 'servicenow',  label: 'ServiceNow ticket' },
+      { id: 'jira',        label: 'Jira ticket' },
+    ];
+    const addBtn = document.getElementById('add-channel-btn');
+    const detailChannels = document.getElementById('detail-channels');
+    const active = ['Slack DM'];
+    let anyAdded = false;
+    let allOn = true;
+    CHANNELS.forEach(function (ch) {
+      const opt = document.getElementById('opt-' + ch.id);
+      const chip = document.getElementById('chip-' + ch.id);
+      if (opt && opt.checked) {
+        if (chip) { chip.hidden = false; chip.classList.add('is-active'); }
+        active.push(ch.label);
+        anyAdded = true;
+      } else {
+        allOn = false;
+      }
+    });
+    if (detailChannels) detailChannels.textContent = active.join(' · ');
+    if (addBtn) {
+      if (allOn) addBtn.hidden = true;
+      else if (anyAdded) addBtn.textContent = '+ Add another channel';
+    }
+    toggleNotifyPanel();
+  }
+
+  function togglePeek() {
+    if (typeof flowStarted !== 'undefined' && !flowStarted) return;
+    var p = document.getElementById('peek-panel');
+    if (!p) return;
+    ['receipt-panel', 'queue-panel'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    var willShow = p.style.display === 'none' || !p.style.display;
+    p.style.display = willShow ? 'block' : 'none';
+    if (willShow) p.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
+  function toggleQueue() {
+    const panel = document.getElementById('queue-panel');
+    if (!panel) return;
+    const r = document.getElementById('receipt-panel');
+    if (r) r.style.display = 'none';
+    const willShow = panel.style.display === 'none' || !panel.style.display;
+    panel.style.display = willShow ? 'block' : 'none';
+    if (willShow) panel.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
+  function toggleQueueItem(id) {
+    const wrap = document.getElementById('qw-' + id);
+    if (!wrap) return;
+    wrap.classList.toggle('is-expanded');
+  }
+
+  function toggleMoreQueue() {
+    const extras = document.querySelectorAll('.q-wrap.is-extra');
+    const btn = document.getElementById('more-queue-btn');
+    const count = document.getElementById('queue-count');
+    const win = document.getElementById('queue-window');
+    if (!extras.length || !btn) return;
+    const showing = extras[0].classList.contains('is-shown');
+    extras.forEach(e => e.classList.toggle('is-shown', !showing));
+    if (showing) {
+      btn.textContent = 'Show 3 more ↓';
+      if (count) count.textContent = '2';
+      if (win) win.textContent = '2 weeks';
+    } else {
+      btn.textContent = 'Show fewer ↑';
+      if (count) count.textContent = '5';
+      if (win) win.textContent = '30 days';
+    }
+  }
+
+  function resetFlow() {
+    flowStarted = false;
+hide(document.getElementById('filed-msg'));
+
+    const card = document.querySelector('.slack-evidence-card');
+    if (card) card.classList.remove('is-resolved');
+
+    // Close any open inline panels
+    ['q2-ref', 'receipt-panel', 'queue-panel', 'notify-panel', 'peek-panel', 'note-panel', 'defer-panel', 'sendback-panel'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+
+    // Reset the file-picker preview state
+    const prev = document.getElementById('upload-preview');
+    if (prev) prev.classList.remove('is-shown');
+    const btn = document.getElementById('file-now-btn');
+    if (btn) {
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+      btn.style.cursor = 'not-allowed';
+    }
+    const dz = document.getElementById('dropzone-area');
+    if (dz) {
+      dz.style.borderColor = '';
+      dz.style.background = '';
+      dz.innerHTML = 'Drop a file, or <span class="picker-link">click to browse</span>';
+    }
+
+    // Scroll back to the original bot DM
+    const win = document.querySelector('.slack-window');
+    if (win) win.scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+</script>
+
+</body>
+</html>
