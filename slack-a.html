@@ -158,6 +158,26 @@
   .slack-sidebar .channel .app-icon img {
     width: 62%; height: auto; display: block;
   }
+  .slack-msg.is-hidden { display: none; }
+  .slack-msg.is-revealing { animation: msgFadeIn 0.4s ease-out forwards; }
+  @keyframes msgFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .slack-evidence-card.is-resolved .actions button,
+  .slack-evidence-card.is-resolved .slack-inline-panel { pointer-events: none; opacity: 0.55; }
+  .slack-evidence-card.is-resolved::after {
+    content: "✓ Filed";
+    display: inline-block;
+    margin-top: 6px;
+    padding: 2px 8px;
+    font-size: 11px; font-weight: 700;
+    color: var(--luna-green-700);
+    background: var(--luna-green-50);
+    border: 1px solid var(--luna-green-100);
+    border-radius: 10px;
+    letter-spacing: 0.03em;
+  }
 </style>
 </head>
 <body>
@@ -244,7 +264,7 @@
                   <span class="ai-citation">DBA attestation email</span>. Same shape as Q2.
                 </div>
                 <div class="actions">
-                  <button class="primary" onclick="scrollToReply(); return false;">✓ Approve &amp; file</button>
+                  <button class="primary" onclick="runFlow(); return false;">✓ Approve &amp; file</button>
                   <button onclick="toggleQueryEditor(); return false;">Edit query</button>
                   <button onclick="toggleFilePicker(); return false;">Upload your own</button>
                 </div>
@@ -258,7 +278,7 @@ WHERE system = 'prod-db-01'
 ORDER BY user;</textarea>
                   <div style="font-size:11px;color:var(--luna-gray-500);margin-top:6px;">Tip: Optro re-runs against ServiceNow and updates the suggested artifact.</div>
                   <div class="panel-actions">
-                    <button class="primary" onclick="closePanelsAndScroll(); return false;">Save &amp; file</button>
+                    <button class="primary" onclick="closePanelsThenRun(); return false;">Save &amp; file</button>
                     <button onclick="toggleQueryEditor(); return false;">Cancel</button>
                   </div>
                 </div>
@@ -274,7 +294,7 @@ ORDER BY user;</textarea>
                     <span class="size">42 KB · just now</span>
                   </div>
                   <div class="panel-actions">
-                    <button class="primary" id="file-now-btn" disabled style="opacity:0.5;cursor:not-allowed;" onclick="closePanelsAndScroll(); return false;">File now</button>
+                    <button class="primary" id="file-now-btn" disabled style="opacity:0.5;cursor:not-allowed;" onclick="closePanelsThenRun(); return false;">File now</button>
                     <button onclick="toggleFilePicker(); return false;">Cancel</button>
                   </div>
                 </div>
@@ -282,8 +302,8 @@ ORDER BY user;</textarea>
             </div>
           </div>
 
-          <!-- 2. Weston's reply with screenshot -->
-          <div class="slack-msg" id="weston-reply">
+          <!-- 2. Weston's reply with screenshot (hidden until Approve/Save/File click) -->
+          <div class="slack-msg is-hidden" id="weston-reply">
             <div class="avatar">W</div>
             <div class="body">
               <div class="head"><span class="name">Weston Prohaska</span><span class="ts">Friday · 3:11 PM</span></div>
@@ -292,8 +312,18 @@ ORDER BY user;</textarea>
             </div>
           </div>
 
-          <!-- 3. Bot confirms filed + receipt -->
-          <div class="slack-msg" id="filed-msg">
+          <!-- 2b. Bot typing while it parses (hidden, briefly shown during the cascade) -->
+          <div class="slack-msg is-hidden" id="bot-typing">
+            <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
+            <div class="body">
+              <div class="head"><span class="name">Optro</span><span class="bot-tag">APP</span><span class="ts">just now</span></div>
+              <div class="slack-typing-bubble"><span></span><span></span><span></span></div>
+              <p style="font-size:11px;color:var(--luna-gray-500);margin-top:4px;">Parsing screenshot, tagging control, routing for review…</p>
+            </div>
+          </div>
+
+          <!-- 3. Bot confirms filed + receipt (hidden until cascade completes) -->
+          <div class="slack-msg is-hidden" id="filed-msg">
             <div class="avatar is-bot"><img src="optro-mark.svg" alt="Optro" style="width:62%;height:auto;display:block;" /></div>
             <div class="body">
               <div class="head">
@@ -314,7 +344,7 @@ ORDER BY user;</textarea>
               </div>
               <p style="margin-top:8px;font-size:13px;">Want me to wrist-tap you if Marie bounces back, or @-mention you in <code style="font-size:11px;background:var(--luna-gray-100);padding:1px 5px;border-radius:3px;font-family:ui-monospace,monospace;">#sox-q3-close</code>?</p>
               <div style="display:flex;gap:6px;margin-top:6px;">
-                <button onclick="scrollToTop(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-teal-500);background:var(--luna-teal-500);color:var(--luna-white);cursor:pointer;">↻ Run another</button>
+                <button onclick="resetFlow(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-teal-500);background:var(--luna-teal-500);color:var(--luna-white);cursor:pointer;">↻ Run another</button>
                 <button style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">Wrist-tap on bounce</button>
                 <a href="chain-a.html" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);text-decoration:none;">View chain receipt ↗</a>
               </div>
@@ -337,7 +367,10 @@ ORDER BY user;</textarea>
 </div>
 
 <script>
+  let flowStarted = false;
+
   function toggleQueryEditor() {
+    if (flowStarted) return;
     const ed = document.getElementById('query-editor-panel');
     const fp = document.getElementById('file-picker-panel');
     if (!ed) return;
@@ -350,6 +383,7 @@ ORDER BY user;</textarea>
     }
   }
   function toggleFilePicker() {
+    if (flowStarted) return;
     const fp = document.getElementById('file-picker-panel');
     const ed = document.getElementById('query-editor-panel');
     if (!fp) return;
@@ -373,22 +407,82 @@ ORDER BY user;</textarea>
       dz.innerHTML = '✓ File selected — ready to file';
     }
   }
-  function scrollToReply() {
-    const el = document.getElementById('weston-reply');
-    if (el) el.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+  function reveal(el) {
+    if (!el) return;
+    el.classList.remove('is-hidden');
+    el.classList.add('is-revealing');
+    el.scrollIntoView({behavior: 'smooth', block: 'center'});
   }
-  function scrollToTop() {
-    const t = document.getElementById('slack-thread');
-    if (t) t.scrollTo({top: 0, behavior: 'smooth'});
-    const win = document.querySelector('.slack-window');
-    if (win) win.scrollIntoView({behavior: 'smooth', block: 'start'});
+  function hide(el) {
+    if (!el) return;
+    el.classList.add('is-hidden');
+    el.classList.remove('is-revealing');
   }
-  function closePanelsAndScroll() {
+
+  function runFlow() {
+    if (flowStarted) return;
+    flowStarted = true;
+
+    // Mark the initial card as resolved (dim buttons + add Filed badge via CSS)
+    const card = document.querySelector('.slack-evidence-card');
+    if (card) card.classList.add('is-resolved');
+
+    // Reveal Weston's reply almost immediately
+    setTimeout(() => reveal(document.getElementById('weston-reply')), 300);
+
+    // Show bot typing after the reply lands
+    setTimeout(() => reveal(document.getElementById('bot-typing')), 1100);
+
+    // Hide typing + reveal filed message
+    setTimeout(() => {
+      hide(document.getElementById('bot-typing'));
+      reveal(document.getElementById('filed-msg'));
+    }, 2600);
+  }
+
+  function closePanelsThenRun() {
     const ed = document.getElementById('query-editor-panel');
     const fp = document.getElementById('file-picker-panel');
     if (ed) ed.style.display = 'none';
     if (fp) fp.style.display = 'none';
-    scrollToReply();
+    runFlow();
+  }
+
+  function resetFlow() {
+    flowStarted = false;
+    hide(document.getElementById('weston-reply'));
+    hide(document.getElementById('bot-typing'));
+    hide(document.getElementById('filed-msg'));
+
+    const card = document.querySelector('.slack-evidence-card');
+    if (card) card.classList.remove('is-resolved');
+
+    // Close any open inline panels
+    const ed = document.getElementById('query-editor-panel');
+    const fp = document.getElementById('file-picker-panel');
+    if (ed) ed.style.display = 'none';
+    if (fp) fp.style.display = 'none';
+
+    // Reset the file-picker preview state
+    const prev = document.getElementById('upload-preview');
+    if (prev) prev.classList.remove('is-shown');
+    const btn = document.getElementById('file-now-btn');
+    if (btn) {
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+      btn.style.cursor = 'not-allowed';
+    }
+    const dz = document.getElementById('dropzone-area');
+    if (dz) {
+      dz.style.borderColor = '';
+      dz.style.background = '';
+      dz.innerHTML = '📎 Drop a file here or <span class="picker-link">choose from your computer</span>';
+    }
+
+    // Scroll back to the original bot DM
+    const win = document.querySelector('.slack-window');
+    if (win) win.scrollIntoView({behavior: 'smooth', block: 'start'});
   }
 </script>
 </body>
