@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260616g" />
-<link rel="stylesheet" href="styles.css?v=20260616g" />
+<link rel="stylesheet" href="tokens.css?v=20260616h" />
+<link rel="stylesheet" href="styles.css?v=20260616h" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -1357,6 +1357,18 @@
                   <svg class="ch-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
                   Teams
                 </span>
+                <span class="channel-chip" id="chip-calendar" hidden>
+                  <svg class="ch-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  Calendar
+                </span>
+                <span class="channel-chip" id="chip-servicenow" hidden>
+                  <svg class="ch-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path><path d="M9 12l2 2 4-4"></path></svg>
+                  ServiceNow
+                </span>
+                <span class="channel-chip" id="chip-jira" hidden>
+                  <svg class="ch-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                  Jira
+                </span>
                 <button type="button" class="channel-chip is-add" id="add-channel-btn" onclick="toggleNotifyPanel(); return false;" title="For escalation or audit-committee visibility">+ Add channel</button>
               </div>
 
@@ -1375,7 +1387,28 @@
                     <input type="checkbox" id="opt-teams" />
                     <div class="opt-text">
                       <div class="opt-title">Microsoft Teams <span class="opt-meta">@Marie Curie · #helios-audit</span></div>
-                      <div class="opt-sub">Adaptive card in Marie's chat plus a post in the audit channel.</div>
+                      <div class="opt-sub">Card in Marie's Teams chat plus a post in the audit channel.</div>
+                    </div>
+                  </label>
+                  <label class="channel-opt">
+                    <input type="checkbox" id="opt-calendar" />
+                    <div class="opt-text">
+                      <div class="opt-title">Calendar block <span class="opt-meta">Marie's calendar · 30 min</span></div>
+                      <div class="opt-sub">Holds a 30-minute review slot on her calendar with a link back to this filing.</div>
+                    </div>
+                  </label>
+                  <label class="channel-opt">
+                    <input type="checkbox" id="opt-servicenow" />
+                    <div class="opt-text">
+                      <div class="opt-title">ServiceNow ticket <span class="opt-meta">AUDIT-REVIEW queue · auto-assigned to Marie</span></div>
+                      <div class="opt-sub">Opens a review ticket in Marie's existing SN queue. Links back to the filing and to control 4.2.1.</div>
+                    </div>
+                  </label>
+                  <label class="channel-opt">
+                    <input type="checkbox" id="opt-jira" />
+                    <div class="opt-text">
+                      <div class="opt-title">Jira ticket <span class="opt-meta">SOX-Q3 project · assigned to Marie</span></div>
+                      <div class="opt-sub">Opens an audit-review issue in the Q3 SOX project board. Useful if Marie tracks her review queue in Jira.</div>
                     </div>
                   </label>
                 </div>
@@ -2101,26 +2134,33 @@
   }
 
   function confirmAddChannels() {
-    const wantEmail = document.getElementById('opt-email')?.checked;
-    const wantTeams = document.getElementById('opt-teams')?.checked;
-    const chipEmail = document.getElementById('chip-email');
-    const chipTeams = document.getElementById('chip-teams');
+    const CHANNELS = [
+      { id: 'email',       label: 'Email' },
+      { id: 'teams',       label: 'Microsoft Teams' },
+      { id: 'calendar',    label: 'Calendar block' },
+      { id: 'servicenow',  label: 'ServiceNow ticket' },
+      { id: 'jira',        label: 'Jira ticket' },
+    ];
     const addBtn = document.getElementById('add-channel-btn');
     const detailChannels = document.getElementById('detail-channels');
-    const channels = ['Slack DM'];
-    if (wantEmail) {
-      if (chipEmail) { chipEmail.hidden = false; chipEmail.classList.add('is-active'); }
-      channels.push('Email');
-    }
-    if (wantTeams) {
-      if (chipTeams) { chipTeams.hidden = false; chipTeams.classList.add('is-active'); }
-      channels.push('Microsoft Teams');
-    }
-    if (detailChannels) detailChannels.textContent = channels.join(' · ');
+    const active = ['Slack DM'];
+    let anyAdded = false;
+    let allOn = true;
+    CHANNELS.forEach(function (ch) {
+      const opt = document.getElementById('opt-' + ch.id);
+      const chip = document.getElementById('chip-' + ch.id);
+      if (opt && opt.checked) {
+        if (chip) { chip.hidden = false; chip.classList.add('is-active'); }
+        active.push(ch.label);
+        anyAdded = true;
+      } else {
+        allOn = false;
+      }
+    });
+    if (detailChannels) detailChannels.textContent = active.join(' · ');
     if (addBtn) {
-      if (wantEmail && wantTeams) addBtn.hidden = true;
-      else if (wantEmail) addBtn.textContent = '+ Also notify by Teams';
-      else if (wantTeams) addBtn.textContent = '+ Also notify by email';
+      if (allOn) addBtn.hidden = true;
+      else if (anyAdded) addBtn.textContent = '+ Add another channel';
     }
     toggleNotifyPanel();
   }
