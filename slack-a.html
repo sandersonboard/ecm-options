@@ -434,6 +434,60 @@
     text-decoration: none;
     transform: translateY(-1px);
   }
+  /* What's-next queue panel */
+  .slack-inline-panel .queue-list { display: flex; flex-direction: column; gap: 6px; }
+  .slack-inline-panel .queue-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    background: var(--luna-white);
+    border: 1px solid var(--luna-gray-200);
+    border-radius: 6px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s, border-color 0.15s, transform 0.15s;
+  }
+  .slack-inline-panel .queue-item:hover {
+    background: var(--luna-gray-50);
+    border-color: var(--luna-gray-300);
+    text-decoration: none;
+    transform: translateX(2px);
+  }
+  .slack-inline-panel .q-due {
+    flex-shrink: 0;
+    width: 38px;
+    text-align: center;
+    padding: 4px 0;
+    background: var(--luna-blue-50);
+    color: var(--luna-blue-700);
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .slack-inline-panel .q-text { flex: 1; min-width: 0; }
+  .slack-inline-panel .q-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--luna-gray-900);
+    line-height: 1.3;
+  }
+  .slack-inline-panel .q-meta {
+    font-size: 11px;
+    color: var(--luna-gray-500);
+    margin-top: 1px;
+    line-height: 1.3;
+  }
+  .slack-inline-panel .q-arrow {
+    color: var(--luna-gray-400);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .slack-inline-panel .queue-item:hover .q-arrow {
+    color: var(--luna-teal-500);
+  }
 </style>
 </head>
 <body>
@@ -696,8 +750,34 @@ ORDER BY user;</textarea>
               </div>
               <p style="margin-top:8px;font-size:13px;">I'll ping you here if Marie has questions.</p>
               <div style="display:flex;gap:6px;margin-top:6px;">
-                <button onclick="resetFlow(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">↻ Run another</button>
+                <button onclick="toggleQueue(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">What's next →</button>
                 <button onclick="toggleReceipt(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">View filing details</button>
+              </div>
+
+              <div class="slack-inline-panel" id="queue-panel" style="display:none;margin-top:10px;">
+                <div class="panel-label">Up next on your SOX queue · 2 due in the next 2 weeks</div>
+                <div class="queue-list">
+                  <a class="queue-item" href="ipad-b.html" target="_blank" rel="noopener">
+                    <span class="q-due">Thu</span>
+                    <div class="q-text">
+                      <div class="q-title">Q3 segregation-of-duties review</div>
+                      <div class="q-meta">SOX control 5.1.1 · prod-payroll-svc · reviewed by Marie Curie</div>
+                    </div>
+                    <span class="q-arrow">→</span>
+                  </a>
+                  <a class="queue-item" href="ipad-b.html" target="_blank" rel="noopener">
+                    <span class="q-due">Mon</span>
+                    <div class="q-text">
+                      <div class="q-title">Q3 deployment review</div>
+                      <div class="q-meta">SOX control 4.2.2 · helios-deploy-pipeline · reviewed by Ada Lovelace</div>
+                    </div>
+                    <span class="q-arrow">→</span>
+                  </a>
+                </div>
+                <div class="panel-actions">
+                  <a class="open-external" href="ipad-b.html" target="_blank" rel="noopener">Open full queue ↗</a>
+                  <button onclick="toggleQueue(); return false;">Close</button>
+                </div>
               </div>
 
               <div class="slack-inline-panel" id="receipt-panel" style="display:none;margin-top:10px;">
@@ -839,6 +919,18 @@ ORDER BY user;</textarea>
   function toggleReceipt() {
     const panel = document.getElementById('receipt-panel');
     if (!panel) return;
+    const q = document.getElementById('queue-panel');
+    if (q) q.style.display = 'none';
+    const willShow = panel.style.display === 'none' || !panel.style.display;
+    panel.style.display = willShow ? 'block' : 'none';
+    if (willShow) panel.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+
+  function toggleQueue() {
+    const panel = document.getElementById('queue-panel');
+    if (!panel) return;
+    const r = document.getElementById('receipt-panel');
+    if (r) r.style.display = 'none';
     const willShow = panel.style.display === 'none' || !panel.style.display;
     panel.style.display = willShow ? 'block' : 'none';
     if (willShow) panel.scrollIntoView({behavior: 'smooth', block: 'center'});
@@ -854,7 +946,7 @@ ORDER BY user;</textarea>
     if (card) card.classList.remove('is-resolved');
 
     // Close any open inline panels
-    ['query-editor-panel', 'file-picker-panel', 'artifact-csv', 'artifact-email', 'receipt-panel'].forEach(id => {
+    ['query-editor-panel', 'file-picker-panel', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
