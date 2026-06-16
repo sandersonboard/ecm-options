@@ -2284,9 +2284,7 @@
       injectRestartButton();
       var params = new URLSearchParams(location.search);
       if (params.get('tour') === 'off') return;
-      var seen = false;
-      try { seen = !!sessionStorage.getItem(SEEN_KEY); } catch (e) {}
-      if (!seen) setTimeout(start, 600);
+      setTimeout(start, 600);
     }
 
     window.Tour = { boot: boot, start: start, next: next, prev: prev, end: end };
