@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>AI-ready data · Take C — Provenance graph · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615f" />
-<link rel="stylesheet" href="styles.css?v=20260615f" />
+<link rel="stylesheet" href="tokens.css?v=20260615g" />
+<link rel="stylesheet" href="styles.css?v=20260615g" />
 <style>
   .cap-stage { max-width: 1100px; margin: 0 auto; }
   .cap-panel { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); overflow: hidden; box-shadow: var(--luna-shadow-100); margin-bottom: 16px; }
@@ -16,7 +16,7 @@
 
   /* The lineage graph */
   .lineage-canvas { padding: 24px 18px; min-height: 380px; position: relative; background:
-    radial-gradient(circle at 10% 50%, var(--luna-lime-50), transparent 30%),
+    radial-gradient(circle at 10% 50%, var(--luna-blue-50), transparent 30%),
     radial-gradient(circle at 90% 50%, var(--luna-teal-50), transparent 30%); }
   .lineage-flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; align-items: center; position: relative; }
   .ln-node {
@@ -31,12 +31,12 @@
     position: relative;
   }
   .ln-node:hover { transform: translateY(-1px); box-shadow: var(--luna-shadow-200); }
-  .ln-node.is-selected { border-color: var(--luna-lime-500); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18); }
+  .ln-node.is-selected { border-color: var(--luna-blue-500); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18); }
   .ln-node .src-name { font-family: ui-monospace, monospace; font-size: 10px; color: var(--luna-gray-500); margin-bottom: 4px; }
   .ln-node .ic { font-size: 18px; }
   .ln-node .label { font-size: 11.5px; font-weight: 600; color: var(--luna-gray-900); margin-top: 4px; line-height: 1.3; }
   .ln-node .ts { font-size: 10px; color: var(--luna-gray-500); font-family: ui-monospace, monospace; margin-top: 2px; }
-  .ln-node.is-source { background: linear-gradient(135deg, var(--luna-lime-50), var(--luna-white)); border-color: var(--luna-lime-300); }
+  .ln-node.is-source { background: linear-gradient(135deg, var(--luna-blue-50), var(--luna-white)); border-color: var(--luna-blue-300); }
   .ln-node.is-ecm { background: linear-gradient(135deg, var(--luna-blue-50), var(--luna-white)); border-color: var(--luna-blue-300); }
   .ln-node.is-midship { background: linear-gradient(135deg, var(--luna-orange-50, #fff7ed), var(--luna-white)); border-color: var(--luna-orange-200, #fed7aa); }
   .ln-node.is-auditor { background: linear-gradient(135deg, var(--luna-green-50), var(--luna-white)); border-color: var(--luna-green-300); }
@@ -46,21 +46,21 @@
   .ln-detail-panel {
     margin-top: 18px;
     padding: 16px 18px;
-    background: var(--luna-lime-50);
-    border: 1px solid var(--luna-lime-100);
-    border-left: 3px solid var(--luna-lime-500);
+    background: var(--luna-blue-50);
+    border: 1px solid var(--luna-blue-100);
+    border-left: 3px solid var(--luna-blue-500);
     border-radius: 6px;
     font-size: 13px;
     color: var(--luna-gray-800);
     line-height: 1.6;
   }
   .ln-detail-panel .det-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
-  .ln-detail-panel .det-head h4 { margin: 0; font-size: 14px; color: var(--luna-lime-700); }
+  .ln-detail-panel .det-head h4 { margin: 0; font-size: 14px; color: var(--luna-blue-700); }
   .ln-detail-panel .det-head .meta { font-size: 11px; color: var(--luna-gray-500); margin-left: auto; font-family: ui-monospace, monospace; }
   .ln-detail-panel .grid { display: grid; grid-template-columns: 130px 1fr; gap: 4px 12px; margin-top: 8px; }
   .ln-detail-panel .grid .k { color: var(--luna-gray-600); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding-top: 2px; }
   .ln-detail-panel .grid .v { color: var(--luna-gray-900); }
-  .ln-detail-panel .grid .v.hash { font-family: ui-monospace, monospace; font-size: 11.5px; color: var(--luna-lime-700); word-break: break-all; }
+  .ln-detail-panel .grid .v.hash { font-family: ui-monospace, monospace; font-size: 11.5px; color: var(--luna-blue-700); word-break: break-all; }
 
   .freshness-strip {
     display: flex; align-items: center; gap: 12px;
@@ -286,14 +286,14 @@
           </div>
           <div class="system-row">
             <div class="system-name"><span class="logo" style="background:#0a3655;">⊕</span>Optro chain</div>
-            <div class="details">Block <code>#4,182,118</code> root hash: <code style="color:var(--luna-lime-700);">0x91a3·c4ed·7b22·4f08·…</code> matches independently-fetched ledger state.</div>
+            <div class="details">Block <code>#4,182,118</code> root hash: <code style="color:var(--luna-blue-700);">0x91a3·c4ed·7b22·4f08·…</code> matches independently-fetched ledger state.</div>
             <div class="verify is-ok">✓ Valid</div>
           </div>
         </div>
       </div>
 
-      <div style="padding: 14px 18px; background: var(--luna-lime-50); border: 1px solid var(--luna-lime-100); border-radius: 6px; font-size: 13px; color: var(--luna-gray-800); line-height: 1.55;">
-        <strong style="color: var(--luna-lime-700);">The strategic claim.</strong>
+      <div style="padding: 14px 18px; background: var(--luna-blue-50); border: 1px solid var(--luna-blue-100); border-radius: 6px; font-size: 13px; color: var(--luna-gray-800); line-height: 1.55;">
+        <strong style="color: var(--luna-blue-700);">The strategic claim.</strong>
         Provenance isn't a feature — it's the substrate. Once every artifact carries its source chain, the question "is this evidence trustworthy" becomes a graph traversal, not a judgment call. The external auditor runs the same verifier ECM does; trust doesn't depend on trusting Optro.
       </div>
 

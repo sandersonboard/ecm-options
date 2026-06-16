@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Palette · Take C — Prepped drafts · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615f" />
-<link rel="stylesheet" href="styles.css?v=20260615f" />
+<link rel="stylesheet" href="tokens.css?v=20260615g" />
+<link rel="stylesheet" href="styles.css?v=20260615g" />
 <style>
   .pal-input-row {
     display: flex; align-items: center; gap: 12px;
@@ -59,8 +59,8 @@
     flex-shrink: 0;
   }
   .pal-result.is-ai .icon {
-    background: linear-gradient(135deg, var(--luna-lime-100), var(--luna-blue-100));
-    color: var(--luna-lime-700);
+    background: linear-gradient(135deg, var(--luna-blue-100), var(--luna-blue-100));
+    color: var(--luna-blue-700);
   }
   .pal-result .body { flex: 1; min-width: 0; }
   .pal-result .title { font-size: 14px; font-weight: 600; color: var(--luna-gray-900); margin-bottom: 2px; }
@@ -70,7 +70,7 @@
   }
   .pal-result .arrow { color: var(--luna-gray-400); font-size: 18px; }
   .pal-result.is-selected .arrow { color: var(--luna-teal-500); }
-  .pal-result.is-ai .title { color: var(--luna-lime-700); }
+  .pal-result.is-ai .title { color: var(--luna-blue-700); }
   .pal-foot {
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px 18px;
@@ -84,11 +84,11 @@
   .ai-suggest-panel {
     margin: 10px 14px;
     padding: 12px 14px;
-    background: linear-gradient(135deg, var(--luna-lime-50), var(--luna-blue-50));
-    border: 1px solid var(--luna-lime-100);
+    background: linear-gradient(135deg, var(--luna-blue-50), var(--luna-blue-50));
+    border: 1px solid var(--luna-blue-100);
     border-radius: 6px;
   }
-  .ai-suggest-panel .title { font-size: 13px; font-weight: 600; color: var(--luna-lime-700); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .ai-suggest-panel .title { font-size: 13px; font-weight: 600; color: var(--luna-blue-700); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
   .ai-suggest-panel .body { font-size: 13px; color: var(--luna-gray-800); line-height: 1.5; }
   .ai-suggest-panel .body strong { font-weight: 600; }
   .ai-suggest-panel .actions { display: flex; gap: 8px; margin-top: 10px; }
@@ -127,7 +127,7 @@
     font-size: 12px;
   }
   .draft-preview .artifact-row:last-child { margin-bottom: 0; }
-  .draft-preview .artifact-row .ic { width: 22px; height: 22px; background: var(--luna-lime-100); color: var(--luna-lime-700); border-radius: 4px; display: grid; place-items: center; flex-shrink: 0; font-size: 11px; }
+  .draft-preview .artifact-row .ic { width: 22px; height: 22px; background: var(--luna-blue-100); color: var(--luna-blue-700); border-radius: 4px; display: grid; place-items: center; flex-shrink: 0; font-size: 11px; }
   .draft-preview .artifact-row .name { flex: 1; font-weight: 500; color: var(--luna-gray-900); }
   .draft-preview .artifact-row .meta { color: var(--luna-gray-500); font-size: 11px; }
   .draft-preview .conf-row { display: flex; align-items: center; gap: 10px; margin: 10px 0; font-size: 12px; color: var(--luna-gray-700); }
@@ -219,7 +219,7 @@
           <div class="pal-input-row">
             <span class="kbd-shortcut">⌘K</span>
             <input class="pal-input" type="text" value="ar q3 prod db" readonly />
-            <span class="luna-badge is-lime">AI assist on</span>
+            <span class="luna-badge is-blue">AI assist on</span>
           </div>
 
           <div class="ai-suggest-panel">
@@ -321,7 +321,7 @@
             <div class="draft-head">
               <button class="back-btn" data-go="browse">← Palette</button>
               <h3>Evidence draft · AR-Q3FY26-prod-db</h3>
-              <span class="luna-badge is-lime">Pre-drafted</span>
+              <span class="luna-badge is-blue">Pre-drafted</span>
             </div>
 
             <div class="draft-grid">
@@ -403,7 +403,7 @@
               <div class="r-row"><div class="k">Artifacts</div><div class="v">snow-query-AR-prod-db.csv · DBA-attestation-Q3FY26.eml</div></div>
               <div class="r-row"><div class="k">Carryover note</div><div class="v">contractor-svc-09 deprovision pending (HEL-3471)</div></div>
               <div class="r-row"><div class="k">Routed to</div><div class="v">Marie Curie · Internal Audit · review SLA 2 BD</div></div>
-              <div class="r-row"><div class="k">Chain receipt</div><div class="v" style="font-family:ui-monospace,monospace;font-size:11px;color:var(--luna-lime-700);">block #4,180,221 · 0x91a3·c4ed·…</div></div>
+              <div class="r-row"><div class="k">Chain receipt</div><div class="v" style="font-family:ui-monospace,monospace;font-size:11px;color:var(--luna-blue-700);">block #4,180,221 · 0x91a3·c4ed·…</div></div>
             </div>
 
             <div class="next-actions">

@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Wearable · Take C — Escalation-only · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615f" />
-<link rel="stylesheet" href="styles.css?v=20260615f" />
+<link rel="stylesheet" href="tokens.css?v=20260615g" />
+<link rel="stylesheet" href="styles.css?v=20260615g" />
 <style>
   .watch-stage { display: flex; gap: 60px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
   .stage-side { flex: 1; min-width: 280px; max-width: 380px; padding: 14px 0; }
@@ -15,8 +15,8 @@
   .stage-side .step-detail { padding: 12px 14px; background: var(--luna-gray-50); border-left: 3px solid var(--luna-teal-500); border-radius: 0 6px 6px 0; margin-bottom: 14px; }
   .stage-side .step-detail .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--luna-gray-500); margin-bottom: 4px; }
   .stage-side .step-detail p { font-size: 13px; color: var(--luna-gray-800); margin: 0; line-height: 1.5; }
-  .stage-side .step-detail.is-lime { border-left-color: var(--luna-lime-500); background: var(--luna-lime-50); }
-  .stage-side .step-detail.is-lime .lbl { color: var(--luna-lime-700); }
+  .stage-side .step-detail.is-blue { border-left-color: var(--luna-blue-500); background: var(--luna-blue-50); }
+  .stage-side .step-detail.is-blue .lbl { color: var(--luna-blue-700); }
   .stage-side .step-detail.is-red { border-left-color: var(--luna-red-500); background: var(--luna-red-50); }
   .stage-side .step-detail.is-red .lbl { color: var(--luna-red-700); }
 
@@ -100,7 +100,7 @@
           <h3>Step 1 of 3 · Idle (most of the day)</h3>
           <p>By design, the watch is silent. Just the time, the date, and a quiet badge confirming ECM is on and not finding anything that needs Weston.</p>
           <div class="step-detail"><div class="lbl">The bet</div><p>For 23 hours out of 24, the right thing is to show nothing. Notifications-as-noise is the failure mode the other two wearable takes risk.</p></div>
-          <div class="step-detail is-lime"><div class="lbl">Try it</div><p>Click <strong>Next →</strong> in the stepper to simulate ECM finally needing Weston.</p></div>
+          <div class="step-detail is-blue"><div class="lbl">Try it</div><p>Click <strong>Next →</strong> in the stepper to simulate ECM finally needing Weston.</p></div>
         </div>
 
         <div class="watch">
@@ -123,7 +123,7 @@
           <h3>Step 2 of 3 · Buzz · 4:48 PM</h3>
           <p>Late afternoon. Marie flagged something on Weston's filing. ECM rings the watch with the smallest possible explanation and one next step: <strong>open phone</strong>.</p>
           <div class="step-detail is-red"><div class="lbl">Why ECM escalated</div><p>Marie's flag was a privilege-escalation finding — high severity, low confidence ECM can resolve solo. Watch becomes the urgent-paging surface, phone becomes the resolution surface.</p></div>
-          <div class="step-detail is-lime"><div class="lbl">Try it</div><p>Tap <strong>Open phone for the full thread</strong>.</p></div>
+          <div class="step-detail is-blue"><div class="lbl">Try it</div><p>Tap <strong>Open phone for the full thread</strong>.</p></div>
         </div>
 
         <div class="watch">

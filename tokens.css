@@ -32,7 +32,8 @@
 
   /* Status colors */
   --luna-blue-50: #f2f8ff;
-  --luna-blue-100: #ebfb85;
+  --luna-blue-100: #dbeaff;
+  --luna-blue-300: #93c5fd;
   --luna-blue-500: #3172e3;
   --luna-blue-700: #0e48a1;
 
@@ -57,12 +58,6 @@
   --luna-red-100: #ffe0e0;
   --luna-red-500: #db3535;
   --luna-red-700: #8c1c1c;
-
-  --luna-lime-50: #fafced;
-  --luna-lime-100: #ebfb85;
-  --luna-lime-300: #d4f03a;
-  --luna-lime-500: #bcdc1d;
-  --luna-lime-700: #5a6e0f;
 
   --luna-white: #ffffff;
 
@@ -150,7 +145,7 @@ button { font-family: inherit; cursor: pointer; }
 .luna-badge.is-orange { background: var(--luna-orange-50); color: var(--luna-orange-700); }
 .luna-badge.is-yellow { background: var(--luna-yellow-50); color: var(--luna-yellow-700); }
 .luna-badge.is-red { background: var(--luna-red-50); color: var(--luna-red-700); }
-.luna-badge.is-lime { background: var(--luna-lime-100); color: var(--luna-lime-700); border: 1px solid var(--luna-lime-300); }
+.luna-badge.is-blue { background: var(--luna-blue-50); color: var(--luna-blue-700); border: 1px solid var(--luna-blue-300); }
 .luna-btn {
   display: inline-flex; align-items: center; gap: var(--luna-space-2);
   padding: 8px 14px;
@@ -192,19 +187,19 @@ button { font-family: inherit; cursor: pointer; }
 .ai-chip {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 3px 8px 3px 6px;
-  background: linear-gradient(135deg, var(--luna-lime-50), var(--luna-blue-50));
-  border: 1px solid var(--luna-lime-100);
+  background: linear-gradient(135deg, var(--luna-blue-50), var(--luna-blue-50));
+  border: 1px solid var(--luna-blue-100);
   border-radius: var(--luna-radius-full);
   font-size: 11px;
   font-weight: 600;
-  color: var(--luna-lime-700);
+  color: var(--luna-blue-700);
 }
 .ai-chip::before {
   content: "";
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: var(--luna-lime-500);
-  box-shadow: 0 0 0 2px var(--luna-lime-100);
+  background: var(--luna-blue-500);
+  box-shadow: 0 0 0 2px var(--luna-blue-100);
 }
 .ai-citation {
   display: inline-flex; align-items: center; gap: 4px;
@@ -225,7 +220,7 @@ button { font-family: inherit; cursor: pointer; }
 .ai-confidence-bar > span {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, var(--luna-lime-300), var(--luna-teal-500));
+  background: linear-gradient(90deg, var(--luna-blue-300), var(--luna-teal-500));
   border-radius: inherit;
 }
 

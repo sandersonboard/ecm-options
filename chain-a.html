@@ -5,20 +5,20 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Blockchain · Take A — Receipt + narration · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615f" />
-<link rel="stylesheet" href="styles.css?v=20260615f" />
+<link rel="stylesheet" href="tokens.css?v=20260615g" />
+<link rel="stylesheet" href="styles.css?v=20260615g" />
 <style>
   .chain-ai-strip {
     max-width: 720px; margin: 0 auto 16px;
     padding: 14px 18px;
-    background: linear-gradient(135deg, var(--luna-lime-50), var(--luna-blue-50));
-    border: 1px solid var(--luna-lime-100);
-    border-left: 3px solid var(--luna-lime-500);
+    background: linear-gradient(135deg, var(--luna-blue-50), var(--luna-blue-50));
+    border: 1px solid var(--luna-blue-100);
+    border-left: 3px solid var(--luna-blue-500);
     border-radius: var(--luna-radius-md);
     font-size: 13px; color: var(--luna-gray-800);
     line-height: 1.5;
   }
-  .chain-ai-strip .head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-weight: 600; color: var(--luna-lime-700); font-size: 12px; }
+  .chain-ai-strip .head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-weight: 600; color: var(--luna-blue-700); font-size: 12px; }
   .chain-step .badge { display: inline-block; padding: 1px 7px; border-radius: 3px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; background: var(--luna-teal-100); color: var(--luna-teal-700); margin-left: 6px; vertical-align: middle; }
   .chain-step.signed .badge { background: var(--luna-green-100); color: var(--luna-green-700); }
   .verify-strip {
@@ -34,12 +34,12 @@
   .verify-strip .checking-badge { padding: 4px 10px; background: var(--luna-blue-50); color: var(--luna-blue-700); border: 1px solid var(--luna-blue-100); border-radius: var(--luna-radius-full); font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
   .verify-strip .checking-badge .spinner { width: 12px; height: 12px; border: 2px solid var(--luna-blue-200); border-top-color: var(--luna-blue-500); border-radius: 50%; animation: spin 0.8s infinite linear; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .verify-strip .hash { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-lime-700); background: var(--luna-lime-50); padding: 2px 6px; border-radius: 3px; }
+  .verify-strip .hash { font-family: ui-monospace, monospace; font-size: 11px; color: var(--luna-blue-700); background: var(--luna-blue-50); padding: 2px 6px; border-radius: 3px; }
 
   .verifier-modal {
     max-width: 720px; margin: 0 auto;
     background: var(--luna-white);
-    border: 2px solid var(--luna-lime-300);
+    border: 2px solid var(--luna-blue-300);
     border-radius: var(--luna-radius-md);
     padding: 24px;
     box-shadow: 0 20px 60px rgba(105, 49, 227, 0.18);
@@ -69,7 +69,7 @@
     </div>
     <div class="right-meta">
       <span class="luna-badge is-teal">Persona · PMO</span>
-      <span class="luna-badge is-lime">Noun · Evidence</span>
+      <span class="luna-badge is-blue">Noun · Evidence</span>
     </div>
   </div>
 
@@ -236,7 +236,7 @@
               <div style="color:var(--luna-gray-600);">Artifact</div><div style="color:var(--luna-gray-900);">opt-evd-helios-AR-Q3FY26-prod-db</div>
               <div style="color:var(--luna-gray-600);">Verified at</div><div style="color:var(--luna-gray-900);">2026-11-02T14:21:08Z (just now)</div>
               <div style="color:var(--luna-gray-600);">Blocks checked</div><div style="color:var(--luna-gray-900);">4 of 4 · all valid</div>
-              <div style="color:var(--luna-gray-600);">Root hash</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:var(--luna-lime-700);">0x91a3·c4ed·7b22·4f08·d9e1·2f5a·6c81·b03d</div>
+              <div style="color:var(--luna-gray-600);">Root hash</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:var(--luna-blue-700);">0x91a3·c4ed·7b22·4f08·d9e1·2f5a·6c81·b03d</div>
               <div style="color:var(--luna-gray-600);">Drift</div><div style="color:var(--luna-green-700);font-weight:600;">none detected</div>
             </div>
           </div>
@@ -268,7 +268,7 @@
             <div style="display:grid;grid-template-columns:140px 1fr;gap:6px 12px;font-size:12px;">
               <div style="color:var(--luna-gray-600);">Artifact</div><div style="color:var(--luna-gray-900);">opt-evd-helios-AR-Q3FY26-prod-db</div>
               <div style="color:var(--luna-gray-600);">Failed block</div><div style="color:var(--luna-gray-900);">#4,182,118 (Marie Curie's sign-off · 09-26 09:42)</div>
-              <div style="color:var(--luna-gray-600);">Expected hash</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:var(--luna-lime-700);">0x77ef·92aa·c1b4·8de2·a0c7·3f91</div>
+              <div style="color:var(--luna-gray-600);">Expected hash</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:var(--luna-blue-700);">0x77ef·92aa·c1b4·8de2·a0c7·3f91</div>
               <div style="color:var(--luna-gray-600);">Computed hash</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:var(--luna-red-700);">0x77ef·92aa·c1b4·8de2·d4f9·2c08</div>
               <div style="color:var(--luna-gray-600);">Drift detected</div><div style="color:var(--luna-red-700);font-weight:600;">last 8 hex digits diverge — metadata edit suspected</div>
             </div>

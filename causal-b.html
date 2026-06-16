@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Causal AI · Take B — Counterfactual evidence · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615f" />
-<link rel="stylesheet" href="styles.css?v=20260615f" />
+<link rel="stylesheet" href="tokens.css?v=20260615g" />
+<link rel="stylesheet" href="styles.css?v=20260615g" />
 <style>
   .cap-stage { max-width: 1100px; margin: 0 auto; }
   .cap-panel { background: var(--luna-white); border: 1px solid var(--luna-gray-200); border-radius: var(--luna-radius-md); overflow: hidden; box-shadow: var(--luna-shadow-100); margin-bottom: 16px; }
@@ -33,9 +33,9 @@
   .cf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 22px 22px; }
   @media (max-width: 900px) { .cf-grid { grid-template-columns: 1fr; } }
   .cf-card { padding: 14px 16px; border: 1.5px solid var(--luna-gray-200); border-radius: 8px; background: var(--luna-white); position: relative; cursor: pointer; transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s; }
-  .cf-card:hover { transform: translateY(-2px); box-shadow: var(--luna-shadow-200); border-color: var(--luna-lime-300); }
-  .cf-card.is-selected { border-color: var(--luna-lime-500); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
-  .cf-card .label { font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--luna-lime-700); margin-bottom: 4px; }
+  .cf-card:hover { transform: translateY(-2px); box-shadow: var(--luna-shadow-200); border-color: var(--luna-blue-300); }
+  .cf-card.is-selected { border-color: var(--luna-blue-500); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
+  .cf-card .label { font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--luna-blue-700); margin-bottom: 4px; }
   .cf-card h5 { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--luna-gray-900); }
   .cf-card .body { font-size: 12px; color: var(--luna-gray-700); line-height: 1.55; }
   .cf-card .body code { background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; }
@@ -61,8 +61,8 @@
   .submitted-banner h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--luna-green-700); }
   .submitted-banner .sub { font-size: 12.5px; color: var(--luna-gray-700); margin-top: 2px; }
 
-  .learning-card { padding: 16px 22px; background: var(--luna-lime-50); border: 1px solid var(--luna-lime-100); border-left: 3px solid var(--luna-lime-500); border-radius: 6px; margin: 18px; }
-  .learning-card h4 { margin: 0 0 6px; font-size: 12.5px; font-weight: 700; color: var(--luna-lime-700); }
+  .learning-card { padding: 16px 22px; background: var(--luna-blue-50); border: 1px solid var(--luna-blue-100); border-left: 3px solid var(--luna-blue-500); border-radius: 6px; margin: 18px; }
+  .learning-card h4 { margin: 0 0 6px; font-size: 12.5px; font-weight: 700; color: var(--luna-blue-700); }
   .learning-card p { margin: 0; font-size: 12.5px; color: var(--luna-gray-800); line-height: 1.55; }
   .learning-card p strong { color: var(--luna-gray-900); }
 </style>
