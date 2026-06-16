@@ -5,8 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Slack · Take A — Bot DM · ECM options</title>
-<link rel="stylesheet" href="tokens.css?v=20260615l" />
-<link rel="stylesheet" href="styles.css?v=20260615l" />
+<link rel="stylesheet" href="tokens.css?v=20260615k" />
+<link rel="stylesheet" href="styles.css?v=20260615k" />
 <style>
   .slack-evidence-card {
     margin-top: 8px;
@@ -487,258 +487,6 @@
     font-size: 11px; color: var(--luna-gray-600);
     margin-top: 2px; line-height: 1.4;
   }
-
-  /* === Take-the-tour entry button === */
-  .tour-start-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 5px 10px;
-    background: var(--luna-teal-500);
-    color: #fff;
-    border: 1px solid var(--luna-teal-500);
-    border-radius: 5px;
-    font-size: 12px; font-weight: 600;
-    cursor: pointer;
-    margin-left: 8px;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .tour-start-btn:hover { background: var(--luna-teal-600); border-color: var(--luna-teal-600); }
-  .tour-start-btn svg { width: 13px; height: 13px; }
-
-  /* === Two-score conf grid === */
-  .slack-evidence-card .conf-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin: 10px 0;
-    padding: 10px 12px;
-    background: var(--luna-gray-50);
-    border-radius: 6px;
-  }
-  .slack-evidence-card .conf-score { min-width: 0; }
-  .slack-evidence-card .conf-label {
-    font-size: 10.5px; font-weight: 700;
-    color: var(--luna-gray-600);
-    letter-spacing: 0.04em; text-transform: uppercase;
-    margin-bottom: 4px;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .slack-evidence-card .conf-info {
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: var(--luna-gray-300);
-    color: #fff;
-    font-size: 9px; font-weight: 700;
-    border: 0; cursor: pointer;
-    display: inline-grid; place-items: center;
-    transition: background 0.15s;
-  }
-  .slack-evidence-card .conf-info:hover { background: var(--luna-teal-500); }
-  .slack-evidence-card .conf-bar-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--luna-gray-800); }
-  .slack-evidence-card .conf-bar-row .ai-confidence-bar { flex: 1; min-width: 0; }
-  .slack-evidence-card .ai-confidence-bar.is-suff .bar-fill { background: var(--luna-green-500); }
-  .slack-evidence-card.is-insufficient .ai-confidence-bar.is-suff .bar-fill { background: #f59e0b; }
-  .slack-evidence-card.is-insufficient #suff-status { color: #b45309; }
-
-  /* Sufficiency reasoning detail panel */
-  .suff-detail {
-    margin-top: -2px; margin-bottom: 10px;
-    padding: 10px 12px;
-    background: var(--luna-white);
-    border: 1px solid var(--luna-gray-200);
-    border-radius: 6px;
-  }
-  .suff-detail .suff-detail-label {
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 0.04em; text-transform: uppercase;
-    color: var(--luna-gray-500);
-    margin-bottom: 8px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .suff-rules-link {
-    font-size: 10px; font-weight: 700;
-    color: var(--luna-teal-500); text-decoration: none;
-    display: inline-flex; align-items: center; gap: 3px;
-    text-transform: none; letter-spacing: 0;
-  }
-  .suff-rules-link svg { width: 10px; height: 10px; stroke: currentColor; }
-  .suff-rules-link:hover { color: var(--luna-teal-700); }
-  .suff-rules { list-style: none; padding: 0; margin: 0; }
-  .suff-rules li { font-size: 12px; line-height: 1.5; color: var(--luna-gray-800); padding: 3px 0; display: flex; align-items: flex-start; gap: 7px; }
-  .suff-rules .suff-ic {
-    display: inline-grid; place-items: center;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    font-size: 9px; font-weight: 700;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-  .suff-rules .suff-ic.ok { background: var(--luna-green-500); color: #fff; }
-  .suff-rules .suff-ic.warn { background: #f59e0b; color: #fff; }
-  .suff-rules li[data-state="warn"] { color: #92400e; font-weight: 500; }
-
-  /* Insufficient/Fix-the-gap action variants */
-  .slack-evidence-card .actions button.primary.is-warn {
-    background: #f59e0b; border-color: #f59e0b;
-  }
-  .slack-evidence-card .actions button.primary.is-warn:hover {
-    background: #d97706; border-color: #d97706;
-  }
-
-  /* Gap panel */
-  .gap-panel { border-left: 3px solid #f59e0b; background: #fffbeb; border-color: #fde68a; }
-  .gap-panel .panel-label.is-warn { color: #b45309; }
-  .gap-statement { font-size: 13px; color: var(--luna-gray-900); line-height: 1.5; margin: 0 0 6px; }
-  .gap-statement code { background: var(--luna-gray-100); padding: 1px 5px; border-radius: 3px; font-size: 11.5px; }
-  .gap-auditor-note { font-size: 12px; color: var(--luna-gray-700); line-height: 1.5; margin: 0 0 12px; font-style: italic; }
-  .gap-suggestion {
-    padding: 12px 14px;
-    background: var(--luna-white);
-    border: 1px solid var(--luna-gray-200);
-    border-left: 3px solid var(--luna-teal-500);
-    border-radius: 6px;
-  }
-  .gap-suggestion-head { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
-  .gap-suggestion-title { color: var(--luna-gray-800); }
-  .gap-suggestion-body { font-size: 13px; color: var(--luna-gray-800); line-height: 1.5; margin: 0 0 8px; }
-  .gap-suggestion-lift { font-size: 12px; color: var(--luna-gray-700); margin: 0 0 12px; }
-  .gap-suggestion-lift strong { color: var(--luna-green-700); font-weight: 700; }
-  .gap-actions { display: flex; gap: 6px; }
-  .gap-actions button {
-    padding: 6px 12px; font-size: 12px; font-weight: 600;
-    border-radius: 5px; cursor: pointer;
-    border: 1px solid var(--luna-gray-300);
-    background: var(--luna-white); color: var(--luna-gray-800);
-  }
-  .gap-actions button.primary {
-    background: var(--luna-teal-500); color: var(--luna-white); border-color: var(--luna-teal-500);
-  }
-  .gap-actions button.primary:hover { background: var(--luna-teal-600); border-color: var(--luna-teal-600); }
-
-  /* Midship panel + status chip */
-  .midship-panel { border-left: 3px solid #0e7490; }
-  .midship-mark {
-    display: inline-grid; place-items: center;
-    width: 18px; height: 18px;
-    background: linear-gradient(135deg, #0e7490, #06b6d4);
-    color: #fff;
-    border-radius: 3px;
-    font-size: 11px; font-weight: 800;
-    margin-right: 4px;
-    text-transform: none; letter-spacing: 0;
-  }
-  .midship-panel .panel-label { display: flex; align-items: center; gap: 4px; text-transform: none; letter-spacing: 0; font-size: 13px; font-weight: 600; color: var(--luna-gray-900); margin-bottom: 8px; }
-  .midship-blurb { font-size: 12.5px; color: var(--luna-gray-700); line-height: 1.5; margin: 0 0 12px; }
-  .midship-blurb strong { color: var(--luna-gray-900); }
-  .midship-tasks { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-  .midship-task {
-    display: flex; gap: 10px; align-items: flex-start;
-    padding: 9px 12px;
-    background: var(--luna-white);
-    border: 1px solid var(--luna-gray-200);
-    border-radius: 6px;
-    font-size: 12.5px; line-height: 1.45;
-    color: var(--luna-gray-800);
-  }
-  .midship-task .midship-step {
-    flex-shrink: 0;
-    width: 18px; height: 18px;
-    background: var(--luna-teal-500);
-    color: #fff;
-    border-radius: 50%;
-    display: inline-grid; place-items: center;
-    font-size: 11px; font-weight: 700;
-    margin-top: 1px;
-  }
-  .midship-task strong { color: var(--luna-gray-900); }
-  .midship-eta { font-size: 12px; color: var(--luna-gray-700); margin-bottom: 4px; }
-  .midship-status {
-    margin-top: 8px;
-    display: flex; align-items: center; gap: 10px;
-    padding: 9px 12px;
-    background: var(--luna-white);
-    border: 1px solid var(--luna-gray-200);
-    border-left: 3px solid #0e7490;
-    border-radius: 6px;
-  }
-  .midship-status .midship-status-text { flex: 1; min-width: 0; }
-  .midship-status-title { font-size: 12.5px; font-weight: 600; color: var(--luna-gray-900); line-height: 1.3; }
-  .midship-status-sub { font-size: 11px; color: var(--luna-gray-500); margin-top: 2px; }
-  .midship-link {
-    color: var(--luna-gray-500); text-decoration: none;
-    transition: color 0.15s;
-  }
-  .midship-link:hover { color: var(--luna-teal-500); }
-  .midship-link svg { width: 14px; height: 14px; stroke: currentColor; display: block; }
-
-  /* === Tour overlay === */
-  #tour[hidden] { display: none; }
-  #tour { position: fixed; inset: 0; z-index: 9000; pointer-events: none; }
-  .tour-backdrop {
-    position: fixed; inset: 0;
-    background: rgba(10, 54, 85, 0.32);
-    pointer-events: auto;
-  }
-  .tour-spotlight {
-    position: absolute;
-    border: 2px solid var(--luna-teal-500);
-    border-radius: 8px;
-    box-shadow: 0 0 0 4px rgba(38, 108, 146, 0.25), 0 0 0 9999px rgba(10, 54, 85, 0.45);
-    pointer-events: none;
-    transition: top 0.3s ease, left 0.3s ease, width 0.3s ease, height 0.3s ease;
-    display: none;
-  }
-  .tour-spotlight.is-shown { display: block; }
-  .tour-pop {
-    position: absolute;
-    background: var(--luna-white);
-    border-radius: 10px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-    padding: 18px 20px 16px;
-    width: 380px;
-    max-width: calc(100vw - 32px);
-    pointer-events: auto;
-    z-index: 9002;
-    transition: top 0.3s ease, left 0.3s ease;
-  }
-  .tour-pop.is-centered {
-    top: 50% !important; left: 50% !important;
-    transform: translate(-50%, -50%);
-  }
-  .tour-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .tour-step-count {
-    font-size: 10.5px; font-weight: 700;
-    color: var(--luna-teal-500);
-    text-transform: uppercase; letter-spacing: 0.06em;
-  }
-  .tour-skip {
-    background: none; border: 0;
-    color: var(--luna-gray-500);
-    font-size: 11.5px;
-    cursor: pointer; padding: 0;
-  }
-  .tour-skip:hover { color: var(--luna-gray-900); text-decoration: underline; }
-  .tour-title { font-size: 17px; font-weight: 700; margin: 0 0 8px; color: var(--luna-gray-900); letter-spacing: -0.01em; }
-  .tour-body { font-size: 13.5px; color: var(--luna-gray-700); line-height: 1.55; margin: 0 0 14px; }
-  .tour-body strong { color: var(--luna-gray-900); }
-  .tour-actions { display: flex; justify-content: space-between; gap: 8px; }
-  .tour-btn {
-    padding: 7px 14px;
-    font-size: 12.5px; font-weight: 600;
-    border-radius: 5px; cursor: pointer;
-    border: 1px solid var(--luna-gray-300);
-    background: var(--luna-white); color: var(--luna-gray-800);
-  }
-  .tour-btn:hover { background: var(--luna-gray-50); border-color: var(--luna-gray-400); }
-  .tour-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-  .tour-btn.is-primary {
-    background: var(--luna-teal-500); color: #fff; border-color: var(--luna-teal-500);
-  }
-  .tour-btn.is-primary:hover { background: var(--luna-teal-600); border-color: var(--luna-teal-600); }
-
-  /* While tour is open, the spotlighted element rises above the backdrop */
-  body.tour-open .tour-target {
-    position: relative;
-    z-index: 9001;
-  }
 </style>
 </head>
 <body>
@@ -754,10 +502,6 @@
     </div>
     <div class="right-meta">
       <span class="luna-badge is-teal">Persona · Control owner</span>
-      <button id="start-tour-btn" class="tour-start-btn" onclick="startTour(); return false;" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-        Take the tour
-      </button>
     </div>
   </div>
 
@@ -823,71 +567,20 @@
                   Access list draft · prod-db-01
                 </div>
                 <div class="meta">Access review · SOX control 4.2.1 · quarterly · Reviewer: Marie Curie</div>
-                <div class="conf-grid" id="conf-grid">
-                  <div class="conf-score">
-                    <div class="conf-label">Pattern match vs Q2</div>
-                    <div class="conf-bar-row">
-                      <div class="ai-confidence-bar"><span class="bar-fill" id="bar-pattern" style="width:85%;"></span></div>
-                      <strong id="pct-pattern">85%</strong>
-                    </div>
-                  </div>
-                  <div class="conf-score">
-                    <div class="conf-label">
-                      Sufficiency check
-                      <button class="conf-info" type="button" onclick="toggleSufficiency(); return false;" title="What ECM evaluated" aria-label="Sufficiency reasoning">?</button>
-                    </div>
-                    <div class="conf-bar-row">
-                      <div class="ai-confidence-bar is-suff"><span class="bar-fill" id="bar-suff" style="width:94%;"></span></div>
-                      <strong id="suff-status">Adequate</strong>
-                    </div>
-                  </div>
+                <div class="conf-row">
+                  <span>Match to Q2:</span>
+                  <div class="ai-confidence-bar" style="max-width:200px;"><span style="width:85%;"></span></div>
+                  <strong>85%</strong>
                 </div>
-
-                <div class="suff-detail" id="suff-detail" hidden>
-                  <div class="suff-detail-label">What ECM evaluated · <a href="ipad-b.html" target="_blank" rel="noopener" class="suff-rules-link">Rules for control 4.2.1<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a></div>
-                  <ul class="suff-rules">
-                    <li><span class="suff-ic ok">✓</span> 22/22 accounts have a documented business need</li>
-                    <li><span class="suff-ic ok">✓</span> Service accounts properly classified (3 of 22)</li>
-                    <li><span class="suff-ic ok">✓</span> No active accounts with last_login over 90 days</li>
-                    <li class="rule-rtaylor" data-state="ok"><span class="suff-ic ok">✓</span> Escalations within the period have approval tickets</li>
-                    <li><span class="suff-ic ok">✓</span> Carryover HEL-3471 acknowledged</li>
-                  </ul>
-                </div>
-
                 <div style="font-size:12px;color:var(--luna-gray-700);">
                   Suggested artifact:
                   <button class="artifact-chip" onclick="toggleArtifact('csv'); return false;"><span class="ai-citation">snow-query-AR-prod-db.csv</span></button> +
                   <button class="artifact-chip" onclick="toggleArtifact('email'); return false;"><span class="ai-citation">DBA attestation email</span></button>
                 </div>
-                <div class="actions" id="card-actions">
-                  <button class="primary" id="approve-btn" onclick="runFlow(); return false;">✓ Approve &amp; file</button>
+                <div class="actions">
+                  <button class="primary" onclick="runFlow(); return false;">✓ Approve &amp; file</button>
                   <button onclick="toggleQueryEditor(); return false;">Edit query</button>
                   <button onclick="toggleFilePicker(); return false;">Upload your own</button>
-                </div>
-                <div class="actions" id="card-actions-gap" hidden>
-                  <button class="primary is-warn" onclick="toggleGapPanel(); return false;">Fix the gap →</button>
-                  <button onclick="toggleQueryEditor(); return false;">Edit query</button>
-                </div>
-
-                <div class="slack-inline-panel gap-panel" id="gap-panel" hidden>
-                  <div class="panel-label is-warn">Gap · 1 unresolved</div>
-                  <p class="gap-statement"><strong>r.taylor@helios.com</strong> escalated from <code>dba-read</code> to <code>dba-admin</code> on Sep 11. No approval ticket found on the filing.</p>
-                  <p class="gap-auditor-note">An external auditor would ask <em>"who authorized this elevation?"</em> — this evidence can't answer that yet.</p>
-
-                  <div class="gap-suggestion">
-                    <div class="gap-suggestion-head">
-                      <span class="ai-chip">Optro ECM</span>
-                      <span class="gap-suggestion-title">Suggested fix</span>
-                    </div>
-                    <p class="gap-suggestion-body">
-                      <span class="ai-citation">HEL-3482</span> in your ServiceNow queue was closed on Sep 11 for <em>"prod-db emergency access for incident #INC-44119."</em> It looks like the approval ticket for this escalation.
-                    </p>
-                    <p class="gap-suggestion-lift">Linking it would lift sufficiency <strong>76% → 94%</strong> and unlock one-tap file.</p>
-                    <div class="gap-actions">
-                      <button class="primary" onclick="applyGapFix(); return false;">Link HEL-3482 and re-check</button>
-                      <button onclick="toggleGapPanel(); return false;">Not now</button>
-                    </div>
-                  </div>
                 </div>
 
                 <div class="slack-inline-panel" id="query-editor-panel" style="display:none;">
@@ -1042,7 +735,6 @@ ORDER BY user;</textarea>
                 </div>
               </div>
               <div style="display:flex;gap:6px;margin-top:6px;">
-                <button id="midship-btn" onclick="toggleMidship(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-teal-500);background:var(--luna-teal-500);color:var(--luna-white);cursor:pointer;">Send to Midship for testing →</button>
                 <button onclick="toggleQueue(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">What's next →</button>
                 <button onclick="toggleReceipt(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">View filing details</button>
               </div>
@@ -1182,35 +874,6 @@ ORDER BY user;</textarea>
                   <button onclick="toggleReceipt(); return false;">Close</button>
                 </div>
               </div>
-
-              <div class="slack-inline-panel midship-panel" id="midship-panel" style="display:none;margin-top:10px;">
-                <div class="panel-label">
-                  <span class="midship-mark">M</span>
-                  Hand off to Midship for control testing
-                </div>
-                <p class="midship-blurb">Optro ECM has filed the evidence. Midship is the separate testing layer that will independently verify it. <strong>Different system, separate sign-off</strong> — that separation is what makes the evidence audit-defensible.</p>
-                <div class="midship-tasks">
-                  <div class="midship-task"><span class="midship-step">1</span><div><strong>Reperform the query</strong> against ServiceNow as of today and diff against your filed list.</div></div>
-                  <div class="midship-task"><span class="midship-step">2</span><div><strong>Sample 5 random users</strong> from the filed list and re-verify role + last_login.</div></div>
-                  <div class="midship-task"><span class="midship-step">3</span><div><strong>Run an SoD check</strong> against Workday to confirm no terminated employees still hold access.</div></div>
-                </div>
-                <div class="midship-eta">ETA <strong>2 business days</strong>. You'll get a DM here if anything diverges from this filing.</div>
-                <div class="panel-actions">
-                  <button class="primary" onclick="confirmMidship(); return false;">Confirm handoff</button>
-                  <button onclick="toggleMidship(); return false;">Cancel</button>
-                </div>
-              </div>
-
-              <div class="midship-status" id="midship-status" hidden>
-                <span class="midship-mark">M</span>
-                <div class="midship-status-text">
-                  <div class="midship-status-title">Midship · queued for testing</div>
-                  <div class="midship-status-sub">case <span id="midship-case-id">#MS-3847</span> · ETA 2 business days</div>
-                </div>
-                <a class="midship-link" href="ipad-b.html" target="_blank" rel="noopener" aria-label="Open Midship case" title="Open Midship case">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                </a>
-              </div>
             </div>
           </div>
         </div>
@@ -1228,290 +891,6 @@ ORDER BY user;</textarea>
 
 <script>
   let flowStarted = false;
-  let cardState = 'adequate';   // 'adequate' | 'insufficient' | 'filed'
-  let midshipState = 'idle';    // 'idle' | 'preflight' | 'sent'
-  let tourStep = 0;
-  let tourTargetEl = null;
-
-  // === Sufficiency state management ===
-  function setCardState(state) {
-    cardState = state;
-    const card = document.querySelector('.slack-evidence-card');
-    const okActions = document.getElementById('card-actions');
-    const gapActions = document.getElementById('card-actions-gap');
-    const suffStatus = document.getElementById('suff-status');
-    const suffBar = document.getElementById('bar-suff');
-    const rule = document.querySelector('.suff-rules .rule-rtaylor');
-    if (!card) return;
-
-    if (state === 'insufficient') {
-      card.classList.add('is-insufficient');
-      if (okActions) okActions.hidden = true;
-      if (gapActions) gapActions.hidden = false;
-      if (suffStatus) suffStatus.textContent = 'Insufficient · 1 gap';
-      if (suffBar) suffBar.style.width = '76%';
-      if (rule) { rule.dataset.state = 'warn'; rule.querySelector('.suff-ic').className = 'suff-ic warn'; rule.querySelector('.suff-ic').textContent = '⚠'; rule.lastChild.textContent = ' r.taylor escalation (Sep 11) — no approval ticket found'; }
-    } else {
-      // adequate / fixed
-      card.classList.remove('is-insufficient');
-      if (okActions) okActions.hidden = false;
-      if (gapActions) gapActions.hidden = true;
-      if (suffStatus) suffStatus.textContent = 'Adequate';
-      if (suffBar) suffBar.style.width = '94%';
-      if (rule) { rule.dataset.state = 'ok'; rule.querySelector('.suff-ic').className = 'suff-ic ok'; rule.querySelector('.suff-ic').textContent = '✓'; rule.lastChild.textContent = ' Escalations within the period have approval tickets'; }
-      const gapPanel = document.getElementById('gap-panel');
-      if (gapPanel) gapPanel.hidden = true;
-    }
-  }
-
-  function toggleSufficiency() {
-    const d = document.getElementById('suff-detail');
-    if (!d) return;
-    d.hidden = !d.hidden;
-  }
-
-  function toggleGapPanel() {
-    const p = document.getElementById('gap-panel');
-    if (!p) return;
-    p.hidden = !p.hidden;
-    if (!p.hidden) p.scrollIntoView({behavior: 'smooth', block: 'center'});
-  }
-
-  function applyGapFix() {
-    // The user "links" HEL-3482. Animate the sufficiency back to adequate.
-    setCardState('adequate');
-    const gapPanel = document.getElementById('gap-panel');
-    if (gapPanel) gapPanel.hidden = true;
-    // Briefly flash the approve button so the user sees it return
-    const btn = document.getElementById('approve-btn');
-    if (btn) {
-      btn.style.transition = 'box-shadow 0.4s';
-      btn.style.boxShadow = '0 0 0 4px rgba(38, 108, 146, 0.3)';
-      setTimeout(() => { btn.style.boxShadow = ''; }, 1200);
-    }
-  }
-
-  // === Midship handoff ===
-  function toggleMidship() {
-    const p = document.getElementById('midship-panel');
-    if (!p) return;
-    const r = document.getElementById('receipt-panel');
-    const q = document.getElementById('queue-panel');
-    if (r) r.style.display = 'none';
-    if (q) q.style.display = 'none';
-    const willShow = p.style.display === 'none' || !p.style.display;
-    p.style.display = willShow ? 'block' : 'none';
-    if (willShow) p.scrollIntoView({behavior: 'smooth', block: 'center'});
-  }
-
-  function confirmMidship() {
-    midshipState = 'sent';
-    const p = document.getElementById('midship-panel');
-    if (p) p.style.display = 'none';
-    const status = document.getElementById('midship-status');
-    if (status) status.hidden = false;
-    const btn = document.getElementById('midship-btn');
-    if (btn) {
-      btn.disabled = true;
-      btn.style.opacity = '0.55';
-      btn.style.cursor = 'not-allowed';
-      btn.textContent = '✓ Sent to Midship';
-    }
-    if (status) status.scrollIntoView({behavior: 'smooth', block: 'center'});
-  }
-
-  // === Product tour ===
-  const TOUR_STEPS = [
-    {
-      target: null,
-      title: 'A quick tour of ECM',
-      body: 'ECM is more than a reminder bot — it judges whether your evidence actually proves the control operated, and hands off to Midship for testing. Five things to walk through.',
-    },
-    {
-      target: '#conf-grid',
-      title: 'Two AI checks, not one',
-      body: '<strong>Pattern match</strong> asks: does this look like prior quarters? <strong>Sufficiency</strong> asks: would this prove the control operated to an external auditor? Different questions, different scores.',
-      onEnter: () => { setCardState('adequate'); const d = document.getElementById('suff-detail'); if (d) d.hidden = false; },
-    },
-    {
-      target: '#suff-detail',
-      title: "What ECM evaluated",
-      body: 'The sufficiency score is grounded in <strong>specific substantive rules</strong> tied to control 4.2.1 — versioned, signed by the audit committee. Click the rules link to see the policy itself.',
-    },
-    {
-      target: '#card-actions',
-      title: 'When evidence is adequate, one tap files',
-      body: 'High pattern match + sufficiency passing + no PCAOB-flagged drifts = the one-tap path is open. Watch what happens when sufficiency <em>fails</em> instead.',
-      onEnter: () => { setCardState('adequate'); },
-    },
-    {
-      target: '#card-actions-gap',
-      title: 'Insufficient evidence blocks one-tap',
-      body: 'In this state, the AI found <strong>1 unresolved gap</strong> — an unapproved escalation. The one-tap button is replaced with <strong>Fix the gap →</strong>. ECM refuses to rubber-stamp evidence an auditor would reject.',
-      onEnter: () => { setCardState('insufficient'); const d = document.getElementById('suff-detail'); if (d) d.hidden = false; },
-    },
-    {
-      target: '#gap-panel',
-      title: 'And ECM suggests the fix',
-      body: 'It doesn\'t just gate — it points at the likely approval ticket already in your ServiceNow queue (<strong>HEL-3482</strong>) and offers a one-tap link. Sufficiency recomputes; if it clears, one-tap is back.',
-      onEnter: () => { const p = document.getElementById('gap-panel'); if (p) p.hidden = false; },
-    },
-    {
-      target: '#approve-btn',
-      title: 'Gap fixed, one-tap returns',
-      body: 'After linking the approval ticket, sufficiency jumps from <strong>76% → 94%</strong> and the Approve &amp; file button is back. The audit committee gets the same evidence either way; ECM made sure it survives PCAOB review.',
-      onEnter: () => { setCardState('adequate'); const p = document.getElementById('gap-panel'); if (p) p.hidden = true; },
-    },
-    {
-      target: '#midship-btn',
-      title: 'Hand off to Midship for testing',
-      body: 'ECM <em>provides</em> the evidence. <strong>Midship tests it.</strong> Different system, separate sign-off — that separation is what makes the audit trail defensible.',
-      onEnter: () => { simulateFiled(); },
-    },
-    {
-      target: '#midship-panel',
-      title: 'Midship pre-flight',
-      body: 'Before the handoff, Midship tells you exactly what it will do: reperform the query, sample 5 users, run SoD against HR. <strong>You confirm. ECM doesn\'t test itself.</strong>',
-      onEnter: () => { const p = document.getElementById('midship-panel'); if (p) p.style.display = 'block'; p.scrollIntoView({behavior: 'smooth', block: 'center'}); },
-    },
-    {
-      target: null,
-      title: "That's the tour",
-      body: 'Two-score evidence card · gated one-tap · AI-suggested fixes · Midship handoff with pre-flight. Click around to explore — every panel, button, and chip is functional.',
-      onEnter: () => { const p = document.getElementById('midship-panel'); if (p) p.style.display = 'none'; },
-    },
-  ];
-
-  function simulateFiled() {
-    // Make sure card is in adequate state, then run the filed flow (without delay).
-    if (!flowStarted) {
-      flowStarted = true;
-      const card = document.querySelector('.slack-evidence-card');
-      if (card) card.classList.add('is-resolved');
-      const filed = document.getElementById('filed-msg');
-      if (filed) { filed.classList.remove('is-hidden'); filed.classList.add('is-revealing'); }
-    }
-  }
-
-  function startTour() {
-    tourStep = 0;
-    document.getElementById('tour').hidden = false;
-    document.body.classList.add('tour-open');
-    showTourStep();
-  }
-
-  function endTour() {
-    document.getElementById('tour').hidden = true;
-    document.body.classList.remove('tour-open');
-    if (tourTargetEl) {
-      tourTargetEl.classList.remove('tour-target');
-      tourTargetEl = null;
-    }
-    const spot = document.getElementById('tour-spotlight');
-    if (spot) spot.classList.remove('is-shown');
-  }
-
-  function tourPrev() {
-    if (tourStep > 0) { tourStep--; showTourStep(); }
-  }
-  function tourNext() {
-    if (tourStep < TOUR_STEPS.length - 1) { tourStep++; showTourStep(); }
-    else { endTour(); }
-  }
-
-  function showTourStep() {
-    const step = TOUR_STEPS[tourStep];
-    if (!step) return;
-
-    // De-target previous target
-    if (tourTargetEl) {
-      tourTargetEl.classList.remove('tour-target');
-      tourTargetEl = null;
-    }
-
-    // Run any onEnter side-effects first
-    if (step.onEnter) {
-      try { step.onEnter(); } catch (e) { console.warn(e); }
-    }
-
-    // Update the popover content
-    document.getElementById('tour-step-count').textContent = 'Step ' + (tourStep + 1) + ' of ' + TOUR_STEPS.length;
-    document.getElementById('tour-title').textContent = step.title;
-    document.getElementById('tour-body').innerHTML = step.body;
-
-    // Prev/Next button states
-    document.getElementById('tour-prev').disabled = (tourStep === 0);
-    document.getElementById('tour-next').textContent = (tourStep === TOUR_STEPS.length - 1) ? 'Done' : 'Next →';
-
-    // Position spotlight + popover
-    setTimeout(() => positionTour(step.target), 50);
-  }
-
-  function positionTour(selector) {
-    const spot = document.getElementById('tour-spotlight');
-    const pop = document.getElementById('tour-pop');
-    if (!selector) {
-      spot.classList.remove('is-shown');
-      pop.classList.add('is-centered');
-      pop.style.top = ''; pop.style.left = '';
-      return;
-    }
-    const el = document.querySelector(selector);
-    if (!el) { spot.classList.remove('is-shown'); pop.classList.add('is-centered'); return; }
-
-    tourTargetEl = el;
-    el.classList.add('tour-target');
-    el.scrollIntoView({behavior: 'smooth', block: 'center'});
-
-    setTimeout(() => {
-      const rect = el.getBoundingClientRect();
-      const scrollY = window.scrollY || window.pageYOffset;
-      const scrollX = window.scrollX || window.pageXOffset;
-      spot.classList.add('is-shown');
-      spot.style.top = (rect.top + scrollY - 6) + 'px';
-      spot.style.left = (rect.left + scrollX - 6) + 'px';
-      spot.style.width = (rect.width + 12) + 'px';
-      spot.style.height = (rect.height + 12) + 'px';
-
-      // Place pop to the right of target if room, else below.
-      pop.classList.remove('is-centered');
-      const popW = 380;
-      const popH = pop.offsetHeight || 200;
-      const margin = 18;
-      let top, left;
-
-      const viewportRight = window.innerWidth;
-      const viewportBottom = window.innerHeight;
-
-      // Try right side
-      if (rect.right + margin + popW < viewportRight) {
-        left = rect.right + scrollX + margin;
-        top = rect.top + scrollY + Math.max(0, (rect.height - popH) / 2);
-      } else if (rect.left - margin - popW > 0) {
-        left = rect.left + scrollX - margin - popW;
-        top = rect.top + scrollY + Math.max(0, (rect.height - popH) / 2);
-      } else if (rect.bottom + margin + popH < viewportBottom) {
-        left = rect.left + scrollX + Math.max(0, (rect.width - popW) / 2);
-        top = rect.bottom + scrollY + margin;
-      } else {
-        left = rect.left + scrollX + Math.max(0, (rect.width - popW) / 2);
-        top = rect.top + scrollY - margin - popH;
-      }
-      // Clamp within viewport
-      left = Math.max(scrollX + 16, Math.min(scrollX + viewportRight - popW - 16, left));
-      top  = Math.max(scrollY + 16, Math.min(scrollY + viewportBottom - popH - 16, top));
-      pop.style.left = left + 'px';
-      pop.style.top  = top  + 'px';
-    }, 380);
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (document.getElementById('tour').hidden) return;
-    if (e.key === 'Escape') endTour();
-    if (e.key === 'ArrowRight') tourNext();
-    if (e.key === 'ArrowLeft')  tourPrev();
-  });
-
 
   function toggleQueryEditor() {
     if (flowStarted) return;
@@ -1684,7 +1063,7 @@ hide(document.getElementById('filed-msg'));
     if (card) card.classList.remove('is-resolved');
 
     // Close any open inline panels
-    ['query-editor-panel', 'file-picker-panel', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel', 'midship-panel', 'gap-panel'].forEach(id => {
+    ['query-editor-panel', 'file-picker-panel', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
@@ -1710,22 +1089,5 @@ hide(document.getElementById('filed-msg'));
     if (win) win.scrollIntoView({behavior: 'smooth', block: 'start'});
   }
 </script>
-
-<div id="tour" hidden aria-modal="true" role="dialog">
-  <div class="tour-backdrop" onclick="endTour()"></div>
-  <div class="tour-spotlight" id="tour-spotlight"></div>
-  <div class="tour-pop" id="tour-pop">
-    <div class="tour-meta">
-      <span class="tour-step-count" id="tour-step-count">Step 1 of 9</span>
-      <button class="tour-skip" onclick="endTour(); return false;" type="button">Skip tour</button>
-    </div>
-    <h4 class="tour-title" id="tour-title">Welcome</h4>
-    <p class="tour-body" id="tour-body"></p>
-    <div class="tour-actions">
-      <button class="tour-btn" id="tour-prev" onclick="tourPrev(); return false;" type="button">← Previous</button>
-      <button class="tour-btn is-primary" id="tour-next" onclick="tourNext(); return false;" type="button">Next →</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
