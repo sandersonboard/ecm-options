@@ -644,6 +644,14 @@
     margin: 0 0 8px;
   }
   .slack-inline-panel .row-review-note { margin-top: 8px; margin-bottom: 0; font-style: italic; color: var(--luna-gray-600); }
+  .slack-inline-panel .rr-section-label {
+    font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--luna-gray-500);
+    margin: 0 0 6px;
+  }
+  .slack-inline-panel .rr-section-label-spaced { margin-top: 14px; }
+  .slack-inline-panel .rr-section-label .ai-citation { text-transform: none; letter-spacing: 0; font-weight: 600; }
   .slack-inline-panel .row-warn .row-flag,
   .slack-inline-panel .q2-flag {
     font-size: 9.5px;
@@ -838,15 +846,10 @@
     margin-left: 4px;
   }
   .artifact-chip {
-    appearance: none;
-    background: none;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
     font: inherit;
   }
-  .artifact-chip .ai-citation { transition: background 0.15s, box-shadow 0.15s; cursor: pointer; }
-  .artifact-chip:hover .ai-citation { background: var(--luna-teal-100); box-shadow: 0 0 0 1px var(--luna-teal-300); }
   .slack-inline-panel.artifact-preview .panel-label {
     display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
     font-size: 12px; font-weight: 600; color: var(--luna-gray-800);
@@ -1438,9 +1441,9 @@
                 <div class="artifact-line">
                   <span class="state-pre">Suggested artifact:</span>
                   <span class="state-post">Filed artifact:</span>
-                  <button class="artifact-chip" onclick="toggleArtifact('csv'); return false;"><span class="ai-citation">snow-query-AR-prod-db.csv</span></button>
+                  <span class="artifact-chip"><span class="ai-citation">snow-query-AR-prod-db.csv</span></span>
                   <span class="artifact-and">and</span>
-                  <button class="artifact-chip" onclick="toggleArtifact('email'); return false;"><span class="ai-citation">DBA attestation email</span></button>
+                  <span class="artifact-chip"><span class="ai-citation">DBA attestation email</span></span>
                   <button type="button" class="review-evidence-link" onclick="toggleRowReview(); return false;">Review the evidence →</button>
                 </div>
                 <div class="actions">
@@ -1520,6 +1523,7 @@
                 <div class="slack-inline-panel" id="row-review-panel" style="display:none;">
                   <div class="panel-label">Evidence preview</div>
                   <p class="row-review-intro">Full draft of what would be filed. ECM flagged <strong>2 items</strong> for your attention.</p>
+                  <div class="rr-section-label">Access list · <span class="ai-citation">snow-query-AR-prod-db.csv</span></div>
                   <div class="csv-preview">
                     <table>
                       <thead><tr><th>user</th><th>role</th><th>last_login</th><th>attested</th></tr></thead>
@@ -1537,68 +1541,29 @@
                       </tbody>
                     </table>
                   </div>
-                  <p class="row-review-note">Both flagged items are explained: one is a carryover Marie already signed off on last quarter, the other has a linked approval ticket. Both will be visible in Marie's review.</p>
-                  <div class="panel-actions">
-                    <button class="primary" onclick="runFlow(); toggleRowReview(); return false;">Looks good. Approve &amp; file</button>
-                    <button onclick="flagForMarie(); return false;">Flag for Marie's review</button>
-                    <button onclick="toggleRowReview(); return false;">Close</button>
-                  </div>
-                </div>
-
-                <div class="slack-inline-panel artifact-preview" id="artifact-csv" style="display:none;">
-                  <div class="panel-label">
-                    <span class="ai-chip">Optro Evidence</span>
-                    snow-query-AR-prod-db.csv · ServiceNow export · 22 rows
-                  </div>
-                  <div class="csv-preview">
-                    <table>
-                      <thead><tr><th>user</th><th>role</th><th>last_login</th><th>attested</th></tr></thead>
-                      <tbody>
-                        <tr><td>m.chen@helios.com</td><td>dba-admin</td><td>2026-09-25</td><td>✓</td></tr>
-                        <tr><td>j.park@helios.com</td><td>dba-read</td><td>2026-09-22</td><td>✓</td></tr>
-                        <tr class="row-warn"><td>contractor-svc-09</td><td>dba-admin</td><td>2026-04-12</td><td>—</td></tr>
-                        <tr><td>k.singh@helios.com</td><td>dba-read</td><td>2026-09-19</td><td>✓</td></tr>
-                        <tr class="row-warn"><td>r.taylor@helios.com</td><td><strong>dba-admin</strong></td><td>2026-09-11</td><td>✓</td></tr>
-                        <tr><td>n.lee@helios.com</td><td>dba-read</td><td>2026-09-23</td><td>✓</td></tr>
-                        <tr><td>app-svc-prod</td><td>app-svc</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
-                        <tr><td>backups-svc</td><td>backups</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
-                        <tr><td>etl-svc</td><td>etl</td><td>2026-09-25</td><td>✓ (auto)</td></tr>
-                        <tr class="row-more"><td colspan="4">… 13 more rows</td></tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div class="panel-actions">
-                    <a class="open-external" href="chain-b.html" target="_blank" rel="noopener">Open in full ↗</a>
-                    <button onclick="toggleArtifact('csv'); return false;">Close</button>
-                  </div>
-                </div>
-
-                <div class="slack-inline-panel artifact-preview" id="artifact-email" style="display:none;">
-                  <div class="panel-label">
-                    <span class="ai-chip">Optro Evidence</span>
-                    DBA attestation email · drafted from Q2 template
-                  </div>
+                  <div class="rr-section-label rr-section-label-spaced">Attestation · <span class="ai-citation">DBA attestation email</span></div>
                   <div class="email-preview">
                     <div class="em-row"><span class="em-k">From</span><span class="em-v">Weston Prohaska &lt;weston@helios.com&gt;</span></div>
                     <div class="em-row"><span class="em-k">To</span><span class="em-v">Marie Curie &lt;mcurie@helios.com&gt;</span></div>
                     <div class="em-row"><span class="em-k">Subject</span><span class="em-v">Q3 FY26 access review attestation for prod-db-01 (control 4.2.1)</span></div>
-                    <div class="em-row"><span class="em-k">Sent</span><span class="em-v">Friday Sep 25 · 3:11 PM PT</span></div>
                     <div class="em-body">
                       <p>Marie,</p>
                       <p>Attaching the Q3 access review for <strong>prod-db-01</strong> (control 4.2.1). 22 active accounts reviewed against the ServiceNow export attached as <code>snow-query-AR-prod-db.csv</code>.</p>
                       <p><strong>Findings carried into Q3:</strong></p>
                       <ul>
                         <li><code>contractor-svc-09</code> still <code>dba-admin</code>; ticket HEL-3471 still open. Same status as Q2.</li>
-                        <li><code>r.taylor@helios.com</code> escalated from <code>dba-read</code> to <code>dba-admin</code> on Sep 11. Please flag if you don't see an approval ticket.</li>
+                        <li><code>r.taylor@helios.com</code> escalated from <code>dba-read</code> to <code>dba-admin</code> on Sep 11. Approval ticket HEL-3482.</li>
                         <li><code>n.lee@helios.com</code> added Sep 23 as <code>dba-read</code> per onboarding (OPS-2208).</li>
                       </ul>
                       <p>All 19 service accounts (app-svc-prod, backups-svc, etl-svc, …) match Q2 verbatim.</p>
                       <p>Weston</p>
                     </div>
                   </div>
+                  <p class="row-review-note">Both flagged items are explained: one is a carryover Marie already signed off on last quarter, the other has a linked approval ticket. Both will be visible in Marie's review.</p>
                   <div class="panel-actions">
-                    <a class="open-external" href="chain-a.html" target="_blank" rel="noopener">Open in full ↗</a>
-                    <button onclick="toggleArtifact('email'); return false;">Close</button>
+                    <button class="primary" onclick="runFlow(); toggleRowReview(); return false;">Looks good. Approve &amp; file</button>
+                    <button onclick="flagForMarie(); return false;">Flag for Marie's review</button>
+                    <button onclick="toggleRowReview(); return false;">Close</button>
                   </div>
                 </div>
 
@@ -1925,7 +1890,7 @@
       },
       {
         title: 'Add context, or defer',
-        body: 'Two secondary options next to Review the evidence. <strong>+ Add a note</strong> captures context that should travel with the filing, like a vendor confirmation or a verbal authorization the data alone wouldn\'t show. <strong>Defer</strong> handles legitimate delays with a reason and a new due date.<span class="tour-why"><strong>Why:</strong> SOX evidence often needs explanatory notes the data doesn\'t carry on its own. And not every filing is ready by its original due date. Both paths leave audit-trail entries, so the reason survives review.</span>',
+        body: '<strong>+ Add a note</strong> captures context that should travel with the filing, like a vendor confirmation or a verbal authorization the data alone wouldn\'t show. <strong>Defer</strong> handles legitimate delays with a reason and a new due date.<span class="tour-why"><strong>Why:</strong> SOX evidence often needs explanatory notes the data doesn\'t carry on its own. And not every filing is ready by its original due date. Both paths leave audit-trail entries, so the reason survives review.</span>',
         selector: '.slack-evidence-card .card-sec-row',
         before: function () { try { toggleMoreOptions(true); } catch (e) {} },
       },
@@ -1945,10 +1910,9 @@
       },
       {
         title: 'The cautious path',
-        body: 'If anything feels off, this opens all 22 records inline. The two flagged ones are called out. From there Weston can approve as-is, or send it to Marie with a flag attached.<span class="tour-why"><strong>Why:</strong> Every AI system needs an error-recovery path. Flag-for-Marie routes the dispute to the reviewer and keeps segregation of duties intact.</span>',
-        selector: '.slack-evidence-card .row-review-link',
+        body: 'If anything feels off, <strong>Review the evidence</strong> opens all 22 records inline alongside the email draft. The two flagged rows are called out with their explanations. From there Weston can approve as-is, or send it to Marie with a flag attached.<span class="tour-why"><strong>Why:</strong> Every AI system needs an error-recovery path. Flag-for-Marie routes the dispute to the reviewer and keeps segregation of duties intact.</span>',
+        selector: '.slack-evidence-card .review-evidence-link',
         before: function () {
-          try { toggleMoreOptions(true); } catch (e) {}
           var p = document.getElementById('row-review-panel');
           if (p) p.style.display = 'block';
         },
@@ -2484,21 +2448,6 @@
     setTimeout(() => reveal(document.getElementById('filed-msg')), 600);
   }
 
-  function toggleArtifact(which) {
-    const ids = ['artifact-csv', 'artifact-email'];
-    const target = which === 'csv' ? 'artifact-csv' : 'artifact-email';
-    ids.forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      if (id === target) {
-        const willShow = el.style.display === 'none' || !el.style.display;
-        el.style.display = willShow ? 'block' : 'none';
-        if (willShow) el.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-      } else {
-        el.style.display = 'none';
-      }
-    });
-  }
 
   function toggleReceipt() {
     const panel = document.getElementById('receipt-panel');
@@ -2606,7 +2555,7 @@ hide(document.getElementById('filed-msg'));
     if (card) card.classList.remove('is-resolved');
 
     // Close any open inline panels
-    ['row-review-panel', 'q2-ref', 'artifact-csv', 'artifact-email', 'receipt-panel', 'queue-panel', 'notify-panel', 'peek-panel', 'note-panel', 'defer-panel', 'sendback-panel'].forEach(id => {
+    ['row-review-panel', 'q2-ref', 'receipt-panel', 'queue-panel', 'notify-panel', 'peek-panel', 'note-panel', 'defer-panel', 'sendback-panel'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
