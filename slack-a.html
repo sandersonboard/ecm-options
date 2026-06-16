@@ -990,7 +990,7 @@
   }
   .slack-inline-panel .q-due {
     flex-shrink: 0;
-    min-width: 38px;
+    min-width: 44px;
     text-align: center;
     padding: 4px 6px;
     background: var(--luna-blue-50);
@@ -1000,6 +1000,19 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.2;
+    gap: 1px;
+  }
+  .slack-inline-panel .q-due .q-due-day {
+    font-size: 9.5px;
+    color: var(--luna-blue-600);
+    font-weight: 600;
+  }
+  .slack-inline-panel .q-due .q-due-date {
+    font-size: 11px;
   }
   .slack-inline-panel .q-text { flex: 1; min-width: 0; }
   .slack-inline-panel .q-title {
@@ -1166,6 +1179,28 @@
     margin-left: auto;
   }
   .marie-peek:hover { color: var(--luna-teal-700); }
+
+  .post-flow-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding-left: 2px;
+  }
+  .post-flow-links .flow-link {
+    appearance: none; background: none; border: 0; padding: 0;
+    font: inherit; font-size: 11.5px;
+    color: var(--luna-teal-500);
+    cursor: pointer;
+    text-decoration: underline; text-underline-offset: 2px;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.15s, color 0.15s;
+  }
+  .post-flow-links .flow-link:hover {
+    color: var(--luna-teal-700);
+    text-decoration-color: currentColor;
+  }
+  .post-flow-links .flow-link-sep { color: var(--luna-gray-400); font-size: 11.5px; }
 
   .slack-inline-panel .peek-note {
     font-size: 11.5px;
@@ -1352,7 +1387,6 @@
 
               <div class="slack-evidence-card">
                 <div class="head">
-                  <span class="ai-chip">Optro Evidence</span>
                   <a class="record-title-link state-pre" href="chain-a.html" target="_blank" rel="noopener" title="Open draft record in Optro">Access list draft · prod-db-01<svg class="record-title-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
                   <a class="record-title-link state-post" href="chain-a.html" target="_blank" rel="noopener" title="Open filed record in Optro">Filed access list · prod-db-01<svg class="record-title-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
                 </div>
@@ -1634,7 +1668,8 @@
                   <button type="button" onclick="toggleNotifyPanel(); return false;">Cancel</button>
                 </div>
               </div>
-                            <div class="marie-status" id="marie-status">
+
+              <div class="marie-status" id="marie-status">
                 <span class="marie-status-label">Marie's review</span>
                 <span class="marie-status-dot" data-state="queued" aria-hidden="true"></span>
                 <span class="marie-status-text">queued · since 3:11 PM</span>
@@ -1664,9 +1699,10 @@
                 </div>
               </div>
 
-              <div style="display:flex;gap:6px;margin-top:6px;">
-                <button onclick="toggleQueue(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">What's next →</button>
-                <button onclick="toggleReceipt(); return false;" style="padding:4px 10px;font-size:12px;font-weight:600;border-radius:4px;border:1px solid var(--luna-gray-300);background:var(--luna-white);color:var(--luna-gray-700);cursor:pointer;">View filing details</button>
+              <div class="post-flow-links">
+                <button type="button" class="flow-link" onclick="toggleQueue(); return false;">What's next →</button>
+                <span class="flow-link-sep">·</span>
+                <button type="button" class="flow-link" onclick="toggleReceipt(); return false;">View filing details</button>
               </div>
 
               <div class="slack-inline-panel" id="queue-panel" style="display:none;margin-top:10px;">
@@ -1674,7 +1710,7 @@
                 <div class="queue-list">
                   <div class="q-wrap" id="qw-q1">
                     <button type="button" class="queue-item" onclick="toggleQueueItem('q1'); return false;">
-                      <span class="q-due">Thu</span>
+                      <span class="q-due"><span class="q-due-day">Thu</span><span class="q-due-date">Oct 1</span></span>
                       <div class="q-text">
                         <div class="q-title">Q3 segregation-of-duties review</div>
                         <div class="q-meta">SOX control 5.1.1 · prod-payroll-svc · reviewed by Marie Curie</div>
@@ -1695,7 +1731,7 @@
                   </div>
                   <div class="q-wrap" id="qw-q2">
                     <button type="button" class="queue-item" onclick="toggleQueueItem('q2'); return false;">
-                      <span class="q-due">Mon</span>
+                      <span class="q-due"><span class="q-due-day">Mon</span><span class="q-due-date">Sep 28</span></span>
                       <div class="q-text">
                         <div class="q-title">Q3 deployment review</div>
                         <div class="q-meta">SOX control 4.2.2 · helios-deploy-pipeline · reviewed by Ada Lovelace</div>
@@ -1716,7 +1752,7 @@
                   </div>
                   <div class="q-wrap is-extra" id="qw-q3">
                     <button type="button" class="queue-item" onclick="toggleQueueItem('q3'); return false;">
-                      <span class="q-due">Sep 30</span>
+                      <span class="q-due"><span class="q-due-day">Tue</span><span class="q-due-date">Sep 30</span></span>
                       <div class="q-text">
                         <div class="q-title">Q3 break-glass access review</div>
                         <div class="q-meta">SOX control 4.2.5 · prod-db-01 · reviewed by Marie Curie</div>
@@ -1737,7 +1773,7 @@
                   </div>
                   <div class="q-wrap is-extra" id="qw-q4">
                     <button type="button" class="queue-item" onclick="toggleQueueItem('q4'); return false;">
-                      <span class="q-due">Oct 2</span>
+                      <span class="q-due"><span class="q-due-day">Fri</span><span class="q-due-date">Oct 2</span></span>
                       <div class="q-text">
                         <div class="q-title">Q3 backup-restore verification</div>
                         <div class="q-meta">SOX control 4.3.1 · prod-db-01 · reviewed by Ada Lovelace</div>
@@ -1758,7 +1794,7 @@
                   </div>
                   <div class="q-wrap is-extra" id="qw-q5">
                     <button type="button" class="queue-item" onclick="toggleQueueItem('q5'); return false;">
-                      <span class="q-due">Oct 5</span>
+                      <span class="q-due"><span class="q-due-day">Mon</span><span class="q-due-date">Oct 5</span></span>
                       <div class="q-text">
                         <div class="q-title">Q3 schema-change approval</div>
                         <div class="q-meta">SOX control 4.4.2 · prod-db-01 · reviewed by Marie Curie</div>
